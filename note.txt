@@ -1,0 +1,7 @@
+-- docker ps
+-- take the postgres docker image id (2fae)
+-- docker inspect 2fae
+-- take IP Address
+-- add that IP Address in the pgadmin [host name/ address]
+
+to see json format 'make query | jq' [| jq]
