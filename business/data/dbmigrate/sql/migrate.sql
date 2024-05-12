@@ -163,3 +163,8 @@ CREATE TABLE co_marks (
 	FOREIGN KEY (mark_id) REFERENCES marks(mark_id) ON DELETE CASCADE,
 	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE
 );
+
+-- Version: 1.12
+-- Description: Update students table roll_number TEXT to INT
+ALTER TABLE students DROP COLUMN roll_number;
+ALTER TABLE students ADD COLUMN roll_number INT;

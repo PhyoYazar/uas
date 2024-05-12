@@ -1,4 +1,4 @@
-package subject
+package student
 
 import (
 	"context"
@@ -13,16 +13,16 @@ import (
 // Set of error variables for CRUD operations.
 var (
 	ErrNotFound              = errors.New("user not found")
-	ErrUniqueSubjectYear     = errors.New("subject and year is not unique")
+	ErrUniqueEmail           = errors.New("email is not unique")
 	ErrAuthenticationFailure = errors.New("authentication failed")
 )
 
 // Storer interface declares the behavior this package needs to perists and
 // retrieve data.
 type Storer interface {
-	Create(ctx context.Context, usr Subject) error
+	Create(ctx context.Context, std Student) error
 
-	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Subject, error)
+	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Student, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
 }
 
@@ -38,47 +38,45 @@ func NewCore(storer Storer) *Core {
 	}
 }
 
-// Create inserts a new user into the database.
-func (c *Core) Create(ctx context.Context, ns NewSubject) (Subject, error) {
+// Create inserts a new student into the database.
+func (c *Core) Create(ctx context.Context, ns NewStudent) (Student, error) {
 
 	now := time.Now()
 
-	usr := Subject{
+	std := Student{
 		ID:           uuid.New(),
 		Name:         ns.Name,
-		Code:         ns.Code,
+		Email:        ns.Email,
+		RollNumber:   ns.RollNumber,
+		PhoneNumber:  ns.PhoneNumber,
 		Year:         ns.Year,
 		AcademicYear: ns.AcademicYear,
-		Semester:     ns.Semester,
-		Instructor:   ns.Instructor,
-		Exam:         ns.Exam,
-		Practical:    100 - ns.Exam,
 		DateCreated:  now,
 		DateUpdated:  now,
 	}
 
-	if err := c.storer.Create(ctx, usr); err != nil {
-		return Subject{}, fmt.Errorf("create: %w", err)
+	if err := c.storer.Create(ctx, std); err != nil {
+		return Student{}, fmt.Errorf("create: %w", err)
 	}
 
-	return usr, nil
+	return std, nil
 }
 
-// Query retrieves a list of existing subjects from the database.
-func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Subject, error) {
-	subjects, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
+// Query retrieves a list of existing students from the database.
+func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Student, error) {
+	stds, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
 	if err != nil {
 
-		fmt.Printf("=============: %v", subjects)
+		fmt.Printf("=============: %v", stds)
 		fmt.Printf("=============: %v", err)
 
 		return nil, fmt.Errorf("query: %w", err)
 	}
 
-	return subjects, nil
+	return stds, nil
 }
 
-// Count returns the total number of subjects in the store.
+// Count returns the total number of students in the store.
 func (c *Core) Count(ctx context.Context, filter QueryFilter) (int, error) {
 	return c.storer.Count(ctx, filter)
 }

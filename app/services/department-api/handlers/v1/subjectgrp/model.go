@@ -14,6 +14,7 @@ type AppSubject struct {
 	Code         string `json:"code"`
 	Year         string `json:"year"`
 	AcademicYear string `json:"academicYear"`
+	Semester     string `json:"semester"`
 	Instructor   string `json:"instructor"`
 	Exam         int    `json:"exam"`
 	Practical    int    `json:"practical"`
@@ -29,6 +30,7 @@ func toAppSubject(sub subject.Subject) AppSubject {
 		Code:         sub.Code,
 		Year:         sub.Year,
 		AcademicYear: sub.AcademicYear,
+		Semester:     sub.Semester,
 		Instructor:   sub.Instructor,
 		Exam:         sub.Exam,
 		Practical:    sub.Practical,
@@ -45,6 +47,7 @@ type AppNewSubject struct {
 	Code         string `json:"code" validate:"required"`
 	Year         string `json:"year" validate:"required"`
 	AcademicYear string `json:"academicYear" validate:"required"`
+	Semester     string `json:"semester" validate:"required"`
 	Instructor   string `json:"instructor" validate:"required"`
 	Exam         int    `json:"exam" validate:"required"`
 }
@@ -56,6 +59,7 @@ func toCoreNewSubject(app AppNewSubject) (subject.NewSubject, error) {
 		Code:         app.Code,
 		Year:         app.Year,
 		AcademicYear: app.AcademicYear,
+		Semester:     app.Semester,
 		Instructor:   app.Instructor,
 		Exam:         app.Exam,
 	}

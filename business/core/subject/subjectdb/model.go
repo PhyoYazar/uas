@@ -15,6 +15,7 @@ type dbSubject struct {
 	Code         string    `db:"code"`
 	Year         string    `db:"year"`
 	AcademicYear string    `db:"academic_year"`
+	Semester     string    `db:"semester"`
 	Instructor   string    `db:"instructor"`
 	Exam         int       `db:"exam"`
 	Practical    int       `db:"practical"`
@@ -30,6 +31,7 @@ func toDBSubject(sub subject.Subject) dbSubject {
 		Code:         sub.Code,
 		Year:         sub.Year,
 		AcademicYear: sub.AcademicYear,
+		Semester:     sub.Semester,
 		Instructor:   sub.Instructor,
 		Exam:         sub.Exam,
 		Practical:    sub.Practical,
@@ -48,6 +50,7 @@ func toCoreSubject(dbSubject dbSubject) subject.Subject {
 		Code:         dbSubject.Code,
 		Year:         dbSubject.Year,
 		AcademicYear: dbSubject.AcademicYear,
+		Semester:     dbSubject.Semester,
 		Instructor:   dbSubject.Instructor,
 		Exam:         dbSubject.Exam,
 		Practical:    dbSubject.Practical,
@@ -58,7 +61,7 @@ func toCoreSubject(dbSubject dbSubject) subject.Subject {
 	return sub
 }
 
-func toCoreUserSlice(dbSubjects []dbSubject) []subject.Subject {
+func toCoreSubjectSlice(dbSubjects []dbSubject) []subject.Subject {
 	subs := make([]subject.Subject, len(dbSubjects))
 	for i, dbSubject := range dbSubjects {
 		subs[i] = toCoreSubject(dbSubject)

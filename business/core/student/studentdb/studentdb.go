@@ -1,4 +1,4 @@
-package subjectdb
+package studentdb
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/subject"
+	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
 	"github.com/jmoiron/sqlx"
@@ -27,17 +27,17 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 	}
 }
 
-// Create inserts a new subject into the database.
-func (s *Store) Create(ctx context.Context, sub subject.Subject) error {
+// Create inserts a new student into the database.
+func (s *Store) Create(ctx context.Context, std student.Student) error {
 	const q = `
-	INSERT INTO subjects
-		(subject_id, name, code, year, semester, academic_year, instructor, exam, practical, date_created, date_updated)
+	INSERT INTO students
+		(student_id, name, email, year, academic_year, roll_number, phone_number, date_created, date_updated)
 	VALUES
-		(:subject_id, :name, :code, :year, :semester, :academic_year, :instructor, :exam, :practical, :date_created, :date_updated)`
+		(:student_id, :name, :email, :year, :academic_year, :roll_number, :phone_number, :date_created, :date_updated)`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBSubject(sub)); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudent(std)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
-			return fmt.Errorf("namedexeccontext: %w", subject.ErrUniqueSubjectYear)
+			return fmt.Errorf("namedexeccontext: %w", student.ErrUniqueEmail)
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -45,8 +45,8 @@ func (s *Store) Create(ctx context.Context, sub subject.Subject) error {
 	return nil
 }
 
-// Query retrieves a list of existing subjects from the database.
-func (s *Store) Query(ctx context.Context, filter subject.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]subject.Subject, error) {
+// Query retrieves a list of existing students from the database.
+func (s *Store) Query(ctx context.Context, filter student.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]student.Student, error) {
 	data := map[string]interface{}{
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
@@ -56,7 +56,7 @@ func (s *Store) Query(ctx context.Context, filter subject.QueryFilter, orderBy o
 	SELECT
 		*
 	FROM
-		subjects`
+		students`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -69,23 +69,23 @@ func (s *Store) Query(ctx context.Context, filter subject.QueryFilter, orderBy o
 	buf.WriteString(orderByClause)
 	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
-	var dbSubjects []dbSubject
-	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbSubjects); err != nil {
+	var dbStudents []dbStudent
+	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbStudents); err != nil {
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	return toCoreSubjectSlice(dbSubjects), nil
+	return toCoreStudentSlice(dbStudents), nil
 }
 
-// Count returns the total number of subjects in the DB.
-func (s *Store) Count(ctx context.Context, filter subject.QueryFilter) (int, error) {
+// Count returns the total number of students in the DB.
+func (s *Store) Count(ctx context.Context, filter student.QueryFilter) (int, error) {
 	data := map[string]interface{}{}
 
 	const q = `
 	SELECT
 		count(1)
 	FROM
-		subjects`
+		students`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

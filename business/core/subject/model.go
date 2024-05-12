@@ -13,6 +13,7 @@ type Subject struct {
 	Code         string
 	Year         string
 	AcademicYear string
+	Semester     string
 	Instructor   string
 	Exam         int
 	Practical    int
@@ -26,6 +27,7 @@ type NewSubject struct {
 	Code         string
 	Year         string
 	AcademicYear string
+	Semester     string
 	Instructor   string
 	Exam         int
 }
@@ -37,6 +39,7 @@ type UpdateSubject struct {
 	Year         *string
 	AcademicYear *string
 	Instructor   *string
+	Semester     *string
 	Exam         *int
 	Practical    *int
 }

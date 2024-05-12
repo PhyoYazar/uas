@@ -5,9 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
+	"github.com/PhyoYazar/uas/business/core/student"
+	"github.com/PhyoYazar/uas/business/core/student/studentdb"
 	"github.com/PhyoYazar/uas/business/core/subject"
 	"github.com/PhyoYazar/uas/business/core/subject/subjectdb"
 	"github.com/PhyoYazar/uas/business/core/user"
@@ -51,10 +54,19 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	subCore := subject.NewCore(subjectdb.NewStore(cfg.Log, cfg.DB))
 
-	sgh := subjectgrp.New(subCore)
+	subgh := subjectgrp.New(subCore)
 
-	app.Handle(http.MethodGet, "/subjects", sgh.Query)
-	app.Handle(http.MethodPost, "/subject", sgh.Create)
+	app.Handle(http.MethodGet, "/subjects", subgh.Query)
+	app.Handle(http.MethodPost, "/subject", subgh.Create)
+
+	// -------------------------------------------------------------------------
+
+	stdCore := student.NewCore(studentdb.NewStore(cfg.Log, cfg.DB))
+
+	stdgh := studentgrp.New(stdCore)
+
+	app.Handle(http.MethodGet, "/students", stdgh.Query)
+	app.Handle(http.MethodPost, "/student", stdgh.Create)
 
 	return app
 }
