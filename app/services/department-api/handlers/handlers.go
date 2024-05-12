@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
+	"github.com/PhyoYazar/uas/business/core/subject"
+	"github.com/PhyoYazar/uas/business/core/subject/subjectdb"
 	"github.com/PhyoYazar/uas/business/core/user"
 	"github.com/PhyoYazar/uas/business/core/user/stores/userdb"
 	"github.com/PhyoYazar/uas/business/web/auth"
@@ -43,6 +46,14 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	ugh := usergrp.New(usrCore)
 
 	app.Handle(http.MethodGet, "/users", ugh.Query)
+
+	// -------------------------------------------------------------------------
+
+	subCore := subject.NewCore(subjectdb.NewStore(cfg.Log, cfg.DB))
+
+	sgh := subjectgrp.New(subCore)
+
+	app.Handle(http.MethodPost, "/subject", sgh.Create)
 
 	return app
 }

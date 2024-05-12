@@ -43,3 +43,20 @@ JOIN
     products AS p ON p.user_id = u.user_id
 GROUP BY
     u.user_id
+
+-- Version: 1.04
+-- Description: Create table users
+CREATE TABLE subjects (
+	subject_id       UUID        NOT NULL,
+	name          	  TEXT        NOT NULL,
+	code         	  TEXT  		  NOT NULL,
+	year         	  TEXT 		  NOT NULL,
+	academic_year    TEXT  		  NOT NULL,
+	instructor	     TEXT  		  NOT NULL,
+	exam			     INT  		  NOT NULL,
+	practical		  INT  		  NOT NULL,
+	date_created  	  TIMESTAMP   NOT NULL,
+	date_updated  	  TIMESTAMP   NOT NULL,
+
+	PRIMARY KEY (subject_id)
+);
