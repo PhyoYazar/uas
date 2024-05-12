@@ -53,6 +53,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	sgh := subjectgrp.New(subCore)
 
+	app.Handle(http.MethodGet, "/subjects", sgh.Query)
 	app.Handle(http.MethodPost, "/subject", sgh.Create)
 
 	return app

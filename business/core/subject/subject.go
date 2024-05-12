@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/PhyoYazar/uas/business/data/order"
 	"github.com/google/uuid"
 )
 
@@ -20,6 +21,9 @@ var (
 // retrieve data.
 type Storer interface {
 	Create(ctx context.Context, usr Subject) error
+
+	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Subject, error)
+	Count(ctx context.Context, filter QueryFilter) (int, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -57,4 +61,23 @@ func (c *Core) Create(ctx context.Context, ns NewSubject) (Subject, error) {
 	}
 
 	return usr, nil
+}
+
+// Query retrieves a list of existing subjects from the database.
+func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Subject, error) {
+	subjects, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
+	if err != nil {
+
+		fmt.Printf("=============: %v", subjects)
+		fmt.Printf("=============: %v", err)
+
+		return nil, fmt.Errorf("query: %w", err)
+	}
+
+	return subjects, nil
+}
+
+// Count returns the total number of subjects in the store.
+func (c *Core) Count(ctx context.Context, filter QueryFilter) (int, error) {
+	return c.storer.Count(ctx, filter)
 }
