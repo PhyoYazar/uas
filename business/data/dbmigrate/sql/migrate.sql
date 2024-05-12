@@ -59,8 +59,8 @@ CREATE TABLE subjects (
 	date_created  	  TIMESTAMP   NOT NULL,
 	date_updated  	  TIMESTAMP   NOT NULL,
 
-	UNIQUE (name, semester, year)
-	UNIQUE (code, semester, year)
+	UNIQUE (name, semester, year),
+	UNIQUE (code, semester, year),
 	PRIMARY KEY (subject_id)
 );
 
@@ -77,7 +77,7 @@ CREATE TABLE students (
 	date_created  	  TIMESTAMP   NOT NULL,
 	date_updated  	  TIMESTAMP   NOT NULL,
 
-	UNIQUE (roll_number, year, academic_year)
+	UNIQUE (roll_number, year, academic_year),
 	PRIMARY KEY (student_id)
 );
 
@@ -91,9 +91,9 @@ CREATE TABLE student_subjects (
 	date_created  	 			 TIMESTAMP   NOT NULL,
 	date_updated  	 			 TIMESTAMP   NOT NULL,
 
-	UNIQUE (subject_id, student_id)
-	PRIMARY KEY (student_subject_id)
-	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE
+	UNIQUE (subject_id, student_id),
+	PRIMARY KEY (student_subject_id),
+	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE,
 	FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
 );
 
@@ -106,7 +106,7 @@ CREATE TABLE course_outlines (
 	date_created  	  TIMESTAMP   NOT NULL,
 	date_updated  	  TIMESTAMP   NOT NULL,
 
-	PRIMARY KEY (co_id)
+	PRIMARY KEY (co_id),
 	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE
 );
 
@@ -131,9 +131,9 @@ CREATE TABLE co_ga (
 	date_created  	  TIMESTAMP   NOT NULL,
 	date_updated  	  TIMESTAMP   NOT NULL,
 
-	UNIQUE (co_id, ga_id)
-	PRIMARY KEY (co_ga_id)
-	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE
+	UNIQUE (co_id, ga_id),
+	PRIMARY KEY (co_ga_id),
+	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE,
 	FOREIGN KEY (ga_id) REFERENCES graduate_attributes(ga_id) ON DELETE CASCADE
 );
 
@@ -151,7 +151,7 @@ CREATE TABLE marks (
 );
 
 -- Version: 1.11
--- Description: Create table practical
+-- Description: Create table co_mark
 CREATE TABLE co_marks (
 	co_mark_id	  	  UUID        NOT NULL,
 	mark_id		  	  UUID        NOT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE co_marks (
 	date_created  	  TIMESTAMP   NOT NULL,
 	date_updated  	  TIMESTAMP   NOT NULL,
 
-	PRIMARY KEY (question_id)
-	FOREIGN KEY (mark_id) REFERENCES marks(mark_id) ON DELETE CASCADE
+	PRIMARY KEY (co_mark_id),
+	FOREIGN KEY (mark_id) REFERENCES marks(mark_id) ON DELETE CASCADE,
 	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE
 );
