@@ -4,6 +4,9 @@ app/services/metrics/metrics
 app/tooling/sales-admin/sales-admin
 app/tooling/sales-admin/logfmt
 
+zarf/docker/pgadmin-data
+zarf/docker/postgres-data
+
 # Mac
 .DS_Store
 
