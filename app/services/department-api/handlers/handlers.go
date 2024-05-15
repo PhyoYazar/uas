@@ -5,10 +5,13 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
+	"github.com/PhyoYazar/uas/business/core/co"
+	"github.com/PhyoYazar/uas/business/core/co/codb"
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/core/student/studentdb"
 	"github.com/PhyoYazar/uas/business/core/subject"
@@ -67,6 +70,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/students", stdgh.Query)
 	app.Handle(http.MethodPost, "/student", stdgh.Create)
+
+	// -------------------------------------------------------------------------
+
+	coCore := co.NewCore(codb.NewStore(cfg.Log, cfg.DB))
+
+	cogh := cogrp.New(coCore)
+
+	app.Handle(http.MethodGet, "/cos", cogh.Query)
+	app.Handle(http.MethodPost, "/co", cogh.Create)
 
 	return app
 }
