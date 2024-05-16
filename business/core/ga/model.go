@@ -22,7 +22,7 @@ type NewGa struct {
 }
 
 // UpdateGa contains information needed to update a Ga.
-type UpdateCo struct {
+type UpdateGa struct {
 	Name *string
 	Slug *string
 }

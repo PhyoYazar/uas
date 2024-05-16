@@ -7,6 +7,7 @@ import (
 
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
@@ -15,6 +16,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/co/codb"
 	"github.com/PhyoYazar/uas/business/core/ga"
 	gadb "github.com/PhyoYazar/uas/business/core/ga/codb"
+	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/core/mark/markdb"
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/core/student/studentdb"
 	"github.com/PhyoYazar/uas/business/core/subject"
@@ -91,6 +94,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/gas", gagh.Query)
 	app.Handle(http.MethodPost, "/ga", gagh.Create)
+
+	// -------------------------------------------------------------------------
+
+	markCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
+
+	markgh := markgrp.New(markCore)
+
+	app.Handle(http.MethodGet, "/marks", markgh.Query)
+	app.Handle(http.MethodPost, "/mark", markgh.Create)
 
 	return app
 }
