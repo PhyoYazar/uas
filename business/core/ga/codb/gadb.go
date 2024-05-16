@@ -1,4 +1,4 @@
-package codb
+package gadb
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/co"
+	"github.com/PhyoYazar/uas/business/core/ga"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
 	"github.com/jmoiron/sqlx"
@@ -27,17 +27,17 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 	}
 }
 
-// Create inserts a new co into the database.
-func (s *Store) Create(ctx context.Context, c co.Co) error {
+// Create inserts a new ga into the database.
+func (s *Store) Create(ctx context.Context, g ga.Ga) error {
 	const q = `
-	INSERT INTO course_outlines
-		(co_id, name, subject_id, date_created, date_updated)
+	INSERT INTO graduate_attributes
+		(ga_id, name, slug, date_created, date_updated)
 	VALUES
-		(:co_id, :name, :subject_id, :date_created, :date_updated)`
+		(:ga_id, :name, :slug, :date_created, :date_updated)`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCo(c)); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBGa(g)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
-			return fmt.Errorf("namedexeccontext: %w", co.ErrUniqueCo)
+			return fmt.Errorf("namedexeccontext: %w", ga.ErrUniqueGa)
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -45,8 +45,8 @@ func (s *Store) Create(ctx context.Context, c co.Co) error {
 	return nil
 }
 
-// Query retrieves a list of existing cos from the database.
-func (s *Store) Query(ctx context.Context, filter co.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]co.Co, error) {
+// Query retrieves a list of existing gas from the database.
+func (s *Store) Query(ctx context.Context, filter ga.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]ga.Ga, error) {
 	data := map[string]interface{}{
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
@@ -56,7 +56,7 @@ func (s *Store) Query(ctx context.Context, filter co.QueryFilter, orderBy order.
 	SELECT
 	*
 	FROM
-	course_outlines`
+	graduate_attributes`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -69,23 +69,23 @@ func (s *Store) Query(ctx context.Context, filter co.QueryFilter, orderBy order.
 	buf.WriteString(orderByClause)
 	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
-	var dbCo []dbCo
-	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbCo); err != nil {
+	var dbGa []dbGa
+	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbGa); err != nil {
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	return toCoreCoSlice(dbCo), nil
+	return toCoreGaSlice(dbGa), nil
 }
 
 // Count returns the total number of cos in the DB.
-func (s *Store) Count(ctx context.Context, filter co.QueryFilter) (int, error) {
+func (s *Store) Count(ctx context.Context, filter ga.QueryFilter) (int, error) {
 	data := map[string]interface{}{}
 
 	const q = `
 	SELECT
 		count(1)
 	FROM
-		course_outlines`
+		graduate_attributes`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

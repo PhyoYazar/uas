@@ -168,3 +168,7 @@ CREATE TABLE co_marks (
 -- Description: Update students table roll_number TEXT to INT
 ALTER TABLE students DROP COLUMN roll_number;
 ALTER TABLE students ADD COLUMN roll_number INT;
+
+-- Version: 1.13
+-- Description: Update ga table slug TEXT
+ALTER TABLE graduate_attributes ADD COLUMN slug CHAR(3) UNIQUE NOT NULL;

@@ -1,4 +1,4 @@
-package co
+package ga
 
 import (
 	"context"
@@ -13,71 +13,63 @@ import (
 // Set of error variables for CRUD operations.
 var (
 	ErrNotFound              = errors.New("name not found")
-	ErrUniqueCo              = errors.New("co already exists")
+	ErrUniqueGa              = errors.New("ga already exists")
 	ErrAuthenticationFailure = errors.New("authentication failed")
 )
 
 // Storer interface declares the behavior this package needs to perists and
 // retrieve data.
 type Storer interface {
-	Create(ctx context.Context, co Co) error
+	Create(ctx context.Context, ga Ga) error
 
-	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Co, error)
+	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Ga, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
 }
-
-// // UserCore interface declares the behavior this package needs from the user
-// // core domain.
-// type SubjectCore interface {
-// 	QueryByID(ctx context.Context, subjectID uuid.UUID) (subject.Subject, error)
-// }
 
 // Core manages the set of APIs for user access.
 type Core struct {
 	storer Storer
-	// subjectCore SubjectCore
 }
 
 // NewCore constructs a core for user api access.
 func NewCore(storer Storer) *Core {
 	return &Core{
 		storer: storer,
-		// subjectCore: subCore,
 	}
 }
 
-// Create inserts a new co into the database.
-func (c *Core) Create(ctx context.Context, co NewCo) (Co, error) {
+// Create inserts a new ga into the database.
+func (c *Core) Create(ctx context.Context, ga NewGa) (Ga, error) {
 
 	now := time.Now()
 
-	usr := Co{
+	usr := Ga{
 		ID:          uuid.New(),
-		Name:        co.Name,
-		SubjectID:   co.SubjectID,
+		Name:        ga.Name,
+		Slug:        ga.Slug,
 		DateCreated: now,
 		DateUpdated: now,
 	}
 
 	if err := c.storer.Create(ctx, usr); err != nil {
-		return Co{}, fmt.Errorf("create: %w", err)
+		return Ga{}, fmt.Errorf("create: %w", err)
 	}
 
 	return usr, nil
 }
 
-// Query retrieves a list of existing cos from the database.
-func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Co, error) {
-	cos, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
+// Query retrieves a list of existing gas from the database.
+func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Ga, error) {
+	gas, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
 	if err != nil {
 
-		fmt.Printf("=============: %v", cos)
+		fmt.Printf("=============: %v", gas)
 		fmt.Printf("=============: %v", err)
 
 		return nil, fmt.Errorf("query: %w", err)
 	}
 
-	return cos, nil
+	return gas, nil
 }
 
 // Count returns the total number of cos in the store.

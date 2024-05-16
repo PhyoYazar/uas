@@ -6,12 +6,15 @@ import (
 	"os"
 
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
 	"github.com/PhyoYazar/uas/business/core/co"
 	"github.com/PhyoYazar/uas/business/core/co/codb"
+	"github.com/PhyoYazar/uas/business/core/ga"
+	gadb "github.com/PhyoYazar/uas/business/core/ga/codb"
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/core/student/studentdb"
 	"github.com/PhyoYazar/uas/business/core/subject"
@@ -79,6 +82,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/cos", cogh.Query)
 	app.Handle(http.MethodPost, "/co", cogh.Create)
+
+	// -------------------------------------------------------------------------
+
+	gaCore := ga.NewCore(gadb.NewStore(cfg.Log, cfg.DB))
+
+	gagh := gagrp.New(gaCore)
+
+	app.Handle(http.MethodGet, "/gas", gagh.Query)
+	app.Handle(http.MethodPost, "/ga", gagh.Create)
 
 	return app
 }

@@ -1,4 +1,4 @@
-package co
+package ga
 
 import (
 	"time"
@@ -6,23 +6,23 @@ import (
 	"github.com/google/uuid"
 )
 
-// Co represents information about an individual Co.
-type Co struct {
+// Ga represents information about an individual Ga.
+type Ga struct {
 	ID          uuid.UUID
-	SubjectID   uuid.UUID
 	Name        string
+	Slug        string
 	DateCreated time.Time
 	DateUpdated time.Time
 }
 
-// NewCo contains information needed to create a new Co.
-type NewCo struct {
-	Name      string
-	SubjectID uuid.UUID
+// NewGa contains information needed to create a new Ga.
+type NewGa struct {
+	Name string
+	Slug string
 }
 
-// UpdateCo contains information needed to update a Co.
+// UpdateGa contains information needed to update a Ga.
 type UpdateCo struct {
-	Name      *string
-	SubjectID uuid.UUID
+	Name *string
+	Slug *string
 }

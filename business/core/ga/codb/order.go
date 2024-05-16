@@ -1,14 +1,15 @@
-package codb
+package gadb
 
 import (
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/co"
+	"github.com/PhyoYazar/uas/business/core/ga"
 	"github.com/PhyoYazar/uas/business/data/order"
 )
 
 var orderByFields = map[string]string{
-	co.OrderByName: "name",
+	ga.OrderByName: "name",
+	ga.OrderBySlug: "slug",
 }
 
 func orderByClause(orderBy order.By) (string, error) {

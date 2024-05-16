@@ -1,4 +1,4 @@
-package co
+package ga
 
 import "github.com/PhyoYazar/uas/business/data/order"
 
@@ -9,4 +9,5 @@ var DefaultOrderBy = order.NewBy(OrderByName, order.ASC)
 // that should be used by the application layer.
 const (
 	OrderByName = "name"
+	OrderBySlug = "slug"
 )

@@ -1,52 +1,52 @@
-package codb
+package gadb
 
 import (
 	"time"
 
-	"github.com/PhyoYazar/uas/business/core/co"
+	"github.com/PhyoYazar/uas/business/core/ga"
 	"github.com/google/uuid"
 )
 
 // dbSubject represent the structure we need for moving data
 // between the app and the database.
-type dbCo struct {
-	ID          uuid.UUID `db:"co_id"`
+type dbGa struct {
+	ID          uuid.UUID `db:"ga_id"`
 	Name        string    `db:"name"`
-	SubjectID   uuid.UUID `db:"subject_id"` // ID of the user who created the product.
+	Slug        string    `db:"slug"`
 	DateCreated time.Time `db:"date_created"`
 	DateUpdated time.Time `db:"date_updated"`
 }
 
-func toDBCo(c co.Co) dbCo {
+func toDBGa(g ga.Ga) dbGa {
 
-	co := dbCo{
-		ID:          c.ID,
-		Name:        c.Name,
-		SubjectID:   c.SubjectID,
-		DateCreated: c.DateCreated.UTC(),
-		DateUpdated: c.DateUpdated.UTC(),
+	ga := dbGa{
+		ID:          g.ID,
+		Name:        g.Name,
+		Slug:        g.Slug,
+		DateCreated: g.DateCreated.UTC(),
+		DateUpdated: g.DateUpdated.UTC(),
 	}
 
-	return co
+	return ga
 }
 
-func toCoreCo(dbCo dbCo) co.Co {
+func toCoreGa(dbGa dbGa) ga.Ga {
 
-	co := co.Co{
-		ID:          dbCo.ID,
-		Name:        dbCo.Name,
-		SubjectID:   dbCo.SubjectID,
-		DateCreated: dbCo.DateCreated.In(time.Local),
-		DateUpdated: dbCo.DateUpdated.In(time.Local),
+	ga := ga.Ga{
+		ID:          dbGa.ID,
+		Name:        dbGa.Name,
+		Slug:        dbGa.Slug,
+		DateCreated: dbGa.DateCreated.In(time.Local),
+		DateUpdated: dbGa.DateUpdated.In(time.Local),
 	}
 
-	return co
+	return ga
 }
 
-func toCoreCoSlice(dbCos []dbCo) []co.Co {
-	cos := make([]co.Co, len(dbCos))
-	for i, dbCo := range dbCos {
-		cos[i] = toCoreCo(dbCo)
+func toCoreGaSlice(dbGas []dbGa) []ga.Ga {
+	gas := make([]ga.Ga, len(dbGas))
+	for i, dbGa := range dbGas {
+		gas[i] = toCoreGa(dbGa)
 	}
-	return cos
+	return gas
 }
