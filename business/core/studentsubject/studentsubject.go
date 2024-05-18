@@ -47,6 +47,7 @@ func (c *Core) Create(ctx context.Context, ss NewStudentSubject) (StudentSubject
 		ID:          uuid.New(),
 		StudentID:   ss.StudentID,
 		SubjectID:   ss.SubjectID,
+		Mark:        ss.Mark,
 		DateCreated: now,
 		DateUpdated: now,
 	}

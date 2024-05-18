@@ -11,7 +11,7 @@ import (
 // dbStudentSubject represent the structure we need for moving data
 // between the app and the database.
 type dbStudentSubject struct {
-	ID          uuid.UUID `db:"mark_id"`
+	ID          uuid.UUID `db:"student_subject_id"`
 	StudentID   uuid.UUID `db:"student_id"`
 	SubjectID   uuid.UUID `db:"subject_id"`
 	Mark        int       `db:"mark"`
@@ -25,6 +25,7 @@ func toDBStudentSubject(ss studentsubject.StudentSubject) dbStudentSubject {
 		ID:          ss.ID,
 		StudentID:   ss.StudentID,
 		SubjectID:   ss.SubjectID,
+		Mark:        ss.Mark,
 		DateCreated: ss.DateCreated.UTC(),
 		DateUpdated: ss.DateUpdated.UTC(),
 	}

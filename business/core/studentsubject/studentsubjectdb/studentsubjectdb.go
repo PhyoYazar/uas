@@ -29,11 +29,13 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 
 // Create inserts a new ga into the database.
 func (s *Store) Create(ctx context.Context, ss studentsubject.StudentSubject) error {
+	fmt.Printf("==============> %d", ss.Mark)
+
 	const q = `
 	INSERT INTO student_subjects
-		(student_subject_id, mark, student_id, subject_id)
+		(student_subject_id, mark, student_id, subject_id, date_created, date_updated)
 	VALUES
-		(:student_subject_id, :mark, :student_id, :subject_id)`
+		(:student_subject_id, :mark, :student_id, :subject_id, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudentSubject(ss)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
