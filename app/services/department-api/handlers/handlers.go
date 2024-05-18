@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
@@ -15,6 +16,8 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
 	"github.com/PhyoYazar/uas/business/core/co"
 	"github.com/PhyoYazar/uas/business/core/co/codb"
+	"github.com/PhyoYazar/uas/business/core/coga"
+	"github.com/PhyoYazar/uas/business/core/coga/cogadb"
 	"github.com/PhyoYazar/uas/business/core/ga"
 	gadb "github.com/PhyoYazar/uas/business/core/ga/codb"
 	"github.com/PhyoYazar/uas/business/core/mark"
@@ -106,6 +109,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/marks", markgh.Query)
 	app.Handle(http.MethodPost, "/mark", markgh.Create)
+
 	// -------------------------------------------------------------------------
 
 	ssCore := studentsubject.NewCore(studentsubjectdb.NewStore(cfg.Log, cfg.DB))
@@ -114,6 +118,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/student_subjects", ssgh.Query)
 	app.Handle(http.MethodPost, "/student_subject", ssgh.Create)
+
+	// -------------------------------------------------------------------------
+
+	cgCore := coga.NewCore(cogadb.NewStore(cfg.Log, cfg.DB))
+
+	cggh := cogagrp.New(cgCore)
+
+	app.Handle(http.MethodGet, "/co_gas", cggh.Query)
+	app.Handle(http.MethodPost, "/co_ga", cggh.Create)
 
 	return app
 }
