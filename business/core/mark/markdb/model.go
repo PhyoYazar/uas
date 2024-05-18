@@ -1,6 +1,7 @@
 package markdb
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/core/mark"
@@ -32,24 +33,33 @@ func toDBMark(mk mark.Mark) dbMark {
 	return mark
 }
 
-func toCoreMark(dbMark dbMark) mark.Mark {
+func toCoreMark(dbMark dbMark) (mark.Mark, error) {
+
+	typ, err := mark.ParseType(dbMark.Type)
+	if err != nil {
+		return mark.Mark{}, fmt.Errorf("parse type: %w", err)
+	}
 
 	mark := mark.Mark{
 		ID:          dbMark.ID,
 		Name:        dbMark.Name,
-		Type:        mark.MustParseMarkType(dbMark.Type),
+		Type:        typ,
 		Instance:    dbMark.Instance,
 		DateCreated: dbMark.DateCreated.In(time.Local),
 		DateUpdated: dbMark.DateUpdated.In(time.Local),
 	}
 
-	return mark
+	return mark, nil
 }
 
-func toCoreMarkSlice(dbMarks []dbMark) []mark.Mark {
+func toCoreMarkSlice(dbMarks []dbMark) ([]mark.Mark, error) {
 	mks := make([]mark.Mark, len(dbMarks))
 	for i, dbGa := range dbMarks {
-		mks[i] = toCoreMark(dbGa)
+		var err error
+		mks[i], err = toCoreMark(dbGa)
+		if err != nil {
+			return nil, fmt.Errorf("parse type: %w", err)
+		}
 	}
-	return mks
+	return mks, nil
 }

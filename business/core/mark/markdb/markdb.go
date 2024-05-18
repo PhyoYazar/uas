@@ -74,7 +74,12 @@ func (s *Store) Query(ctx context.Context, filter mark.QueryFilter, orderBy orde
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	return toCoreMarkSlice(dbMark), nil
+	mark, err := toCoreMarkSlice(dbMark)
+	if err != nil {
+		return nil, err
+	}
+
+	return mark, nil
 }
 
 // Count returns the total number of cos in the DB.
