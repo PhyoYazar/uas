@@ -7,6 +7,7 @@ import (
 
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/comarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
@@ -18,6 +19,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/co/codb"
 	"github.com/PhyoYazar/uas/business/core/coga"
 	"github.com/PhyoYazar/uas/business/core/coga/cogadb"
+	"github.com/PhyoYazar/uas/business/core/comark"
+	"github.com/PhyoYazar/uas/business/core/comark/comarkdb"
 	"github.com/PhyoYazar/uas/business/core/ga"
 	gadb "github.com/PhyoYazar/uas/business/core/ga/codb"
 	"github.com/PhyoYazar/uas/business/core/mark"
@@ -127,6 +130,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/co_gas", cggh.Query)
 	app.Handle(http.MethodPost, "/co_ga", cggh.Create)
+
+	// -------------------------------------------------------------------------
+
+	cmCore := comark.NewCore(comarkdb.NewStore(cfg.Log, cfg.DB))
+
+	cmgh := comarkgrp.New(cmCore)
+
+	app.Handle(http.MethodGet, "/co_marks", cmgh.Query)
+	app.Handle(http.MethodPost, "/co_mark", cmgh.Create)
 
 	return app
 }
