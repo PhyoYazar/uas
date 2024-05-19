@@ -1,4 +1,4 @@
-package mark
+package attribute
 
 import (
 	"fmt"
@@ -23,9 +23,9 @@ func (qf *QueryFilter) Validate() error {
 	return nil
 }
 
-// WithMarkID sets the ID field of the QueryFilter value.
-func (qf *QueryFilter) WithMarkID(markID uuid.UUID) {
-	qf.ID = &markID
+// WithAttributeID sets the ID field of the QueryFilter value.
+func (qf *QueryFilter) WithAttributeID(attID uuid.UUID) {
+	qf.ID = &attID
 }
 
 // WithName sets the Name field of the QueryFilter value.
@@ -34,6 +34,6 @@ func (qf *QueryFilter) WithName(name string) {
 }
 
 // WithType sets the Type field of the QueryFilter value.
-func (qf *QueryFilter) WithMarkType(markType Type) {
-	qf.Type = &markType
+func (qf *QueryFilter) WithAttributeType(attType Type) {
+	qf.Type = &attType
 }

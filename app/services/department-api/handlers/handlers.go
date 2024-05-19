@@ -5,16 +5,18 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/attributegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/comarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
-	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentsubjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
+	"github.com/PhyoYazar/uas/business/core/attribute"
+	"github.com/PhyoYazar/uas/business/core/attribute/attributedb"
 	"github.com/PhyoYazar/uas/business/core/co"
 	"github.com/PhyoYazar/uas/business/core/co/codb"
 	"github.com/PhyoYazar/uas/business/core/coga"
@@ -23,8 +25,6 @@ import (
 	"github.com/PhyoYazar/uas/business/core/comark/comarkdb"
 	"github.com/PhyoYazar/uas/business/core/ga"
 	"github.com/PhyoYazar/uas/business/core/ga/gadb"
-	"github.com/PhyoYazar/uas/business/core/mark"
-	"github.com/PhyoYazar/uas/business/core/mark/markdb"
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/core/student/studentdb"
 	"github.com/PhyoYazar/uas/business/core/studentsubject"
@@ -106,12 +106,12 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	// -------------------------------------------------------------------------
 
-	markCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
+	attributeCore := attribute.NewCore(attributedb.NewStore(cfg.Log, cfg.DB))
 
-	markgh := markgrp.New(markCore)
+	attributegh := attributegrp.New(attributeCore)
 
-	app.Handle(http.MethodGet, "/marks", markgh.Query)
-	app.Handle(http.MethodPost, "/mark", markgh.Create)
+	app.Handle(http.MethodGet, "/attributes", attributegh.Query)
+	app.Handle(http.MethodPost, "/attribute", attributegh.Create)
 
 	// -------------------------------------------------------------------------
 

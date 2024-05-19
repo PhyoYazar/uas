@@ -1,19 +1,19 @@
-package markdb
+package attributedb
 
 import (
 	"bytes"
 	"fmt"
 	"strings"
 
-	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/core/attribute"
 )
 
-func (s *Store) applyFilter(filter mark.QueryFilter, data map[string]interface{}, buf *bytes.Buffer) {
+func (s *Store) applyFilter(filter attribute.QueryFilter, data map[string]interface{}, buf *bytes.Buffer) {
 	var wc []string
 
 	if filter.ID != nil {
-		data["mark_id"] = *filter.ID
-		wc = append(wc, "mark_id = :mark_id")
+		data["attribute_id"] = *filter.ID
+		wc = append(wc, "attribute_id = :attribute_id")
 	}
 
 	if filter.Name != nil {

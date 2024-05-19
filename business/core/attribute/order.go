@@ -1,4 +1,4 @@
-package mark
+package attribute
 
 import "github.com/PhyoYazar/uas/business/data/order"
 
@@ -8,7 +8,7 @@ var DefaultOrderBy = order.NewBy(OrderByID, order.ASC)
 // Set of fields that the results can be ordered by. These are the names
 // that should be used by the application layer.
 const (
-	OrderByID       = "markid"
+	OrderByID       = "attributeid"
 	OrderByName     = "name"
 	OrderByInstance = "instance"
 )

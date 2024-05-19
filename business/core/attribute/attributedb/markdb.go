@@ -1,4 +1,4 @@
-package markdb
+package attributedb
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/core/attribute"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
 	"github.com/jmoiron/sqlx"
@@ -28,16 +28,16 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 }
 
 // Create inserts a new ga into the database.
-func (s *Store) Create(ctx context.Context, mk mark.Mark) error {
+func (s *Store) Create(ctx context.Context, att attribute.Attribute) error {
 	const q = `
-	INSERT INTO marks
-		(mark_id, name, type, instance, date_created, date_updated)
+	INSERT INTO attributes
+		(attribute_id, name, type, instance, date_created, date_updated)
 	VALUES
-		(:mark_id, :name, :type, :instance, :date_created, :date_updated)`
+		(:attribute_id, :name, :type, :instance, :date_created, :date_updated)`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBMark(mk)); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBAttribute(att)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
-			return fmt.Errorf("namedexeccontext: %w", mark.ErrUniqueMark)
+			return fmt.Errorf("namedexeccontext: %w", attribute.ErrUniqueAttribute)
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -46,7 +46,7 @@ func (s *Store) Create(ctx context.Context, mk mark.Mark) error {
 }
 
 // Query retrieves a list of existing gas from the database.
-func (s *Store) Query(ctx context.Context, filter mark.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]mark.Mark, error) {
+func (s *Store) Query(ctx context.Context, filter attribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]attribute.Attribute, error) {
 	data := map[string]interface{}{
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
@@ -56,7 +56,7 @@ func (s *Store) Query(ctx context.Context, filter mark.QueryFilter, orderBy orde
 	SELECT
 	*
 	FROM
-	marks`
+	attributes`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -69,28 +69,28 @@ func (s *Store) Query(ctx context.Context, filter mark.QueryFilter, orderBy orde
 	buf.WriteString(orderByClause)
 	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
-	var dbMark []dbMark
-	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbMark); err != nil {
+	var dbAttribute []dbAttribute
+	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbAttribute); err != nil {
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	mark, err := toCoreMarkSlice(dbMark)
+	att, err := toCoreAttributeSlice(dbAttribute)
 	if err != nil {
 		return nil, err
 	}
 
-	return mark, nil
+	return att, nil
 }
 
 // Count returns the total number of cos in the DB.
-func (s *Store) Count(ctx context.Context, filter mark.QueryFilter) (int, error) {
+func (s *Store) Count(ctx context.Context, filter attribute.QueryFilter) (int, error) {
 	data := map[string]interface{}{}
 
 	const q = `
 	SELECT
 		count(1)
 	FROM
-		marks`
+	attributes`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

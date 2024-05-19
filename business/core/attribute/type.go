@@ -1,4 +1,4 @@
-package mark
+package attribute
 
 import "errors"
 

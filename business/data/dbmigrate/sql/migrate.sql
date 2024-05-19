@@ -210,3 +210,37 @@ CREATE TABLE co_ga_marks (
 	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE,
 	FOREIGN KEY (ga_id) REFERENCES graduate_attributes(ga_id) ON DELETE CASCADE
 );
+
+-- Version: 1.19
+-- Description: Drop marks table and Create table attributes instead of marks
+-- Description: Drop co_ga_marks table and re-create marks table
+DROP TABLE IF EXISTS co_ga_marks;
+
+DROP TABLE IF EXISTS marks;
+
+CREATE TABLE attributes (
+	attribute_id	  UUID        NOT NULL,
+	name          	  TEXT        NOT NULL,
+	type          	  TEXT        NOT NULL,
+	instance         INT 		  NOT NULL,
+	date_created  	  TIMESTAMP   NOT NULL,
+	date_updated  	  TIMESTAMP   NOT NULL,
+
+	PRIMARY KEY (attribute_id)
+);
+
+CREATE TABLE marks (
+	mark_id	  		  UUID        NOT NULL,
+	attribute_id	  UUID        NOT NULL,
+	ga_id			  	  UUID        NOT NULL,
+	co_id			  	  UUID        NOT NULL,
+	mark 				  INT 		  NULL,
+	date_created  	  TIMESTAMP   NOT NULL,
+	date_updated  	  TIMESTAMP   NOT NULL,
+
+	PRIMARY KEY (mark_id),
+	UNIQUE (attribute_id, co_id),
+	FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id) ON DELETE CASCADE,
+	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE,
+	FOREIGN KEY (ga_id) REFERENCES graduate_attributes(ga_id) ON DELETE CASCADE
+);

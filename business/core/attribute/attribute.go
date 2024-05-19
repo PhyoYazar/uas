@@ -1,4 +1,4 @@
-package mark
+package attribute
 
 import (
 	"context"
@@ -13,16 +13,16 @@ import (
 // Set of error variables for CRUD operations.
 var (
 	ErrNotFound              = errors.New("name not found")
-	ErrUniqueMark            = errors.New("mark already exists")
+	ErrUniqueAttribute       = errors.New("attribute already exists")
 	ErrAuthenticationFailure = errors.New("authentication failed")
 )
 
 // Storer interface declares the behavior this package needs to perists and
 // retrieve data.
 type Storer interface {
-	Create(ctx context.Context, mark Mark) error
+	Create(ctx context.Context, mark Attribute) error
 
-	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Mark, error)
+	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Attribute, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
 }
 
@@ -39,38 +39,38 @@ func NewCore(storer Storer) *Core {
 }
 
 // Create inserts a new ga into the database.
-func (c *Core) Create(ctx context.Context, mark NewMark) (Mark, error) {
+func (c *Core) Create(ctx context.Context, attribute NewAttribute) (Attribute, error) {
 
 	now := time.Now()
 
-	mk := Mark{
+	att := Attribute{
 		ID:          uuid.New(),
-		Name:        mark.Name,
-		Type:        mark.Type,
-		Instance:    mark.Instance,
+		Name:        attribute.Name,
+		Type:        attribute.Type,
+		Instance:    attribute.Instance,
 		DateCreated: now,
 		DateUpdated: now,
 	}
 
-	if err := c.storer.Create(ctx, mk); err != nil {
-		return Mark{}, fmt.Errorf("create: %w", err)
+	if err := c.storer.Create(ctx, att); err != nil {
+		return Attribute{}, fmt.Errorf("create: %w", err)
 	}
 
-	return mk, nil
+	return att, nil
 }
 
 // Query retrieves a list of existing gas from the database.
-func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Mark, error) {
-	mks, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
+func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Attribute, error) {
+	att, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
 	if err != nil {
 
-		fmt.Printf("=============: %v", mks)
+		fmt.Printf("=============: %v", att)
 		fmt.Printf("=============: %v", err)
 
 		return nil, fmt.Errorf("query: %w", err)
 	}
 
-	return mks, nil
+	return att, nil
 }
 
 // Count returns the total number of cos in the store.

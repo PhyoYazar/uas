@@ -1,16 +1,16 @@
-package markdb
+package attributedb
 
 import (
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/core/attribute"
 	"github.com/PhyoYazar/uas/business/data/order"
 )
 
 var orderByFields = map[string]string{
-	mark.OrderByID:       "ga_id",
-	mark.OrderByName:     "name",
-	mark.OrderByInstance: "instance",
+	attribute.OrderByID:       "attribute_id",
+	attribute.OrderByName:     "name",
+	attribute.OrderByInstance: "instance",
 }
 
 func orderByClause(orderBy order.By) (string, error) {

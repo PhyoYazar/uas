@@ -1,22 +1,22 @@
-package markgrp
+package attributegrp
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/core/attribute"
 	"github.com/PhyoYazar/uas/business/data/order"
 	"github.com/PhyoYazar/uas/business/sys/validate"
 )
 
 var orderByFields = map[string]struct{}{
-	mark.OrderByID:       {},
-	mark.OrderByName:     {},
-	mark.OrderByInstance: {},
+	attribute.OrderByID:       {},
+	attribute.OrderByName:     {},
+	attribute.OrderByInstance: {},
 }
 
 func parseOrder(r *http.Request) (order.By, error) {
-	orderBy, err := order.Parse(r, mark.DefaultOrderBy)
+	orderBy, err := order.Parse(r, attribute.DefaultOrderBy)
 	if err != nil {
 		return order.By{}, err
 	}
