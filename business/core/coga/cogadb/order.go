@@ -9,7 +9,6 @@ import (
 
 var orderByFields = map[string]string{
 	coga.OrderByID:   "co_ga_id",
-	coga.OrderByMark: "mark",
 	coga.OrderByCoID: "co_id",
 	coga.OrderByGaID: "ga_id",
 }

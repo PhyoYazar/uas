@@ -14,7 +14,6 @@ type AppCoGa struct {
 	ID          string `json:"id"`
 	CoID        string `json:"coID"`
 	GaID        string `json:"gaID"`
-	Mark        int    `json:"mark"`
 	DateCreated string `json:"dateCreated"`
 	DateUpdated string `json:"dateUpdated"`
 }
@@ -25,7 +24,6 @@ func toAppStudentSubject(mark coga.CoGa) AppCoGa {
 		ID:          mark.ID.String(),
 		CoID:        mark.CoID.String(),
 		GaID:        mark.GaID.String(),
-		Mark:        mark.Mark,
 		DateCreated: mark.DateCreated.Format(time.RFC3339),
 		DateUpdated: mark.DateUpdated.Format(time.RFC3339),
 	}
@@ -37,7 +35,6 @@ func toAppStudentSubject(mark coga.CoGa) AppCoGa {
 type AppNewCoGa struct {
 	CoID string `json:"coID" validate:"required"`
 	GaID string `json:"gaID" validate:"required"`
-	Mark int    `json:"mark" validate:"required"`
 }
 
 func toCoreNewCoGa(app AppNewCoGa) (coga.NewCoGa, error) {
@@ -58,7 +55,6 @@ func toCoreNewCoGa(app AppNewCoGa) (coga.NewCoGa, error) {
 	cg := coga.NewCoGa{
 		CoID: coID,
 		GaID: gaID,
-		Mark: app.Mark,
 	}
 
 	return cg, nil

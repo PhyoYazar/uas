@@ -32,9 +32,9 @@ func (s *Store) Create(ctx context.Context, cg coga.CoGa) error {
 
 	const q = `
 	INSERT INTO co_ga
-		(co_ga_id, mark, co_id, ga_id, date_created, date_updated)
+		(co_ga_id, co_id, ga_id, date_created, date_updated)
 	VALUES
-		(:co_ga_id, :mark, :co_id, :ga_id, :date_created, :date_updated)`
+		(:co_ga_id, :co_id, :ga_id, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCoGa(cg)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {

@@ -2,7 +2,6 @@ package cogagrp
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/PhyoYazar/uas/business/core/coga"
 	"github.com/PhyoYazar/uas/business/sys/validate"
@@ -36,14 +35,6 @@ func parseFilter(r *http.Request) (coga.QueryFilter, error) {
 			return coga.QueryFilter{}, validate.NewFieldsError("ga_id", err)
 		}
 		filter.WithGaID(id)
-	}
-
-	if mark := values.Get("mark"); mark != "" {
-		mk, err := strconv.ParseInt(mark, 10, 64)
-		if err != nil {
-			return coga.QueryFilter{}, validate.NewFieldsError("mark", err)
-		}
-		filter.WithMark(int(mk))
 	}
 
 	if err := filter.Validate(); err != nil {

@@ -11,7 +11,6 @@ type CoGa struct {
 	ID          uuid.UUID
 	CoID        uuid.UUID
 	GaID        uuid.UUID
-	Mark        int
 	DateCreated time.Time
 	DateUpdated time.Time
 }
@@ -20,12 +19,10 @@ type CoGa struct {
 type NewCoGa struct {
 	CoID uuid.UUID
 	GaID uuid.UUID
-	Mark int
 }
 
 // UpdateStudentSubject contains information needed to update a CoGa.
 type UpdateCoGa struct {
 	CoID *uuid.UUID
 	GaID *uuid.UUID
-	Mark *int
 }

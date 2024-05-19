@@ -11,7 +11,6 @@ import (
 
 var orderByFields = map[string]struct{}{
 	coga.OrderByID:   {},
-	coga.OrderByMark: {},
 	coga.OrderByCoID: {},
 	coga.OrderByGaID: {},
 }

@@ -37,8 +37,3 @@ func (qf *QueryFilter) WithCoID(coID uuid.UUID) {
 func (qf *QueryFilter) WithGaID(gaID uuid.UUID) {
 	qf.GaID = &gaID
 }
-
-// WithMark sets the Name field of the QueryFilter value.
-func (qf *QueryFilter) WithMark(mark int) {
-	qf.Mark = &mark
-}

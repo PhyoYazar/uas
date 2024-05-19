@@ -187,3 +187,26 @@ ALTER TABLE subjects ADD CONSTRAINT subjects_code_semester_academic_year_key UNI
 -- Version: 1.16
 -- Description: Update co_marks table UNIQUE
 ALTER TABLE co_marks ADD UNIQUE (mark_id, co_id);
+
+-- Version: 1.17
+-- Description: DROP mark from co_ga table
+ALTER TABLE co_ga DROP COLUMN mark;
+
+-- Version: 1.18
+-- Description: Drop co_mark table and re-create co_go_mark table
+DROP TABLE IF EXISTS co_marks;
+CREATE TABLE co_ga_marks (
+	co_ga_mark_id	  UUID        NOT NULL,
+	mark_id		  	  UUID        NOT NULL,
+	ga_id			  	  UUID        NOT NULL,
+	co_id			  	  UUID        NOT NULL,
+	mark 				  INT 		  NULL,
+	date_created  	  TIMESTAMP   NOT NULL,
+	date_updated  	  TIMESTAMP   NOT NULL,
+
+	PRIMARY KEY (co_ga_mark_id),
+	UNIQUE (mark_id, co_id),
+	FOREIGN KEY (mark_id) REFERENCES marks(mark_id) ON DELETE CASCADE,
+	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE,
+	FOREIGN KEY (ga_id) REFERENCES graduate_attributes(ga_id) ON DELETE CASCADE
+);

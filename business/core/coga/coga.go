@@ -47,7 +47,6 @@ func (c *Core) Create(ctx context.Context, cg NewCoGa) (CoGa, error) {
 		ID:          uuid.New(),
 		CoID:        cg.CoID,
 		GaID:        cg.GaID,
-		Mark:        cg.Mark,
 		DateCreated: now,
 		DateUpdated: now,
 	}

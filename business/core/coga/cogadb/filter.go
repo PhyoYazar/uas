@@ -2,7 +2,6 @@ package cogadb
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	"github.com/PhyoYazar/uas/business/core/coga"
@@ -14,11 +13,6 @@ func (s *Store) applyFilter(filter coga.QueryFilter, data map[string]interface{}
 	if filter.ID != nil {
 		data["co_ga_id"] = *filter.ID
 		wc = append(wc, "co_ga_id = :co_ga_id")
-	}
-
-	if filter.Mark != nil {
-		data["mark"] = fmt.Sprintf("%%%d%%", *filter.Mark)
-		wc = append(wc, "mark = :mark")
 	}
 
 	if filter.CoID != nil {
