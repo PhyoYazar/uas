@@ -24,6 +24,8 @@ type Storer interface {
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Subject, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	QueryByID(ctx context.Context, subjectID uuid.UUID) (Subject, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -76,6 +78,16 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 	}
 
 	return subjects, nil
+}
+
+// QueryByID finds the user by the specified ID.
+func (c *Core) QueryByID(ctx context.Context, subjectID uuid.UUID) (Subject, error) {
+	sub, err := c.storer.QueryByID(ctx, subjectID)
+	if err != nil {
+		return Subject{}, fmt.Errorf("query: subjectID[%s]: %w", subjectID, err)
+	}
+
+	return sub, nil
 }
 
 // Count returns the total number of subjects in the store.

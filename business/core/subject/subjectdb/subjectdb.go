@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/subject"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -80,6 +81,33 @@ func (s *Store) Query(ctx context.Context, filter subject.QueryFilter, orderBy o
 	}
 
 	return sub, nil
+}
+
+// QueryByID gets the specified subject from the database.
+func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (subject.Subject, error) {
+	data := struct {
+		ID string `db:"subject_id"`
+	}{
+		ID: subjectID.String(),
+	}
+
+	const q = `
+	SELECT
+        subject_id, name, instructor, year, academic_year, code, semester, exam, practical, date_created, date_updated
+	FROM
+		subjects
+	WHERE
+		subject_id = :subject_id`
+
+	var dbSub dbSubject
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbSub); err != nil {
+		if errors.Is(err, database.ErrDBNotFound) {
+			return subject.Subject{}, fmt.Errorf("db: %w", subject.ErrNotFound)
+		}
+		return subject.Subject{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toCoreSubject(dbSub)
 }
 
 // Count returns the total number of subjects in the DB.

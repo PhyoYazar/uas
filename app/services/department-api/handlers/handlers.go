@@ -76,6 +76,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/subjects", subgh.Query)
 	app.Handle(http.MethodPost, "/subject", subgh.Create)
+	app.Handle(http.MethodGet, "/subjects/:subject_id", subgh.QueryByID)
 
 	// -------------------------------------------------------------------------
 

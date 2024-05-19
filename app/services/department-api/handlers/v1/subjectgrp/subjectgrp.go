@@ -7,9 +7,11 @@ import (
 	"net/http"
 
 	"github.com/PhyoYazar/uas/business/core/subject"
+	"github.com/PhyoYazar/uas/business/sys/validate"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
+	"github.com/google/uuid"
 )
 
 // Handlers manages the set of user endpoints.
@@ -81,4 +83,24 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	return web.Respond(ctx, w, paging.NewResponse(items, total, page.Number, page.RowsPerPage), http.StatusOK)
+}
+
+// QueryByID returns a subject by its ID.
+func (h *Handlers) QueryByID(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	subjectID, err := uuid.Parse(web.Param(r, "subject_id"))
+	if err != nil {
+		return validate.NewFieldsError("subject_id", err)
+	}
+
+	sub, err := h.subject.QueryByID(ctx, subjectID)
+	if err != nil {
+		switch {
+		case errors.Is(err, subject.ErrNotFound):
+			return v1.NewRequestError(err, http.StatusNotFound)
+		default:
+			return fmt.Errorf("querybyid: subjectID[%s]: %w", subjectID, err)
+		}
+	}
+
+	return web.Respond(ctx, w, toAppSubject(sub), http.StatusOK)
 }
