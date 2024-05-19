@@ -10,6 +10,7 @@ import (
 )
 
 var orderByFields = map[string]struct{}{
+	comark.OrderByID:     {},
 	comark.OrderByCoID:   {},
 	comark.OrderByMarkID: {},
 }

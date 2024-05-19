@@ -4,19 +4,20 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/PhyoYazar/uas/business/core/subject"
+	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/data/order"
 	"github.com/PhyoYazar/uas/business/sys/validate"
 )
 
 var orderByFields = map[string]struct{}{
-	subject.OrderByID:         {},
-	subject.OrderByName:       {},
-	subject.OrderByInstructor: {},
+	student.OrderByID:         {},
+	student.OrderByName:       {},
+	student.OrderByEmail:      {},
+	student.OrderByRollNumber: {},
 }
 
 func parseOrder(r *http.Request) (order.By, error) {
-	orderBy, err := order.Parse(r, subject.DefaultOrderBy)
+	orderBy, err := order.Parse(r, student.DefaultOrderBy)
 	if err != nil {
 		return order.By{}, err
 	}

@@ -10,6 +10,7 @@ import (
 )
 
 var orderByFields = map[string]struct{}{
+	studentsubject.OrderByID:        {},
 	studentsubject.OrderByMark:      {},
 	studentsubject.OrderBySubjectID: {},
 	studentsubject.OrderByStudentID: {},

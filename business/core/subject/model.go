@@ -11,9 +11,9 @@ type Subject struct {
 	ID           uuid.UUID
 	Name         string
 	Code         string
-	Year         string
+	Year         Year
 	AcademicYear string
-	Semester     string
+	Semester     Semester
 	Instructor   string
 	Exam         int
 	Practical    int
@@ -25,9 +25,9 @@ type Subject struct {
 type NewSubject struct {
 	Name         string
 	Code         string
-	Year         string
+	Year         Year
 	AcademicYear string
-	Semester     string
+	Semester     Semester
 	Instructor   string
 	Exam         int
 }
@@ -36,10 +36,10 @@ type NewSubject struct {
 type UpdateSubject struct {
 	Name         *string
 	Code         *string
-	Year         *string
+	Year         *Year
 	AcademicYear *string
 	Instructor   *string
-	Semester     *string
+	Semester     *Semester
 	Exam         *int
 	Practical    *int
 }

@@ -31,6 +31,11 @@ func (s *Store) applyFilter(filter subject.QueryFilter, data map[string]interfac
 		wc = append(wc, "year = :year")
 	}
 
+	if filter.Semester != nil {
+		data["semester"] = fmt.Sprintf("%%%s%%", *filter.Semester)
+		wc = append(wc, "semester = :semester")
+	}
+
 	if filter.AcademicYear != nil {
 		data["academic_year"] = fmt.Sprintf("%%%s%%", *filter.AcademicYear)
 		wc = append(wc, "academic_year = :academic_year")

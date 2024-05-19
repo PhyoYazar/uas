@@ -1,6 +1,7 @@
 package subjectdb
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/core/subject"
@@ -29,9 +30,9 @@ func toDBSubject(sub subject.Subject) dbSubject {
 		ID:           sub.ID,
 		Name:         sub.Name,
 		Code:         sub.Code,
-		Year:         sub.Year,
+		Year:         sub.Year.Name(),
 		AcademicYear: sub.AcademicYear,
-		Semester:     sub.Semester,
+		Semester:     sub.Semester.Name(),
 		Instructor:   sub.Instructor,
 		Exam:         sub.Exam,
 		Practical:    sub.Practical,
@@ -42,15 +43,25 @@ func toDBSubject(sub subject.Subject) dbSubject {
 	return subject
 }
 
-func toCoreSubject(dbSubject dbSubject) subject.Subject {
+func toCoreSubject(dbSubject dbSubject) (subject.Subject, error) {
+
+	year, err := subject.ParseYear(dbSubject.Year)
+	if err != nil {
+		return subject.Subject{}, fmt.Errorf("parse type: %w", err)
+	}
+
+	semester, err := subject.ParseSemester(dbSubject.Semester)
+	if err != nil {
+		return subject.Subject{}, fmt.Errorf("parse type: %w", err)
+	}
 
 	sub := subject.Subject{
 		ID:           dbSubject.ID,
 		Name:         dbSubject.Name,
 		Code:         dbSubject.Code,
-		Year:         dbSubject.Year,
+		Year:         year,
 		AcademicYear: dbSubject.AcademicYear,
-		Semester:     dbSubject.Semester,
+		Semester:     semester,
 		Instructor:   dbSubject.Instructor,
 		Exam:         dbSubject.Exam,
 		Practical:    dbSubject.Practical,
@@ -58,13 +69,19 @@ func toCoreSubject(dbSubject dbSubject) subject.Subject {
 		DateUpdated:  dbSubject.DateUpdated.In(time.Local),
 	}
 
-	return sub
+	return sub, nil
 }
 
-func toCoreSubjectSlice(dbSubjects []dbSubject) []subject.Subject {
+func toCoreSubjectSlice(dbSubjects []dbSubject) ([]subject.Subject, error) {
 	subs := make([]subject.Subject, len(dbSubjects))
+
 	for i, dbSubject := range dbSubjects {
-		subs[i] = toCoreSubject(dbSubject)
+		var err error
+
+		subs[i], err = toCoreSubject(dbSubject)
+		if err != nil {
+			return nil, fmt.Errorf("parse type: %w", err)
+		}
 	}
-	return subs
+	return subs, nil
 }

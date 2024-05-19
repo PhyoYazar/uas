@@ -13,7 +13,8 @@ type QueryFilter struct {
 	ID               *uuid.UUID `validate:"omitempty"`
 	Name             *string    `validate:"omitempty,min=3"`
 	Code             *string    `validate:"omitempty"`
-	Year             *string    `validate:"omitempty"`
+	Year             *Year      `validate:"omitempty"`
+	Semester         *Semester  `validate:"omitempty"`
 	AcademicYear     *string    `validate:"omitempty"`
 	Instructor       *string    `validate:"omitempty"`
 	StartCreatedDate *time.Time `validate:"omitempty"`
@@ -44,8 +45,13 @@ func (qf *QueryFilter) WithCode(code string) {
 }
 
 // WithYear sets the Year field of the QueryFilter value.
-func (qf *QueryFilter) WithYear(year string) {
+func (qf *QueryFilter) WithYear(year Year) {
 	qf.Year = &year
+}
+
+// WithSemester sets the Semester field of the QueryFilter value.
+func (qf *QueryFilter) WithSemester(semester Semester) {
+	qf.Semester = &semester
 }
 
 // WithAcademicYear sets the AcademicYear field of the QueryFilter value.

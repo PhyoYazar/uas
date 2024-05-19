@@ -1,6 +1,7 @@
 package subjectgrp
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/core/subject"
@@ -28,9 +29,9 @@ func toAppSubject(sub subject.Subject) AppSubject {
 		ID:           sub.ID.String(),
 		Name:         sub.Name,
 		Code:         sub.Code,
-		Year:         sub.Year,
+		Year:         sub.Year.Name(),
 		AcademicYear: sub.AcademicYear,
-		Semester:     sub.Semester,
+		Semester:     sub.Semester.Name(),
 		Instructor:   sub.Instructor,
 		Exam:         sub.Exam,
 		Practical:    sub.Practical,
@@ -54,12 +55,22 @@ type AppNewSubject struct {
 
 func toCoreNewSubject(app AppNewSubject) (subject.NewSubject, error) {
 
+	year, err := subject.ParseYear(app.Year)
+	if err != nil {
+		return subject.NewSubject{}, fmt.Errorf("error parsing year: %v", err)
+	}
+
+	semester, err := subject.ParseSemester(app.Semester)
+	if err != nil {
+		return subject.NewSubject{}, fmt.Errorf("error parsing semester: %v", err)
+	}
+
 	sub := subject.NewSubject{
 		Name:         app.Name,
 		Code:         app.Code,
-		Year:         app.Year,
+		Year:         year,
 		AcademicYear: app.AcademicYear,
-		Semester:     app.Semester,
+		Semester:     semester,
 		Instructor:   app.Instructor,
 		Exam:         app.Exam,
 	}

@@ -13,7 +13,7 @@ import (
 // Set of error variables for CRUD operations.
 var (
 	ErrNotFound              = errors.New("user not found")
-	ErrUniqueSubjectYear     = errors.New("subject and year is not unique")
+	ErrUniqueSubjectYear     = errors.New("name/code ,semester and academic year is not unique")
 	ErrAuthenticationFailure = errors.New("authentication failed")
 )
 

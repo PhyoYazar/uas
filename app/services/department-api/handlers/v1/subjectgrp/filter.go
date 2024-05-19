@@ -46,8 +46,20 @@ func parseFilter(r *http.Request) (subject.QueryFilter, error) {
 		filter.WithCode(code)
 	}
 
-	if year := values.Get("year"); year != "" {
+	if subYear := values.Get("year"); subYear != "" {
+		year, err := subject.ParseYear(subYear)
+		if err != nil {
+			return subject.QueryFilter{}, validate.NewFieldsError("year", err)
+		}
 		filter.WithYear(year)
+	}
+
+	if semester := values.Get("semester"); semester != "" {
+		sem, err := subject.ParseSemester(semester)
+		if err != nil {
+			return subject.QueryFilter{}, validate.NewFieldsError("semester", err)
+		}
+		filter.WithSemester(sem)
 	}
 
 	if academicYear := values.Get("academicYear"); academicYear != "" {

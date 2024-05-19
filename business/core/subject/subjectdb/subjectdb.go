@@ -74,7 +74,12 @@ func (s *Store) Query(ctx context.Context, filter subject.QueryFilter, orderBy o
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	return toCoreSubjectSlice(dbSubjects), nil
+	sub, err := toCoreSubjectSlice(dbSubjects)
+	if err != nil {
+		return nil, err
+	}
+
+	return sub, nil
 }
 
 // Count returns the total number of subjects in the DB.

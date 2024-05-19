@@ -176,3 +176,10 @@ ALTER TABLE graduate_attributes ADD COLUMN slug CHAR(3) UNIQUE NOT NULL;
 -- Version: 1.14
 -- Description: Update mark table UNIQUE
 ALTER TABLE marks ADD UNIQUE (name, instance);
+
+-- Version: 1.15
+-- Description: Update subjects table UNIQUE
+ALTER TABLE subjects DROP CONSTRAINT subjects_name_semester_year_key;
+ALTER TABLE subjects DROP CONSTRAINT subjects_code_semester_year_key;
+ALTER TABLE subjects ADD CONSTRAINT subjects_name_semester_academic_year_key UNIQUE (name, semester, academic_year);
+ALTER TABLE subjects ADD CONSTRAINT subjects_code_semester_academic_year_key UNIQUE (code, semester, academic_year);
