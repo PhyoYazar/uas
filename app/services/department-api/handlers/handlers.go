@@ -22,7 +22,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/comark"
 	"github.com/PhyoYazar/uas/business/core/comark/comarkdb"
 	"github.com/PhyoYazar/uas/business/core/ga"
-	gadb "github.com/PhyoYazar/uas/business/core/ga/codb"
+	"github.com/PhyoYazar/uas/business/core/ga/gadb"
 	"github.com/PhyoYazar/uas/business/core/mark"
 	"github.com/PhyoYazar/uas/business/core/mark/markdb"
 	"github.com/PhyoYazar/uas/business/core/student"

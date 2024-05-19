@@ -183,3 +183,7 @@ ALTER TABLE subjects DROP CONSTRAINT subjects_name_semester_year_key;
 ALTER TABLE subjects DROP CONSTRAINT subjects_code_semester_year_key;
 ALTER TABLE subjects ADD CONSTRAINT subjects_name_semester_academic_year_key UNIQUE (name, semester, academic_year);
 ALTER TABLE subjects ADD CONSTRAINT subjects_code_semester_academic_year_key UNIQUE (code, semester, academic_year);
+
+-- Version: 1.16
+-- Description: Update co_marks table UNIQUE
+ALTER TABLE co_marks ADD UNIQUE (mark_id, co_id);

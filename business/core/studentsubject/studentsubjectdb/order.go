@@ -8,6 +8,7 @@ import (
 )
 
 var orderByFields = map[string]string{
+	studentsubject.OrderByID:        "student_subject_id",
 	studentsubject.OrderByMark:      "mark",
 	studentsubject.OrderByStudentID: "student_id",
 	studentsubject.OrderBySubjectID: "subject_id",

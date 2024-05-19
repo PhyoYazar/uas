@@ -8,6 +8,7 @@ import (
 )
 
 var orderByFields = map[string]string{
+	comark.OrderByID:     "co_mark_id",
 	comark.OrderByCoID:   "co_id",
 	comark.OrderByMarkID: "mark_id",
 }

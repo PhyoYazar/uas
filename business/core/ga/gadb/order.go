@@ -8,6 +8,7 @@ import (
 )
 
 var orderByFields = map[string]string{
+	ga.OrderByID:   "ga_id",
 	ga.OrderByName: "name",
 	ga.OrderBySlug: "slug",
 }

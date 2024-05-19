@@ -8,6 +8,7 @@ import (
 )
 
 var orderByFields = map[string]string{
+	co.OrderByID:   "co_id",
 	co.OrderByName: "name",
 }
 
