@@ -1,16 +1,18 @@
-package comarkdb
+package markdb
 
 import (
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/comark"
+	"github.com/PhyoYazar/uas/business/core/mark"
 	"github.com/PhyoYazar/uas/business/data/order"
 )
 
 var orderByFields = map[string]string{
-	comark.OrderByID:     "co_mark_id",
-	comark.OrderByCoID:   "co_id",
-	comark.OrderByMarkID: "mark_id",
+	mark.OrderByID:          "mark_id",
+	mark.OrderByCoID:        "co_id",
+	mark.OrderByGaID:        "ga_id",
+	mark.OrderByAttributeID: "attribute_id",
+	mark.OrderByMark:        "mark",
 }
 
 func orderByClause(orderBy order.By) (string, error) {

@@ -1,4 +1,4 @@
-package comarkdb
+package markdb
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/comark"
+	"github.com/PhyoYazar/uas/business/core/mark"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
 	"github.com/jmoiron/sqlx"
@@ -28,17 +28,17 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 }
 
 // Create inserts a new cm into the database.
-func (s *Store) Create(ctx context.Context, cm comark.CoMark) error {
+func (s *Store) Create(ctx context.Context, cm mark.Mark) error {
 
 	const q = `
-	INSERT INTO co_marks
-		(co_mark_id, co_id, mark_id, date_created, date_updated)
+	INSERT INTO marks
+		(mark_id, co_id, ga_id, attribute_id, mark, date_created, date_updated)
 	VALUES
-		(:co_mark_id, :co_id, :mark_id, :date_created, :date_updated)`
+		(:mark_id, :co_id, :ga_id, :attribute_id, :mark, :date_created, :date_updated)`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCoMark(cm)); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBMark(cm)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
-			return fmt.Errorf("namedexeccontext: %w", comark.ErrUniqueCoMark)
+			return fmt.Errorf("namedexeccontext: %w", mark.ErrUniqueMark)
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -47,7 +47,7 @@ func (s *Store) Create(ctx context.Context, cm comark.CoMark) error {
 }
 
 // Query retrieves a list of existing gas from the database.
-func (s *Store) Query(ctx context.Context, filter comark.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]comark.CoMark, error) {
+func (s *Store) Query(ctx context.Context, filter mark.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]mark.Mark, error) {
 	data := map[string]interface{}{
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
@@ -57,7 +57,7 @@ func (s *Store) Query(ctx context.Context, filter comark.QueryFilter, orderBy or
 	SELECT
 	*
 	FROM
-	co_marks`
+	marks`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -70,28 +70,28 @@ func (s *Store) Query(ctx context.Context, filter comark.QueryFilter, orderBy or
 	buf.WriteString(orderByClause)
 	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
-	var dbCoMark []dbCoMark
-	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbCoMark); err != nil {
+	var dbMark []dbMark
+	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbMark); err != nil {
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	cg, err := toCoreCoMarkSlice(dbCoMark)
+	m, err := toCoreMarkSlice(dbMark)
 	if err != nil {
 		return nil, err
 	}
 
-	return cg, nil
+	return m, nil
 }
 
 // Count returns the total number of cos in the DB.
-func (s *Store) Count(ctx context.Context, filter comark.QueryFilter) (int, error) {
+func (s *Store) Count(ctx context.Context, filter mark.QueryFilter) (int, error) {
 	data := map[string]interface{}{}
 
 	const q = `
 	SELECT
 		count(1)
 	FROM
-	co_marks`
+	marks`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

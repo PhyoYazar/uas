@@ -1,4 +1,4 @@
-package comarkgrp
+package markgrp
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/PhyoYazar/uas/business/core/comark"
+	"github.com/PhyoYazar/uas/business/core/mark"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
@@ -14,37 +14,37 @@ import (
 
 // Handlers manages the set of ga endpoints.
 type Handlers struct {
-	comark *comark.Core
+	mark *mark.Core
 }
 
 // New constructs a handlers for route access.
-func New(comark *comark.Core) *Handlers {
+func New(mark *mark.Core) *Handlers {
 	return &Handlers{
-		comark: comark,
+		mark: mark,
 	}
 }
 
 // Create adds a new ga to the system.
 func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	var app AppNewCoMark
+	var app AppNewMark
 	if err := web.Decode(r, &app); err != nil {
 		return err
 	}
 
-	cms, err := toCoreNewCoMark(app)
+	cms, err := toCoreNewMark(app)
 	if err != nil {
 		return v1.NewRequestError(err, http.StatusBadRequest)
 	}
 
-	cm, err := h.comark.Create(ctx, cms)
+	cm, err := h.mark.Create(ctx, cms)
 	if err != nil {
-		if errors.Is(err, comark.ErrUniqueCoMark) {
+		if errors.Is(err, mark.ErrUniqueMark) {
 			return v1.NewRequestError(err, http.StatusConflict)
 		}
-		return fmt.Errorf("create: ga[%+v]: %w", cm, err)
+		return fmt.Errorf("create: mark[%+v]: %w", cm, err)
 	}
 
-	return web.Respond(ctx, w, toAppCoMark(cm), http.StatusCreated)
+	return web.Respond(ctx, w, toAppMark(cm), http.StatusCreated)
 }
 
 // Query returns a list of cos with paging.
@@ -65,17 +65,17 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 		return err
 	}
 
-	comarks, err := h.comark.Query(ctx, filter, orderBy, page.Number, page.RowsPerPage)
+	marks, err := h.mark.Query(ctx, filter, orderBy, page.Number, page.RowsPerPage)
 	if err != nil {
 		return fmt.Errorf("query: %w", err)
 	}
 
-	items := make([]AppCoMark, len(comarks))
-	for i, cm := range comarks {
-		items[i] = toAppCoMark(cm)
+	items := make([]AppMark, len(marks))
+	for i, cm := range marks {
+		items[i] = toAppMark(cm)
 	}
 
-	total, err := h.comark.Count(ctx, filter)
+	total, err := h.mark.Count(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("count: %w", err)
 	}

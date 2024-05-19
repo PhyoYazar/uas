@@ -1,22 +1,24 @@
-package comarkgrp
+package markgrp
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/PhyoYazar/uas/business/core/comark"
+	"github.com/PhyoYazar/uas/business/core/mark"
 	"github.com/PhyoYazar/uas/business/data/order"
 	"github.com/PhyoYazar/uas/business/sys/validate"
 )
 
 var orderByFields = map[string]struct{}{
-	comark.OrderByID:     {},
-	comark.OrderByCoID:   {},
-	comark.OrderByMarkID: {},
+	mark.OrderByID:          {},
+	mark.OrderByAttributeID: {},
+	mark.OrderByCoID:        {},
+	mark.OrderByGaID:        {},
+	mark.OrderByMark:        {},
 }
 
 func parseOrder(r *http.Request) (order.By, error) {
-	orderBy, err := order.Parse(r, comark.DefaultOrderBy)
+	orderBy, err := order.Parse(r, mark.DefaultOrderBy)
 	if err != nil {
 		return order.By{}, err
 	}

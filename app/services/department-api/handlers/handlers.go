@@ -8,8 +8,8 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/attributegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
-	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/comarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentsubjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
@@ -21,10 +21,10 @@ import (
 	"github.com/PhyoYazar/uas/business/core/co/codb"
 	"github.com/PhyoYazar/uas/business/core/coga"
 	"github.com/PhyoYazar/uas/business/core/coga/cogadb"
-	"github.com/PhyoYazar/uas/business/core/comark"
-	"github.com/PhyoYazar/uas/business/core/comark/comarkdb"
 	"github.com/PhyoYazar/uas/business/core/ga"
 	"github.com/PhyoYazar/uas/business/core/ga/gadb"
+	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/core/mark/markdb"
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/core/student/studentdb"
 	"github.com/PhyoYazar/uas/business/core/studentsubject"
@@ -133,12 +133,12 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	// -------------------------------------------------------------------------
 
-	cmCore := comark.NewCore(comarkdb.NewStore(cfg.Log, cfg.DB))
+	mCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
 
-	cmgh := comarkgrp.New(cmCore)
+	mgh := markgrp.New(mCore)
 
-	app.Handle(http.MethodGet, "/co_marks", cmgh.Query)
-	app.Handle(http.MethodPost, "/co_mark", cmgh.Create)
+	app.Handle(http.MethodGet, "/marks", mgh.Query)
+	app.Handle(http.MethodPost, "/mark", mgh.Create)
 
 	return app
 }
