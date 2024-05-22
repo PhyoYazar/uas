@@ -244,6 +244,34 @@ func namedQuerySlice[T any](ctx context.Context, log *zap.SugaredLogger, db sqlx
 	return nil
 }
 
+//================================================================================================================================
+
+func NamedQueryRows(ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext, query string, data any) (*sqlx.Rows, error) {
+	return namedQueryRows(ctx, log, db, query, data)
+}
+
+func namedQueryRows(ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext, query string, data any) (*sqlx.Rows, error) {
+	q := queryString(query, data)
+
+	log.WithOptions(zap.AddCallerSkip(3)).Infow("database.NamedQuerySlice", "trace_id", web.GetTraceID(ctx), "query", q)
+
+	var rows *sqlx.Rows
+	var err error
+
+	rows, err = sqlx.NamedQueryContext(ctx, db, query, data)
+
+	if err != nil {
+		if pqerr, ok := err.(*pgconn.PgError); ok && pqerr.Code == undefinedTable {
+			return rows, ErrUndefinedTable
+		}
+		return rows, err
+	}
+
+	return rows, nil
+}
+
+//================================================================================================================================
+
 // QueryStruct is a helper function for executing queries that return a
 // single value to be unmarshalled into a struct type where field replacement is necessary.
 func QueryStruct(ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext, query string, dest any) error {

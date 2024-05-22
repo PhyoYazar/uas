@@ -15,6 +15,7 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vsubjectgrp"
 	"github.com/PhyoYazar/uas/business/core/attribute"
 	"github.com/PhyoYazar/uas/business/core/attribute/attributedb"
 	"github.com/PhyoYazar/uas/business/core/co"
@@ -33,6 +34,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/subject/subjectdb"
 	"github.com/PhyoYazar/uas/business/core/user"
 	"github.com/PhyoYazar/uas/business/core/user/stores/userdb"
+	"github.com/PhyoYazar/uas/business/core/vsubject"
+	"github.com/PhyoYazar/uas/business/core/vsubject/vsubjectdb"
 	"github.com/PhyoYazar/uas/business/web/auth"
 	"github.com/PhyoYazar/uas/business/web/v1/mid"
 	"github.com/PhyoYazar/uas/foundation/web"
@@ -140,6 +143,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/marks", mgh.Query)
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
+
+	// -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+
+	vsubCore := vsubject.NewCore(vsubjectdb.NewStore(cfg.Log, cfg.DB))
+
+	vsubgh := vsubjectgrp.New(vsubCore)
+
+	app.Handle(http.MethodGet, "/subject-detail/:subject_id", vsubgh.QueryByID)
 
 	return app
 }
