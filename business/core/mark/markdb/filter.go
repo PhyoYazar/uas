@@ -15,9 +15,9 @@ func (s *Store) applyFilter(filter mark.QueryFilter, data map[string]interface{}
 		wc = append(wc, "mark_id = :mark_id")
 	}
 
-	if filter.CoID != nil {
-		data["co_id"] = *filter.CoID
-		wc = append(wc, "co_id = :co_id")
+	if filter.SubjectID != nil {
+		data["subject_id"] = *filter.SubjectID
+		wc = append(wc, "subject_id = :subject_id")
 	}
 
 	if filter.GaID != nil {

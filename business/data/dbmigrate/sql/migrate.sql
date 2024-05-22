@@ -244,3 +244,22 @@ CREATE TABLE marks (
 	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE,
 	FOREIGN KEY (ga_id) REFERENCES graduate_attributes(ga_id) ON DELETE CASCADE
 );
+
+-- Version: 1.20
+-- Description: Drop co realtion to mark table
+ALTER TABLE marks DROP COLUMN co_id;
+
+-- Version: 1.21
+-- Description: Add student_id to mark table to make relation
+ALTER TABLE marks ADD COLUMN student_id UUID NOT NULL;
+ALTER TABLE marks ADD CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+
+-- Version: 1.22
+-- Description: Drop student_id realtion to mark table
+ALTER TABLE marks DROP COLUMN student_id;
+
+
+-- Version: 1.23
+-- Description: Add subject_id to mark table to make relation
+ALTER TABLE marks ADD COLUMN subject_id UUID NOT NULL;
+ALTER TABLE marks ADD CONSTRAINT fk_subject FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE

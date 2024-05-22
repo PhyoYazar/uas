@@ -10,7 +10,7 @@ import (
 // QueryFilter holds the available fields a query can be filtered on.
 type QueryFilter struct {
 	ID          *uuid.UUID `validate:"omitempty"`
-	CoID        *uuid.UUID `validate:"omitempty"`
+	SubjectID   *uuid.UUID `validate:"omitempty"`
 	GaID        *uuid.UUID `validate:"omitempty"`
 	AttributeID *uuid.UUID `validate:"omitempty"`
 	Mark        *int       `validate:"omitempty"`
@@ -29,9 +29,9 @@ func (qf *QueryFilter) WithMarkID(markID uuid.UUID) {
 	qf.ID = &markID
 }
 
-// WithCoID sets the Name field of the QueryFilter value.
-func (qf *QueryFilter) WithCoID(coID uuid.UUID) {
-	qf.CoID = &coID
+// WithSubjectID sets the Name field of the QueryFilter value.
+func (qf *QueryFilter) WithSubjectID(subID uuid.UUID) {
+	qf.SubjectID = &subID
 }
 
 // WithMarkID sets the Name field of the QueryFilter value.

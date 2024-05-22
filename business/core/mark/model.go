@@ -9,7 +9,7 @@ import (
 // Mark represents information about an individual Mark.
 type Mark struct {
 	ID          uuid.UUID
-	CoID        uuid.UUID
+	SubjectID   uuid.UUID
 	GaID        uuid.UUID
 	AttributeID uuid.UUID
 	Mark        int
@@ -19,7 +19,7 @@ type Mark struct {
 
 // NewMark contains information needed to create a new Mark.
 type NewMark struct {
-	CoID        uuid.UUID
+	SubjectID   uuid.UUID
 	GaID        uuid.UUID
 	AttributeID uuid.UUID
 	Mark        int
@@ -27,7 +27,7 @@ type NewMark struct {
 
 // UpdateMark contains information needed to update a Mark.
 type UpdateMark struct {
-	CoID        *uuid.UUID
+	SubjectID   *uuid.UUID
 	GaID        *uuid.UUID
 	AttributeID *uuid.UUID
 	Mark        *int

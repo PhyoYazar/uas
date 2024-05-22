@@ -22,12 +22,12 @@ func parseFilter(r *http.Request) (mark.QueryFilter, error) {
 		filter.WithMarkID(id)
 	}
 
-	if cmId := values.Get("co_id"); cmId != "" {
+	if cmId := values.Get("subject_id"); cmId != "" {
 		id, err := uuid.Parse(cmId)
 		if err != nil {
-			return mark.QueryFilter{}, validate.NewFieldsError("co_id", err)
+			return mark.QueryFilter{}, validate.NewFieldsError("subject_id", err)
 		}
-		filter.WithCoID(id)
+		filter.WithSubjectID(id)
 	}
 
 	if cmId := values.Get("ga_id"); cmId != "" {

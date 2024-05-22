@@ -12,7 +12,7 @@ import (
 // between the app and the database.
 type dbMark struct {
 	ID          uuid.UUID `db:"mark_id"`
-	CoID        uuid.UUID `db:"co_id"`
+	SubjectID   uuid.UUID `db:"subject_id"`
 	GaID        uuid.UUID `db:"ga_id"`
 	AttributeID uuid.UUID `db:"attribute_id"`
 	Mark        int       `db:"mark"`
@@ -24,7 +24,7 @@ func toDBMark(mark mark.Mark) dbMark {
 
 	m := dbMark{
 		ID:          mark.ID,
-		CoID:        mark.CoID,
+		SubjectID:   mark.SubjectID,
 		GaID:        mark.GaID,
 		AttributeID: mark.AttributeID,
 		Mark:        mark.Mark,
@@ -39,7 +39,7 @@ func toCoreMark(dbMark dbMark) (mark.Mark, error) {
 
 	m := mark.Mark{
 		ID:          dbMark.ID,
-		CoID:        dbMark.CoID,
+		SubjectID:   dbMark.SubjectID,
 		GaID:        dbMark.GaID,
 		AttributeID: dbMark.AttributeID,
 		Mark:        dbMark.Mark,

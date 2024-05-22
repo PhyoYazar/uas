@@ -9,7 +9,7 @@ import (
 
 var orderByFields = map[string]string{
 	mark.OrderByID:          "mark_id",
-	mark.OrderByCoID:        "co_id",
+	mark.OrderBySubjectID:   "subject_id",
 	mark.OrderByGaID:        "ga_id",
 	mark.OrderByAttributeID: "attribute_id",
 	mark.OrderByMark:        "mark",

@@ -12,7 +12,7 @@ import (
 var orderByFields = map[string]struct{}{
 	mark.OrderByID:          {},
 	mark.OrderByAttributeID: {},
-	mark.OrderByCoID:        {},
+	mark.OrderBySubjectID:   {},
 	mark.OrderByGaID:        {},
 	mark.OrderByMark:        {},
 }

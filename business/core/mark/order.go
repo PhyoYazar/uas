@@ -9,7 +9,7 @@ var DefaultOrderBy = order.NewBy(OrderByID, order.ASC)
 // that should be used by the application layer.
 const (
 	OrderByID          = "markid"
-	OrderByCoID        = "co_id"
+	OrderBySubjectID   = "subject_id"
 	OrderByGaID        = "ga_id"
 	OrderByAttributeID = "attribute_id"
 	OrderByMark        = "mark"

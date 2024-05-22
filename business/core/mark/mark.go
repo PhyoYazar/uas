@@ -45,7 +45,7 @@ func (c *Core) Create(ctx context.Context, m NewMark) (Mark, error) {
 
 	mk := Mark{
 		ID:          uuid.New(),
-		CoID:        m.CoID,
+		SubjectID:   m.SubjectID,
 		GaID:        m.GaID,
 		AttributeID: m.AttributeID,
 		Mark:        m.Mark,

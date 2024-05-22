@@ -12,7 +12,7 @@ import (
 // AppCoGa represents information about an individual coga.
 type AppMark struct {
 	ID          string `json:"id"`
-	CoID        string `json:"coID"`
+	SubjectID   string `json:"subjectID"`
 	GaID        string `json:"gaID"`
 	AttributeID string `json:"attributeID"`
 	Mark        int    `json:"mark"`
@@ -24,7 +24,7 @@ func toAppMark(m mark.Mark) AppMark {
 
 	return AppMark{
 		ID:          m.ID.String(),
-		CoID:        m.CoID.String(),
+		SubjectID:   m.SubjectID.String(),
 		GaID:        m.GaID.String(),
 		AttributeID: m.AttributeID.String(),
 		Mark:        m.Mark,
@@ -37,7 +37,7 @@ func toAppMark(m mark.Mark) AppMark {
 
 // AppNewCoGa contains information needed to create a new coga.
 type AppNewMark struct {
-	CoID        string `json:"coID" validate:"required"`
+	SubjectID   string `json:"subjectID" validate:"required"`
 	GaId        string `json:"gaID" validate:"required"`
 	AttributeID string `json:"attributeID" validate:"required"`
 	Mark        int    `json:"mark"`
@@ -46,9 +46,9 @@ type AppNewMark struct {
 func toCoreNewMark(app AppNewMark) (mark.NewMark, error) {
 
 	var err error
-	coID, err := uuid.Parse(app.CoID)
+	subjectID, err := uuid.Parse(app.SubjectID)
 	if err != nil {
-		return mark.NewMark{}, fmt.Errorf("error parsing coid string to uuid: %w", err)
+		return mark.NewMark{}, fmt.Errorf("error parsing subjectid string to uuid: %w", err)
 
 	}
 
@@ -65,7 +65,7 @@ func toCoreNewMark(app AppNewMark) (mark.NewMark, error) {
 	}
 
 	cg := mark.NewMark{
-		CoID:        coID,
+		SubjectID:   subjectID,
 		GaID:        gaID,
 		AttributeID: attID,
 		Mark:        app.Mark,
