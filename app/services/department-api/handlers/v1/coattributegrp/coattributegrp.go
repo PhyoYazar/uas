@@ -1,4 +1,4 @@
-package cogagrp
+package coattributegrp
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/PhyoYazar/uas/business/core/coga"
+	"github.com/PhyoYazar/uas/business/core/coattribute"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
@@ -14,37 +14,37 @@ import (
 
 // Handlers manages the set of ga endpoints.
 type Handlers struct {
-	coga *coga.Core
+	coattribute *coattribute.Core
 }
 
 // New constructs a handlers for route access.
-func New(coga *coga.Core) *Handlers {
+func New(coattribute *coattribute.Core) *Handlers {
 	return &Handlers{
-		coga: coga,
+		coattribute: coattribute,
 	}
 }
 
 // Create adds a new ga to the system.
 func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	var app AppNewCoGa
+	var app AppNewCoAttribute
 	if err := web.Decode(r, &app); err != nil {
 		return err
 	}
 
-	cgs, err := toCoreNewCoGa(app)
+	cgs, err := toCoreNewCoAttribute(app)
 	if err != nil {
 		return v1.NewRequestError(err, http.StatusBadRequest)
 	}
 
-	cg, err := h.coga.Create(ctx, cgs)
+	cg, err := h.coattribute.Create(ctx, cgs)
 	if err != nil {
-		if errors.Is(err, coga.ErrUniqueCoGa) {
+		if errors.Is(err, coattribute.ErrUniqueCoAttribute) {
 			return v1.NewRequestError(err, http.StatusConflict)
 		}
 		return fmt.Errorf("create: ga[%+v]: %w", cg, err)
 	}
 
-	return web.Respond(ctx, w, toAppCoGa(cg), http.StatusCreated)
+	return web.Respond(ctx, w, toAppCoAttribute(cg), http.StatusCreated)
 }
 
 // Query returns a list of cos with paging.
@@ -65,17 +65,17 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 		return err
 	}
 
-	cogas, err := h.coga.Query(ctx, filter, orderBy, page.Number, page.RowsPerPage)
+	cogas, err := h.coattribute.Query(ctx, filter, orderBy, page.Number, page.RowsPerPage)
 	if err != nil {
 		return fmt.Errorf("query: %w", err)
 	}
 
-	items := make([]AppCoGa, len(cogas))
+	items := make([]AppCoAttribute, len(cogas))
 	for i, cg := range cogas {
-		items[i] = toAppCoGa(cg)
+		items[i] = toAppCoAttribute(cg)
 	}
 
-	total, err := h.coga.Count(ctx, filter)
+	total, err := h.coattribute.Count(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("count: %w", err)
 	}

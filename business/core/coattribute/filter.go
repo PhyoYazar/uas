@@ -1,4 +1,4 @@
-package coga
+package coattribute
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 
 // QueryFilter holds the available fields a query can be filtered on.
 type QueryFilter struct {
-	ID   *uuid.UUID `validate:"omitempty"`
-	CoID *uuid.UUID `validate:"omitempty"`
-	GaID *uuid.UUID `validate:"omitempty"`
+	ID          *uuid.UUID `validate:"omitempty"`
+	CoID        *uuid.UUID `validate:"omitempty"`
+	AttributeID *uuid.UUID `validate:"omitempty"`
 }
 
 // Validate checks the data in the model is considered clean.
@@ -23,8 +23,8 @@ func (qf *QueryFilter) Validate() error {
 }
 
 // WithID sets the ID field of the QueryFilter value.
-func (qf *QueryFilter) WithCoGaID(cogaID uuid.UUID) {
-	qf.ID = &cogaID
+func (qf *QueryFilter) WithCoAttributeID(coattID uuid.UUID) {
+	qf.ID = &coattID
 }
 
 // WithStudentID sets the Name field of the QueryFilter value.
@@ -33,6 +33,6 @@ func (qf *QueryFilter) WithCoID(coID uuid.UUID) {
 }
 
 // WithSubjectID sets the Name field of the QueryFilter value.
-func (qf *QueryFilter) WithGaID(gaID uuid.UUID) {
-	qf.GaID = &gaID
+func (qf *QueryFilter) WithAttributeID(attID uuid.UUID) {
+	qf.AttributeID = &attID
 }

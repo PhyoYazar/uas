@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/attributegrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/coattributegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
@@ -20,6 +21,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/attribute/attributedb"
 	"github.com/PhyoYazar/uas/business/core/co"
 	"github.com/PhyoYazar/uas/business/core/co/codb"
+	"github.com/PhyoYazar/uas/business/core/coattribute"
+	"github.com/PhyoYazar/uas/business/core/coattribute/coattributedb"
 	"github.com/PhyoYazar/uas/business/core/coga"
 	"github.com/PhyoYazar/uas/business/core/coga/cogadb"
 	"github.com/PhyoYazar/uas/business/core/ga"
@@ -143,6 +146,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/marks", mgh.Query)
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
+
+	// -------------------------------------------------------------------------
+
+	caCore := coattribute.NewCore(coattributedb.NewStore(cfg.Log, cfg.DB))
+
+	cagh := coattributegrp.New(caCore)
+
+	app.Handle(http.MethodGet, "/co_attributes", cagh.Query)
+	app.Handle(http.MethodPost, "/co_attribute", cagh.Create)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------

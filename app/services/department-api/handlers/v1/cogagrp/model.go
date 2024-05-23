@@ -18,7 +18,7 @@ type AppCoGa struct {
 	DateUpdated string `json:"dateUpdated"`
 }
 
-func toAppStudentSubject(mark coga.CoGa) AppCoGa {
+func toAppCoGa(mark coga.CoGa) AppCoGa {
 
 	return AppCoGa{
 		ID:          mark.ID.String(),
