@@ -16,6 +16,7 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vattributegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vcogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vsubjectgrp"
 	"github.com/PhyoYazar/uas/business/core/attribute"
@@ -38,6 +39,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/subject/subjectdb"
 	"github.com/PhyoYazar/uas/business/core/user"
 	"github.com/PhyoYazar/uas/business/core/user/stores/userdb"
+	"github.com/PhyoYazar/uas/business/core/vattribute"
+	"github.com/PhyoYazar/uas/business/core/vattribute/vattributedb"
 	"github.com/PhyoYazar/uas/business/core/vco"
 	"github.com/PhyoYazar/uas/business/core/vco/vcodb"
 	"github.com/PhyoYazar/uas/business/core/vsubject"
@@ -177,6 +180,14 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	vcogh := vcogrp.New(vcoCore)
 
 	app.Handle(http.MethodGet, "/co-detail/:co_id", vcogh.QueryByID)
+
+	// -------------------------------------------------------------------------
+
+	vattCore := vattribute.NewCore(vattributedb.NewStore(cfg.Log, cfg.DB))
+
+	vattgh := vattributegrp.New(vattCore)
+
+	app.Handle(http.MethodGet, "/attributes-detail/:subject_id", vattgh.Query)
 
 	return app
 }
