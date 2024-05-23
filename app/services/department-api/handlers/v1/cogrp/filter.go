@@ -2,6 +2,7 @@ package cogrp
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/PhyoYazar/uas/business/core/co"
 	"github.com/PhyoYazar/uas/business/sys/validate"
@@ -23,6 +24,14 @@ func parseFilter(r *http.Request) (co.QueryFilter, error) {
 
 	if name := values.Get("name"); name != "" {
 		filter.WithName(name)
+	}
+
+	if instance := values.Get("instance"); instance != "" {
+		inst, err := strconv.ParseInt(instance, 10, 64)
+		if err != nil {
+			return co.QueryFilter{}, validate.NewFieldsError("mark", err)
+		}
+		filter.WithInstance(int(inst))
 	}
 
 	if err := filter.Validate(); err != nil {

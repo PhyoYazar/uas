@@ -31,9 +31,9 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 func (s *Store) Create(ctx context.Context, c co.Co) error {
 	const q = `
 	INSERT INTO course_outlines
-		(co_id, name, subject_id, date_created, date_updated)
+		(co_id, name, instance, subject_id, date_created, date_updated)
 	VALUES
-		(:co_id, :name, :subject_id, :date_created, :date_updated)`
+		(:co_id, :name, :instance, :subject_id, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCo(c)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {

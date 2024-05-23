@@ -20,9 +20,14 @@ func (s *Store) applyFilter(filter co.QueryFilter, data map[string]interface{}, 
 		data["name"] = fmt.Sprintf("%%%s%%", *filter.Name)
 		wc = append(wc, "name LIKE :name")
 	}
+	if filter.Instance != nil {
+		data["instance"] = fmt.Sprintf("%%%d%%", *filter.Instance)
+		wc = append(wc, "instance = :instance")
+	}
 
 	if len(wc) > 0 {
 		buf.WriteString(" WHERE ")
 		buf.WriteString(strings.Join(wc, " AND "))
 	}
+
 }

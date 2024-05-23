@@ -14,6 +14,7 @@ type AppCo struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	SubjectID   string `json:"subjectID"`
+	Instance    int    `json:"instance"`
 	DateCreated string `json:"dateCreated"`
 	DateUpdated string `json:"dateUpdated"`
 }
@@ -24,6 +25,7 @@ func toAppCo(co co.Co) AppCo {
 		ID:          co.ID.String(),
 		Name:        co.Name,
 		SubjectID:   co.SubjectID.String(),
+		Instance:    co.Instance,
 		DateCreated: co.DateCreated.Format(time.RFC3339),
 		DateUpdated: co.DateUpdated.Format(time.RFC3339),
 	}
@@ -35,6 +37,7 @@ func toAppCo(co co.Co) AppCo {
 type AppNewCo struct {
 	Name      string `json:"name" validate:"required"`
 	SubjectID string `json:"subjectID" validate:"required"`
+	Instance  int    `json:"instance" validate:"required"`
 }
 
 func toCoreNewCo(app AppNewCo) (co.NewCo, error) {
@@ -46,6 +49,7 @@ func toCoreNewCo(app AppNewCo) (co.NewCo, error) {
 	co := co.NewCo{
 		Name:      app.Name,
 		SubjectID: subjectId,
+		Instance:  app.Instance,
 	}
 
 	return co, nil

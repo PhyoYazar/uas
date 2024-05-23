@@ -12,6 +12,7 @@ import (
 type dbCo struct {
 	ID          uuid.UUID `db:"co_id"`
 	Name        string    `db:"name"`
+	Instance    int       `db:"instance"`
 	SubjectID   uuid.UUID `db:"subject_id"` // ID of the user who created the product.
 	DateCreated time.Time `db:"date_created"`
 	DateUpdated time.Time `db:"date_updated"`
@@ -23,6 +24,7 @@ func toDBCo(c co.Co) dbCo {
 		ID:          c.ID,
 		Name:        c.Name,
 		SubjectID:   c.SubjectID,
+		Instance:    c.Instance,
 		DateCreated: c.DateCreated.UTC(),
 		DateUpdated: c.DateUpdated.UTC(),
 	}
@@ -36,6 +38,7 @@ func toCoreCo(dbCo dbCo) co.Co {
 		ID:          dbCo.ID,
 		Name:        dbCo.Name,
 		SubjectID:   dbCo.SubjectID,
+		Instance:    dbCo.Instance,
 		DateCreated: dbCo.DateCreated.In(time.Local),
 		DateUpdated: dbCo.DateUpdated.In(time.Local),
 	}

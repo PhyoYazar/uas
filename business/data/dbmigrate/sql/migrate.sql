@@ -152,5 +152,9 @@ CREATE TABLE co_attributes (
 	PRIMARY KEY (co_attribute_id),
 	UNIQUE (attribute_id, co_id),
 	FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id) ON DELETE CASCADE,
-	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE,
+	FOREIGN KEY (co_id) REFERENCES course_outlines(co_id) ON DELETE CASCADE
 );
+
+-- Version: 1.11
+-- Description: Update course_outlines table UNIQUE
+ALTER TABLE course_outlines ADD UNIQUE (subject_id, instance, name);
