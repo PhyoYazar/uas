@@ -18,6 +18,7 @@ import (
 	"github.com/PhyoYazar/uas/foundation/keystore"
 	"github.com/PhyoYazar/uas/foundation/logger"
 	"github.com/ardanlabs/conf/v3"
+	"github.com/rs/cors"
 	"go.uber.org/zap"
 )
 
@@ -177,8 +178,9 @@ func run(log *zap.SugaredLogger) error {
 	})
 
 	api := http.Server{
-		Addr:         cfg.Web.APIHost,
-		Handler:      apiMux,
+		Addr: cfg.Web.APIHost,
+		// Handler:      apiMux,
+		Handler:      cors.Default().Handler(apiMux),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 		IdleTimeout:  cfg.Web.IdleTimeout,

@@ -78,33 +78,10 @@ type APIMuxConfig struct {
 type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
 
 // APIMux constructs a http.Handler with all application routes defined.
-func APIMux(cfg APIMuxConfig, options ...func(opts *Options)) *web.App {
-	var opts Options
-	for _, option := range options {
-		option(&opts)
-	}
+func APIMux(cfg APIMuxConfig) *web.App {
 
-	var app *web.App
-
-	if opts.corsOrigin != "" {
-		app = web.NewApp(
-			cfg.Shutdown,
-			mid.Logger(cfg.Log),
-			mid.Errors(cfg.Log),
-			mid.Metrics(),
-			mid.Cors(opts.corsOrigin),
-			mid.Panics(),
-		)
-
-		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			return nil
-		}
-		app.Handle(http.MethodOptions, "/*", h, mid.Cors(opts.corsOrigin))
-	}
-
-	if app == nil {
-		app = web.NewApp(cfg.Shutdown, mid.Logger(cfg.Log), mid.Errors(cfg.Log), mid.Metrics(), mid.Cors(opts.corsOrigin), mid.Panics())
-	}
+	app := web.NewApp(cfg.Shutdown, mid.Logger(cfg.Log), mid.Errors(cfg.Log), mid.Metrics(),
+		mid.Panics())
 
 	app.Handle(http.MethodGet, "/test", testgrp.Test)
 	app.Handle(http.MethodGet, "/test/auth", testgrp.Test, mid.Authenticate(cfg.Auth), mid.Authorize(cfg.Auth, auth.RuleAdminOnly))
