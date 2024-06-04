@@ -158,3 +158,7 @@ CREATE TABLE co_attributes (
 -- Version: 1.11
 -- Description: Update course_outlines table UNIQUE
 ALTER TABLE course_outlines ADD UNIQUE (subject_id, instance, name);
+
+-- Version: 1.12
+-- Description: Add auto increment column in graduate attributes table
+ALTER TABLE graduate_attributes ADD COLUMN incrementing_column SERIAL;

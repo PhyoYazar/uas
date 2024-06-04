@@ -10,9 +10,10 @@ import (
 )
 
 var orderByFields = map[string]struct{}{
-	ga.OrderByID:   {},
-	ga.OrderByName: {},
-	ga.OrderBySlug: {},
+	ga.OrderByID:                 {},
+	ga.OrderByName:               {},
+	ga.OrderBySlug:               {},
+	ga.OrderByIncrementingColumn: {},
 }
 
 func parseOrder(r *http.Request) (order.By, error) {

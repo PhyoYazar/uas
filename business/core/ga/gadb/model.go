@@ -10,11 +10,12 @@ import (
 // dbSubject represent the structure we need for moving data
 // between the app and the database.
 type dbGa struct {
-	ID          uuid.UUID `db:"ga_id"`
-	Name        string    `db:"name"`
-	Slug        string    `db:"slug"`
-	DateCreated time.Time `db:"date_created"`
-	DateUpdated time.Time `db:"date_updated"`
+	ID                 uuid.UUID `db:"ga_id"`
+	Name               string    `db:"name"`
+	Slug               string    `db:"slug"`
+	IncrementingColumn int       `db:"incrementing_column"`
+	DateCreated        time.Time `db:"date_created"`
+	DateUpdated        time.Time `db:"date_updated"`
 }
 
 func toDBGa(g ga.Ga) dbGa {

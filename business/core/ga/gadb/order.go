@@ -8,9 +8,10 @@ import (
 )
 
 var orderByFields = map[string]string{
-	ga.OrderByID:   "ga_id",
-	ga.OrderByName: "name",
-	ga.OrderBySlug: "slug",
+	ga.OrderByID:                 "ga_id",
+	ga.OrderByName:               "name",
+	ga.OrderBySlug:               "slug",
+	ga.OrderByIncrementingColumn: "incrementing_column",
 }
 
 func orderByClause(orderBy order.By) (string, error) {
