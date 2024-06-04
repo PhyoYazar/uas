@@ -11,9 +11,10 @@ type VGa struct {
 }
 
 type VCo struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-	Ga   []VGa     `json:"ga"`
+	ID       uuid.UUID `json:"id"`
+	Instance int       `json:"instance"`
+	Name     string    `json:"name"`
+	Ga       []VGa     `json:"ga"`
 }
 
 type VSubject struct {

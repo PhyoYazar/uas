@@ -39,7 +39,7 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 
 	const q = `
 	SELECT
-		s.subject_id, s.name, s.code, s.academic_year, s.instructor, s.semester, co.co_id, co.name, ga.ga_id, ga.name, ga.slug
+		s.subject_id, s.name, s.code, s.academic_year, s.instructor, s.semester, co.co_id, co.instance, co.name, ga.ga_id, ga.name, ga.slug
 	FROM
 		subjects s
 	LEFT JOIN
@@ -119,8 +119,9 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 	for rows.Next() {
 		var subjectID, coID, gaID uuid.UUID
 		var subjectName, subjectCode, academicYear, instructor, semester, coName, gaName, gaSlug sql.NullString
+		var coInstance sql.NullInt64
 
-		err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coName, &gaID, &gaName, &gaSlug)
+		err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coInstance, &coName, &gaID, &gaName, &gaSlug)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -141,9 +142,10 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 		// Initialize course outline if it doesn't exist in the map
 		if _, exists := coMap[coID]; !exists {
 			coMap[coID] = &vsubject.VCo{
-				ID:   coID,
-				Name: coName.String,
-				Ga:   []vsubject.VGa{},
+				ID:       coID,
+				Instance: int(coInstance.Int64),
+				Name:     coName.String,
+				Ga:       []vsubject.VGa{},
 			}
 			subject.Co = append(subject.Co, *coMap[coID])
 		}
