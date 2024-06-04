@@ -36,15 +36,15 @@ func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return v1.NewRequestError(err, http.StatusBadRequest)
 	}
 
-	sub, err := h.co.Create(ctx, nc)
+	c, err := h.co.Create(ctx, nc)
 	if err != nil {
 		if errors.Is(err, co.ErrUniqueCo) {
 			return v1.NewRequestError(err, http.StatusConflict)
 		}
-		return fmt.Errorf("create: sub[%+v]: %w", sub, err)
+		return fmt.Errorf("create: c[%+v]: %w", c, err)
 	}
 
-	return web.Respond(ctx, w, toAppCo(sub), http.StatusCreated)
+	return web.Respond(ctx, w, toAppCo(c), http.StatusCreated)
 }
 
 // Query returns a list of cos with paging.

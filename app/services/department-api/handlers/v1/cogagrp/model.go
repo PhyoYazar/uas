@@ -69,3 +69,11 @@ func (app AppNewCoGa) Validate() error {
 }
 
 // =============================================================================
+
+// create Co and then connect created co with ga
+type AppConnectCoGa struct {
+	SubjectID  uuid.UUID   `json:"subjectID" validate:"required"`
+	CoName     string      `json:"coName" validate:"required"`
+	CoInstance int         `json:"coInstance" validate:"required"`
+	GaID       []uuid.UUID `json:"gaIDs" validate:"required"`
+}

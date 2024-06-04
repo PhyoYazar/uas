@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/PhyoYazar/uas/business/core/co"
 	"github.com/PhyoYazar/uas/business/core/coga"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
@@ -15,12 +16,14 @@ import (
 // Handlers manages the set of ga endpoints.
 type Handlers struct {
 	coga *coga.Core
+	co   *co.Core
 }
 
 // New constructs a handlers for route access.
-func New(coga *coga.Core) *Handlers {
+func New(coga *coga.Core, co *co.Core) *Handlers {
 	return &Handlers{
 		coga: coga,
+		co:   co,
 	}
 }
 
@@ -81,4 +84,39 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	return web.Respond(ctx, w, paging.NewResponse(items, total, page.Number, page.RowsPerPage), http.StatusOK)
+}
+
+func (h *Handlers) ConnectCoWithGa(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	var app AppConnectCoGa
+
+	if err := web.Decode(r, &app); err != nil {
+		return err
+	}
+
+	c, err := h.co.Create(ctx, co.NewCo{
+		Name:      app.CoName,
+		SubjectID: app.SubjectID,
+		Instance:  app.CoInstance,
+	})
+	if err != nil {
+		if errors.Is(err, co.ErrUniqueCo) {
+			return v1.NewRequestError(err, http.StatusConflict)
+		}
+		return fmt.Errorf("create: co[%+v]: %w", c, err)
+	}
+
+	for _, gaID := range app.GaID {
+		cg, err := h.coga.Create(ctx, coga.NewCoGa{
+			CoID: c.ID,
+			GaID: gaID,
+		})
+		if err != nil {
+			if errors.Is(err, coga.ErrUniqueCoGa) {
+				return v1.NewRequestError(err, http.StatusConflict)
+			}
+			return fmt.Errorf("create: coga[%+v]: %w", cg, err)
+		}
+	}
+
+	return nil
 }

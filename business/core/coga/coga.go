@@ -24,6 +24,8 @@ type Storer interface {
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]CoGa, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	// ConnectCoWithGa(ctx context.Context, ccg ConnectCoGa) error
 }
 
 // Core manages the set of APIs for user access.

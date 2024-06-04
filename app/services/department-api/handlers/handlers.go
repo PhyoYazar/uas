@@ -87,6 +87,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodGet, "/test/auth", testgrp.Test, mid.Authenticate(cfg.Auth), mid.Authorize(cfg.Auth, auth.RuleAdminOnly))
 
 	// -------------------------------------------------------------------------
+	// user
 
 	usrCore := user.NewCore(userdb.NewStore(cfg.Log, cfg.DB))
 
@@ -95,6 +96,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodGet, "/users", ugh.Query)
 
 	// -------------------------------------------------------------------------
+	// subject
 
 	subCore := subject.NewCore(subjectdb.NewStore(cfg.Log, cfg.DB))
 
@@ -105,6 +107,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodGet, "/subjects/:subject_id", subgh.QueryByID)
 
 	// -------------------------------------------------------------------------
+	// student
 
 	stdCore := student.NewCore(studentdb.NewStore(cfg.Log, cfg.DB))
 
@@ -114,6 +117,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/student", stdgh.Create)
 
 	// -------------------------------------------------------------------------
+	// co -> course outlines
 
 	coCore := co.NewCore(codb.NewStore(cfg.Log, cfg.DB))
 
@@ -123,6 +127,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/co", cogh.Create)
 
 	// -------------------------------------------------------------------------
+	// ga -> graduate attributes
 
 	gaCore := ga.NewCore(gadb.NewStore(cfg.Log, cfg.DB))
 
@@ -132,6 +137,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/ga", gagh.Create)
 
 	// -------------------------------------------------------------------------
+	// attributes
 
 	attributeCore := attribute.NewCore(attributedb.NewStore(cfg.Log, cfg.DB))
 
@@ -141,6 +147,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/attribute", attributegh.Create)
 
 	// -------------------------------------------------------------------------
+	// student subject
 
 	ssCore := studentsubject.NewCore(studentsubjectdb.NewStore(cfg.Log, cfg.DB))
 
@@ -150,15 +157,18 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/student_subject", ssgh.Create)
 
 	// -------------------------------------------------------------------------
+	// co ga
 
 	cgCore := coga.NewCore(cogadb.NewStore(cfg.Log, cfg.DB))
 
-	cggh := cogagrp.New(cgCore)
+	cggh := cogagrp.New(cgCore, coCore)
 
 	app.Handle(http.MethodGet, "/co_gas", cggh.Query)
 	app.Handle(http.MethodPost, "/co_ga", cggh.Create)
+	app.Handle(http.MethodPost, "/connect_co_gas", cggh.ConnectCoWithGa)
 
 	// -------------------------------------------------------------------------
+	// mark
 
 	mCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
 
@@ -168,6 +178,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
 
 	// -------------------------------------------------------------------------
+	// co attributes
 
 	caCore := coattribute.NewCore(coattributedb.NewStore(cfg.Log, cfg.DB))
 
