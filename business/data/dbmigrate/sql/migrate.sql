@@ -162,3 +162,7 @@ ALTER TABLE course_outlines ADD UNIQUE (subject_id, instance, name);
 -- Version: 1.12
 -- Description: Add auto increment column in graduate attributes table
 ALTER TABLE graduate_attributes ADD COLUMN incrementing_column SERIAL;
+
+-- Version: 1.13
+-- Description: Add unique (subject_id & instance) to the course outlines table
+ALTER TABLE course_outlines ADD CONSTRAINT subject_id_instance_key UNIQUE (subject_id, instance);
