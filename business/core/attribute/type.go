@@ -4,14 +4,14 @@ import "errors"
 
 // Set of possible types for a mark.
 var (
-	TypeExam      = Type{"EXAM"}
-	TypePractical = Type{"PRACTICAL"}
+	TypeExam       = Type{"EXAM"}
+	TypeCourseWork = Type{"COURSEWORK"}
 )
 
 // Set of known types.
 var types = map[string]Type{
-	TypeExam.name:      TypeExam,
-	TypePractical.name: TypePractical,
+	TypeExam.name:       TypeExam,
+	TypeCourseWork.name: TypeCourseWork,
 }
 
 // Type represents a type of mark in the system.
