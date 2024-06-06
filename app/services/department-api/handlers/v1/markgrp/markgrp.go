@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/PhyoYazar/uas/business/core/coattribute"
 	"github.com/PhyoYazar/uas/business/core/mark"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
@@ -14,13 +15,15 @@ import (
 
 // Handlers manages the set of ga endpoints.
 type Handlers struct {
-	mark *mark.Core
+	mark        *mark.Core
+	coAttribute *coattribute.Core
 }
 
 // New constructs a handlers for route access.
-func New(mark *mark.Core) *Handlers {
+func New(mark *mark.Core, coAttribute *coattribute.Core) *Handlers {
 	return &Handlers{
-		mark: mark,
+		mark:        mark,
+		coAttribute: coAttribute,
 	}
 }
 
@@ -81,4 +84,42 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	return web.Respond(ctx, w, paging.NewResponse(items, total, page.Number, page.RowsPerPage), http.StatusOK)
+}
+
+func (h *Handlers) CreateMarkByConnectingCOGA(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	var App MarkByConnectingCOGA
+
+	if err := web.Decode(r, &App); err != nil {
+		return err
+	}
+
+	// 1. create Co-Attribute
+	for _, coId := range App.CoIDs {
+		cg, err := h.coAttribute.Create(ctx, coattribute.NewCoAttribute{CoID: coId, AttributeID: App.AttributeID})
+		if err != nil {
+			if errors.Is(err, coattribute.ErrUniqueCoAttribute) {
+				return v1.NewRequestError(err, http.StatusConflict)
+			}
+			return fmt.Errorf("create: coattribute[%+v]: %w", cg, err)
+		}
+	}
+
+	// 2. create Mark
+	for _, ga := range App.Gas {
+		m, err := h.mark.Create(ctx, mark.NewMark{
+			SubjectID:   App.SubjectID,
+			AttributeID: App.AttributeID,
+			GaID:        ga.GaId,
+			Mark:        ga.Mark,
+		})
+		if err != nil {
+			if errors.Is(err, mark.ErrUniqueMark) {
+				return v1.NewRequestError(err, http.StatusConflict)
+			}
+			return fmt.Errorf("create: mark[%+v]: %w", m, err)
+		}
+
+	}
+
+	return nil
 }

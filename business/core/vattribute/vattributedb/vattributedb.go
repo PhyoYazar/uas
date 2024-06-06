@@ -124,29 +124,39 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 				Ga:          []vattribute.VGa{},
 			}
 			attributesMap[attributeID] = attribute
+		}
 
-			// Append Co if not NULL
-			if coID.Valid && coName.Valid && coInstance.Valid {
-				co := vattribute.VCo{
-					ID:       uuid.MustParse(coID.String),
-					Name:     coName.String,
-					Instance: int(coInstance.Int64),
-				}
+		// Append Co if not NULL
+		if coID.Valid && coName.Valid && coInstance.Valid {
+			co := vattribute.VCo{
+				ID:       uuid.MustParse(coID.String),
+				Name:     coName.String,
+				Instance: int(coInstance.Int64),
+			}
+
+			if coIsExist := existInSlice(attribute.Co, co); !coIsExist {
 				attribute.Co = append(attribute.Co, co)
 			}
+		}
 
-			// Append Ga if not NULL
-			if gaID.Valid && gaName.Valid && gaSlug.Valid {
-				ga := vattribute.VGa{
-					ID:   uuid.MustParse(gaID.String),
-					Name: gaName.String,
-					Slug: gaSlug.String,
-				}
-				attribute.Ga = append(attribute.Ga, ga)
+		// Append Ga if not NULL
+		if gaID.Valid && gaName.Valid && gaSlug.Valid {
+			ga := vattribute.VGa{
+				ID:   uuid.MustParse(gaID.String),
+				Name: gaName.String,
+				Slug: gaSlug.String,
 			}
 
-			result = append(result, attribute)
+			attribute.Ga = append(attribute.Ga, ga)
 		}
+
+		attributesMap[attributeID] = attribute
+
+		// result = append(result, attributesMap[attributeID])
+	}
+
+	for _, value := range attributesMap {
+		result = append(result, value)
 	}
 
 	if err := rows.Err(); err != nil {

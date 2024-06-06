@@ -168,16 +168,6 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/connect_co_gas", cggh.ConnectCoWithGa)
 
 	// -------------------------------------------------------------------------
-	// mark
-
-	mCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
-
-	mgh := markgrp.New(mCore)
-
-	app.Handle(http.MethodGet, "/marks", mgh.Query)
-	app.Handle(http.MethodPost, "/mark", mgh.Create)
-
-	// -------------------------------------------------------------------------
 	// co attributes
 
 	caCore := coattribute.NewCore(coattributedb.NewStore(cfg.Log, cfg.DB))
@@ -186,6 +176,17 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/co_attributes", cagh.Query)
 	app.Handle(http.MethodPost, "/co_attribute", cagh.Create)
+
+	// -------------------------------------------------------------------------
+	// mark
+
+	mCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
+
+	mgh := markgrp.New(mCore, caCore)
+
+	app.Handle(http.MethodGet, "/marks", mgh.Query)
+	app.Handle(http.MethodPost, "/mark", mgh.Create)
+	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------
