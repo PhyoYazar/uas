@@ -197,7 +197,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	vsubgh := vsubjectgrp.New(vsubCore)
 
-	app.Handle(http.MethodGet, "/subject-detail/:subject_id", vsubgh.QueryByID)
+	app.Handle(http.MethodGet, "/subject_detail/:subject_id", vsubgh.QueryByID)
 
 	// -------------------------------------------------------------------------
 
@@ -205,7 +205,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	vcogh := vcogrp.New(vcoCore)
 
-	app.Handle(http.MethodGet, "/co-detail/:co_id", vcogh.QueryByID)
+	app.Handle(http.MethodGet, "/co_detail/:co_id", vcogh.QueryByID)
 
 	// -------------------------------------------------------------------------
 
@@ -213,7 +213,8 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	vattgh := vattributegrp.New(vattCore)
 
-	app.Handle(http.MethodGet, "/attributes-detail/:subject_id", vattgh.Query)
+	app.Handle(http.MethodGet, "/attributes_detail/:subject_id", vattgh.Query)
+	app.Handle(http.MethodGet, "/attributes_ga_mark/:subject_id", vattgh.QueryAttributeWithGaMark)
 
 	return app
 }

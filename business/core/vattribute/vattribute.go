@@ -12,6 +12,8 @@ import (
 type Storer interface {
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttribute, error)
 
+	QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttributeWithGaMark, error)
+
 	// Count(ctx context.Context, filter QueryFilter) (int, error)
 }
 
@@ -33,6 +35,20 @@ var (
 // Query retrieves a list of existing subjects from the database.
 func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttribute, error) {
 	atts, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage, subjectID)
+	if err != nil {
+
+		fmt.Printf("=============: %v", atts)
+		fmt.Printf("=============: %v", err)
+
+		return nil, fmt.Errorf("query: %w", err)
+	}
+
+	return atts, nil
+}
+
+// Query retrieves a list of existing subjects from the database.
+func (c *Core) QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttributeWithGaMark, error) {
+	atts, err := c.storer.QueryAttributeWithGaMark(ctx, filter, orderBy, pageNumber, rowsPerPage, subjectID)
 	if err != nil {
 
 		fmt.Printf("=============: %v", atts)

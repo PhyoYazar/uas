@@ -29,6 +29,111 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 	}
 }
 
+func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]vattribute.VAttributeWithGaMark, error) {
+	data := struct {
+		ID string `db:"subject_id"`
+	}{
+		ID: subjectID.String(),
+	}
+
+	// pdata := map[string]interface{}{
+	// 	"offset":        (pageNumber - 1) * rowsPerPage,
+	// 	"rows_per_page": rowsPerPage,
+	// }
+
+	const q = `
+		SELECT
+			a.attribute_id,
+         a.name,
+         a.instance,
+         a.type,
+         m.mark_id,
+         m.ga_id,
+         m.mark
+		FROM
+			attributes a
+		LEFT JOIN
+	 		marks m ON m.attribute_id = a.attribute_id
+		WHERE
+			m.subject_id = :subject_id`
+
+	buf := bytes.NewBufferString(q)
+	// s.applyFilter(filter, pdata, buf)
+
+	orderByClause, err := orderByClause(orderBy)
+	if err != nil {
+		return nil, err
+	}
+
+	buf.WriteString(orderByClause)
+	// buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
+
+	rows, err := database.NamedQueryRows(ctx, s.log, s.db, buf.String(), data)
+	if err != nil {
+		return nil, fmt.Errorf("namedqueryrows: %w", err)
+	}
+
+	var attributesMap = make(map[uuid.UUID]vattribute.VAttributeWithGaMark)
+	var result []vattribute.VAttributeWithGaMark
+
+	for rows.Next() {
+		var (
+			attributeID       uuid.UUID
+			attributeName     string
+			attributeInstance int
+			attributeType     string
+			markID            sql.NullString
+			gaID              sql.NullString
+			mark              sql.NullInt64
+			// coID              sql.NullString
+			// coName            sql.NullString
+			// coInstance        sql.NullInt64
+		)
+
+		err := rows.Scan(
+			&attributeID, &attributeName, &attributeInstance, &attributeType,
+			&markID, &gaID, &mark,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		attribute, ok := attributesMap[attributeID]
+		if !ok {
+			attribute = vattribute.VAttributeWithGaMark{
+				ID:       attributeID,
+				Name:     attributeName,
+				Instance: attributeInstance,
+				Type:     attributeType,
+				Marks:    []vattribute.VMark{},
+			}
+			attributesMap[attributeID] = attribute
+		}
+
+		if markID.Valid && gaID.Valid && mark.Valid {
+			mark := vattribute.VMark{
+				ID:   uuid.MustParse(markID.String),
+				Mark: int(mark.Int64),
+				GaID: uuid.MustParse(gaID.String),
+			}
+
+			attribute.Marks = append(attribute.Marks, mark)
+		}
+
+		attributesMap[attributeID] = attribute
+	}
+
+	for _, value := range attributesMap {
+		result = append(result, value)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 // Query retrieves a list of existing subjects from the database.
 func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]vattribute.VAttribute, error) {
 	data := struct {
@@ -164,7 +269,6 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 	}
 
 	return result, nil
-
 }
 
 // // QueryByID gets the specified subject from the database.
