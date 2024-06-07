@@ -214,7 +214,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	vattgh := vattributegrp.New(vattCore)
 
 	app.Handle(http.MethodGet, "/attributes_detail/:subject_id", vattgh.Query)
-	app.Handle(http.MethodGet, "/attributes_ga_mark/:subject_id", vattgh.QueryAttributeWithGaMark)
+	app.Handle(http.MethodGet, "/attributes_ga_mark", vattgh.QueryAttributeWithGaMark)
 
 	return app
 }

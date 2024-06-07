@@ -166,3 +166,8 @@ ALTER TABLE graduate_attributes ADD COLUMN incrementing_column SERIAL;
 -- Version: 1.13
 -- Description: Add unique (subject_id & instance) to the course outlines table
 ALTER TABLE course_outlines ADD CONSTRAINT subject_id_instance_key UNIQUE (subject_id, instance);
+
+-- Version: 1.14
+-- Description: Add unique (subject_id & attribute_id) to the marks table
+ALTER TABLE marks DROP CONSTRAINT marks_attribute_id_subject_id_ga_id_key;
+ALTER TABLE marks ADD CONSTRAINT marks_attribute_id_subject_id_key UNIQUE (attribute_id, subject_id);

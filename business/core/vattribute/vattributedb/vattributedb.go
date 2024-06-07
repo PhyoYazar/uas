@@ -29,17 +29,12 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 	}
 }
 
-func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]vattribute.VAttributeWithGaMark, error) {
-	data := struct {
-		ID string `db:"subject_id"`
-	}{
-		ID: subjectID.String(),
-	}
+func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]vattribute.VAttributeWithGaMark, error) {
 
-	// pdata := map[string]interface{}{
-	// 	"offset":        (pageNumber - 1) * rowsPerPage,
-	// 	"rows_per_page": rowsPerPage,
-	// }
+	data := map[string]interface{}{
+		"offset":        (pageNumber - 1) * rowsPerPage,
+		"rows_per_page": rowsPerPage,
+	}
 
 	const q = `
 		SELECT
@@ -63,12 +58,10 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 		LEFT JOIN
 			co_attributes ca ON ca.attribute_id = a.attribute_id
 		LEFT JOIN
-			course_outlines co ON co.co_id = ca.co_id
-		WHERE
-			m.subject_id = :subject_id`
+			course_outlines co ON co.co_id = ca.co_id`
 
 	buf := bytes.NewBufferString(q)
-	// s.applyFilter(filter, pdata, buf)
+	s.applyFilter(filter, data, buf)
 
 	orderByClause, err := orderByClause(orderBy)
 	if err != nil {
@@ -76,7 +69,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 	}
 
 	buf.WriteString(orderByClause)
-	// buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
+	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
 	rows, err := database.NamedQueryRows(ctx, s.log, s.db, buf.String(), data)
 	if err != nil {

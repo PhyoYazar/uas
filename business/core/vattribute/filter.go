@@ -11,6 +11,7 @@ import (
 // QueryFilter holds the available fields a query can be filtered on.
 type QueryFilter struct {
 	ID       *uuid.UUID      `validate:"omitempty"`
+	SubID    *uuid.UUID      `validate:"omitempty"`
 	Name     *string         `validate:"omitempty,min=3"`
 	Type     *attribute.Type `validate:"omitempty"`
 	Instance *int            `validate:"omitempty"`
@@ -26,6 +27,10 @@ func (qf *QueryFilter) Validate() error {
 
 func (qf *QueryFilter) WithAttributeID(attID uuid.UUID) {
 	qf.ID = &attID
+}
+
+func (qf *QueryFilter) WithSubjectID(subID uuid.UUID) {
+	qf.SubID = &subID
 }
 
 // WithName sets the Name field of the QueryFilter value.

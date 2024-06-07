@@ -16,9 +16,19 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 		wc = append(wc, "attribute_id = :attribute_id")
 	}
 
+	if filter.SubID != nil {
+		data["subject_id"] = *filter.SubID
+		wc = append(wc, "m.subject_id = :subject_id") //! Careful comparison
+	}
+
 	if filter.Name != nil {
 		data["name"] = fmt.Sprintf("%%%s%%", *filter.Name)
 		wc = append(wc, "name LIKE :name")
+	}
+
+	if filter.Type != nil {
+		data["type"] = filter.Type.Name()
+		wc = append(wc, "type = :type")
 	}
 
 	if len(wc) > 0 {

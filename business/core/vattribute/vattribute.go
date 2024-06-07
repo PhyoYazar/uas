@@ -12,7 +12,7 @@ import (
 type Storer interface {
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttribute, error)
 
-	QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttributeWithGaMark, error)
+	QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VAttributeWithGaMark, error)
 
 	// Count(ctx context.Context, filter QueryFilter) (int, error)
 }
@@ -47,8 +47,8 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 }
 
 // Query retrieves a list of existing subjects from the database.
-func (c *Core) QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttributeWithGaMark, error) {
-	atts, err := c.storer.QueryAttributeWithGaMark(ctx, filter, orderBy, pageNumber, rowsPerPage, subjectID)
+func (c *Core) QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VAttributeWithGaMark, error) {
+	atts, err := c.storer.QueryAttributeWithGaMark(ctx, filter, orderBy, pageNumber, rowsPerPage)
 	if err != nil {
 
 		fmt.Printf("=============: %v", atts)
