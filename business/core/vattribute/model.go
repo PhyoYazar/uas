@@ -37,9 +37,10 @@ type VAttribute struct {
 //================================================================
 
 type VMark struct {
-	ID   uuid.UUID `json:"id"`
-	Mark int       `json:"mark"`
-	GaID uuid.UUID `json:"gaID"`
+	ID     uuid.UUID `json:"id"`
+	Mark   int       `json:"mark"`
+	GaID   uuid.UUID `json:"gaID"`
+	GaSlug string    `json:"gaSlug"`
 }
 
 // Implement the GetID method for VMark

@@ -50,6 +50,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
          m.mark_id,
          m.ga_id,
          m.mark,
+			ga.slug ga_slug,
 			co.co_id,
 			co.name co_name,
 			co.instance
@@ -57,6 +58,8 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			attributes a
 		LEFT JOIN
 	 		marks m ON m.attribute_id = a.attribute_id
+		LEFT JOIN
+			graduate_attributes ga ON ga.ga_id = m.ga_id
 		LEFT JOIN
 			co_attributes ca ON ca.attribute_id = a.attribute_id
 		LEFT JOIN
@@ -92,6 +95,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			markID            sql.NullString
 			gaID              sql.NullString
 			mark              sql.NullInt64
+			gaSlug            sql.NullString
 			coID              sql.NullString
 			coName            sql.NullString
 			coInstance        sql.NullInt64
@@ -99,7 +103,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 
 		err := rows.Scan(
 			&attributeID, &attributeName, &attributeInstance, &attributeType,
-			&markID, &gaID, &mark,
+			&markID, &gaID, &mark, &gaSlug,
 			&coID, &coName, &coInstance,
 		)
 		if err != nil {
@@ -132,11 +136,12 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 		}
 
 		// Append Mark if not NULL
-		if markID.Valid && gaID.Valid && mark.Valid {
+		if markID.Valid && gaID.Valid && mark.Valid && gaSlug.Valid {
 			mark := vattribute.VMark{
-				ID:   uuid.MustParse(markID.String),
-				Mark: int(mark.Int64),
-				GaID: uuid.MustParse(gaID.String),
+				ID:     uuid.MustParse(markID.String),
+				Mark:   int(mark.Int64),
+				GaID:   uuid.MustParse(gaID.String),
+				GaSlug: gaSlug.String,
 			}
 
 			if markIsExist := existInSlice(attribute.Marks, mark); !markIsExist {
