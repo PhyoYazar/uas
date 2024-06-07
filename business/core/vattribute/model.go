@@ -18,6 +18,11 @@ type VCo struct {
 	Instance int       `json:"instance"`
 }
 
+// Implement the GetID method for VCo
+func (co VCo) GetID() interface{} {
+	return co.ID
+}
+
 type VAttribute struct {
 	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name"`
@@ -37,11 +42,16 @@ type VMark struct {
 	GaID uuid.UUID `json:"gaID"`
 }
 
+// Implement the GetID method for VMark
+func (mark VMark) GetID() interface{} {
+	return mark.ID
+}
+
 type VAttributeWithGaMark struct {
 	ID       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
 	Instance int       `json:"instance"`
 	Type     string    `json:"type"`
 	Marks    []VMark   `json:"marks"`
-	// Co       []VCo     `json:"co"`
+	Co       []VCo     `json:"co"`
 }

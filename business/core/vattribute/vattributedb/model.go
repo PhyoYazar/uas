@@ -1,12 +1,15 @@
 package vattributedb
 
-import (
-	"github.com/PhyoYazar/uas/business/core/vattribute"
-)
+// Define an interface that requires a GetID method
+type HasID interface {
+	GetID() interface{}
+}
 
-func existInSlice(structs []vattribute.VCo, newStruct vattribute.VCo) bool {
-	for _, existingStruct := range structs {
-		if existingStruct.ID == newStruct.ID {
+func existInSlice[T HasID](existingItems []T, compareItem T) bool {
+	compareItemID := compareItem.GetID()
+
+	for _, item := range existingItems {
+		if item.GetID() == compareItemID {
 			return true
 		}
 	}

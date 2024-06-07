@@ -49,11 +49,18 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
          a.type,
          m.mark_id,
          m.ga_id,
-         m.mark
+         m.mark,
+			co.co_id,
+			co.name co_name,
+			co.instance
 		FROM
 			attributes a
 		LEFT JOIN
 	 		marks m ON m.attribute_id = a.attribute_id
+		LEFT JOIN
+			co_attributes ca ON ca.attribute_id = a.attribute_id
+		LEFT JOIN
+			course_outlines co ON co.co_id = ca.co_id
 		WHERE
 			m.subject_id = :subject_id`
 
@@ -85,14 +92,15 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			markID            sql.NullString
 			gaID              sql.NullString
 			mark              sql.NullInt64
-			// coID              sql.NullString
-			// coName            sql.NullString
-			// coInstance        sql.NullInt64
+			coID              sql.NullString
+			coName            sql.NullString
+			coInstance        sql.NullInt64
 		)
 
 		err := rows.Scan(
 			&attributeID, &attributeName, &attributeInstance, &attributeType,
 			&markID, &gaID, &mark,
+			&coID, &coName, &coInstance,
 		)
 		if err != nil {
 			return nil, err
@@ -110,6 +118,20 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			attributesMap[attributeID] = attribute
 		}
 
+		// Append Co if not NULL
+		if coID.Valid && coName.Valid && coInstance.Valid {
+			co := vattribute.VCo{
+				ID:       uuid.MustParse(coID.String),
+				Name:     coName.String,
+				Instance: int(coInstance.Int64),
+			}
+
+			if coIsExist := existInSlice(attribute.Co, co); !coIsExist {
+				attribute.Co = append(attribute.Co, co)
+			}
+		}
+
+		// Append Mark if not NULL
 		if markID.Valid && gaID.Valid && mark.Valid {
 			mark := vattribute.VMark{
 				ID:   uuid.MustParse(markID.String),
@@ -117,7 +139,9 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 				GaID: uuid.MustParse(gaID.String),
 			}
 
-			attribute.Marks = append(attribute.Marks, mark)
+			if markIsExist := existInSlice(attribute.Marks, mark); !markIsExist {
+				attribute.Marks = append(attribute.Marks, mark)
+			}
 		}
 
 		attributesMap[attributeID] = attribute
