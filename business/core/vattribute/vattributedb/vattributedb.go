@@ -48,7 +48,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			ga.slug ga_slug,
 			co.co_id,
 			co.name co_name,
-			co.instance
+			co.instance co_instance
 		FROM
 			attributes a
 		LEFT JOIN
@@ -93,7 +93,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			gaSlug            sql.NullString
 			coID              sql.NullString
 			coName            sql.NullString
-			coInstance        sql.NullInt64
+			coInstance        int
 		)
 
 		err := rows.Scan(
@@ -118,11 +118,11 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 		}
 
 		// Append Co if not NULL
-		if coID.Valid && coName.Valid && coInstance.Valid {
+		if coID.Valid && coName.Valid {
 			co := vattribute.VCo{
 				ID:       uuid.MustParse(coID.String),
 				Name:     coName.String,
-				Instance: int(coInstance.Int64),
+				Instance: coInstance,
 			}
 
 			if coIsExist := existInSlice(attribute.Co, co); !coIsExist {
