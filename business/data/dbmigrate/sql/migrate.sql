@@ -171,3 +171,8 @@ ALTER TABLE course_outlines ADD CONSTRAINT subject_id_instance_key UNIQUE (subje
 -- Description: Add unique (subject_id & attribute_id) to the marks table
 ALTER TABLE marks DROP CONSTRAINT marks_attribute_id_subject_id_ga_id_key;
 ALTER TABLE marks ADD CONSTRAINT marks_attribute_id_subject_id_key UNIQUE (attribute_id, subject_id);
+
+-- Version: 1.15
+-- Description: roll back version 1.14 to original (attribute_id & subject_id & ga_id) to the marks table
+ALTER TABLE marks DROP CONSTRAINT marks_attribute_id_subject_id_key;
+ALTER TABLE marks ADD CONSTRAINT marks_attribute_id_subject_id_ga_id_key UNIQUE (attribute_id, subject_id, ga_id);

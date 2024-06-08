@@ -18,7 +18,7 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 
 	if filter.SubID != nil {
 		data["subject_id"] = *filter.SubID
-		wc = append(wc, "m.subject_id = :subject_id") //! Careful comparison
+		wc = append(wc, "m.subject_id = :subject_id AND co.subject_id = :subject_id") //! Careful comparison
 	}
 
 	if filter.Name != nil {

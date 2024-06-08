@@ -56,9 +56,11 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 		LEFT JOIN
 			graduate_attributes ga ON ga.ga_id = m.ga_id
 		LEFT JOIN
+			co_ga cg ON cg.ga_id = ga.ga_id
+		LEFT JOIN
 			co_attributes ca ON ca.attribute_id = a.attribute_id
 		LEFT JOIN
-			course_outlines co ON co.co_id = ca.co_id`
+			course_outlines co ON co.co_id = ca.co_id AND co.co_id = cg.co_id`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
