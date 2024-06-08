@@ -36,10 +36,10 @@ type NewSubject struct {
 type UpdateSubject struct {
 	Name         *string
 	Code         *string
-	Year         *Year
+	Year         Year
 	AcademicYear *string
 	Instructor   *string
-	Semester     *Semester
+	Semester     Semester
 	Exam         *int
 	Practical    *int
 }

@@ -79,14 +79,14 @@ func (c *Core) Update(ctx context.Context, sub Subject, uSub UpdateSubject) (Sub
 	if uSub.AcademicYear != nil {
 		sub.AcademicYear = *uSub.AcademicYear
 	}
-	if uSub.Year != nil {
-		sub.Year = *uSub.Year
+	if uSub.Year != (Year{}) {
+		sub.Year = uSub.Year
 	}
 	if uSub.Instructor != nil {
 		sub.Instructor = *uSub.Instructor
 	}
-	if uSub.Semester != nil {
-		sub.Semester = *uSub.Semester
+	if uSub.Semester != (Semester{}) {
+		sub.Semester = uSub.Semester
 	}
 	if uSub.Exam != nil {
 		sub.Exam = *uSub.Exam

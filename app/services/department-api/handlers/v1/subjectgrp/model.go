@@ -90,14 +90,14 @@ func (app AppNewSubject) Validate() error {
 
 // AppUpdateUser contains information needed to update a user.
 type AppUpdateSubject struct {
-	Name         *string `json:"name"`
-	Code         *string `json:"code"`
-	Year         string  `json:"year"`
-	AcademicYear *string `json:"academicYear"`
-	Instructor   *string `json:"instructor"`
-	Semester     string  `json:"semester"`
-	Exam         *int    `json:"exam"`
-	Practical    *int    `json:"coursework"`
+	Name         *string          `json:"name"`
+	Code         *string          `json:"code"`
+	Year         subject.Year     `json:"year"`
+	AcademicYear *string          `json:"academicYear"`
+	Instructor   *string          `json:"instructor"`
+	Semester     subject.Semester `json:"semester"`
+	Exam         *int             `json:"exam"`
+	Practical    *int             `json:"coursework"`
 }
 
 func toCoreUpdateSubject(app AppUpdateSubject) (subject.UpdateSubject, error) {
@@ -120,23 +120,23 @@ func toCoreUpdateSubject(app AppUpdateSubject) (subject.UpdateSubject, error) {
 	// 	}
 	// }
 
-	year, err := subject.ParseYear(app.Year)
-	if err != nil {
-		return subject.UpdateSubject{}, fmt.Errorf("error parsing year: %v", err)
-	}
+	// year, err := subject.ParseYear(app.Year)
+	// if err != nil {
+	// 	return subject.UpdateSubject{}, fmt.Errorf("error parsing year: %v", err)
+	// }
 
-	semester, err := subject.ParseSemester(app.Semester)
-	if err != nil {
-		return subject.UpdateSubject{}, fmt.Errorf("error parsing semester: %v", err)
-	}
+	// semester, err := subject.ParseSemester(app.Semester)
+	// if err != nil {
+	// 	return subject.UpdateSubject{}, fmt.Errorf("error parsing semester: %v", err)
+	// }
 
 	nSub := subject.UpdateSubject{
 		Name:         app.Name,
 		Code:         app.Code,
-		Year:         &year,
+		Year:         app.Year,
 		AcademicYear: app.AcademicYear,
 		Instructor:   app.Instructor,
-		Semester:     &semester,
+		Semester:     app.Semester,
 		Exam:         app.Exam,
 		Practical:    app.Practical,
 	}
