@@ -45,12 +45,12 @@ func toDBSubject(sub subject.Subject) dbSubject {
 
 func toCoreSubject(dbSubject dbSubject) (subject.Subject, error) {
 
-	year, err := subject.ParseYear(dbSubject.Year)
+	semester, err := subject.ParseSemester(dbSubject.Semester)
 	if err != nil {
 		return subject.Subject{}, fmt.Errorf("parse type: %w", err)
 	}
 
-	semester, err := subject.ParseSemester(dbSubject.Semester)
+	year, err := subject.ParseYear(dbSubject.Year)
 	if err != nil {
 		return subject.Subject{}, fmt.Errorf("parse type: %w", err)
 	}

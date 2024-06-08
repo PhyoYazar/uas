@@ -20,7 +20,9 @@ var (
 // Storer interface declares the behavior this package needs to perists and
 // retrieve data.
 type Storer interface {
-	Create(ctx context.Context, usr Subject) error
+	Create(ctx context.Context, sub Subject) error
+	Update(ctx context.Context, sub Subject) error
+	Delete(ctx context.Context, sub Subject) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Subject, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
@@ -64,6 +66,51 @@ func (c *Core) Create(ctx context.Context, ns NewSubject) (Subject, error) {
 	}
 
 	return usr, nil
+}
+
+// Update replaces a user document in the database.
+func (c *Core) Update(ctx context.Context, sub Subject, uSub UpdateSubject) (Subject, error) {
+	if uSub.Name != nil {
+		sub.Name = *uSub.Name
+	}
+	if uSub.Code != nil {
+		sub.Code = *uSub.Code
+	}
+	if uSub.AcademicYear != nil {
+		sub.AcademicYear = *uSub.AcademicYear
+	}
+	if uSub.Year != nil {
+		sub.Year = *uSub.Year
+	}
+	if uSub.Instructor != nil {
+		sub.Instructor = *uSub.Instructor
+	}
+	if uSub.Semester != nil {
+		sub.Semester = *uSub.Semester
+	}
+	if uSub.Exam != nil {
+		sub.Exam = *uSub.Exam
+	}
+	if uSub.Practical != nil {
+		sub.Practical = *uSub.Practical
+	}
+
+	sub.DateUpdated = time.Now()
+
+	if err := c.storer.Update(ctx, sub); err != nil {
+		return Subject{}, fmt.Errorf("update: %w", err)
+	}
+
+	return sub, nil
+}
+
+// Delete removes a user from the database.
+func (c *Core) Delete(ctx context.Context, sub Subject) error {
+	if err := c.storer.Delete(ctx, sub); err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
 }
 
 // Query retrieves a list of existing subjects from the database.

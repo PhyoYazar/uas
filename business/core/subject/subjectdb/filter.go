@@ -27,17 +27,18 @@ func (s *Store) applyFilter(filter subject.QueryFilter, data map[string]interfac
 	}
 
 	if filter.Year != nil {
-		data["year"] = fmt.Sprintf("%%%s%%", *filter.Year)
+		// data["year"] = fmt.Sprintf("%%%s%%", *filter.Year)
+		data["year"] = filter.Year.Name()
 		wc = append(wc, "year = :year")
 	}
 
 	if filter.Semester != nil {
-		data["semester"] = fmt.Sprintf("%%%s%%", *filter.Semester)
+		data["semester"] = filter.Semester.Name()
 		wc = append(wc, "semester = :semester")
 	}
 
 	if filter.AcademicYear != nil {
-		data["academic_year"] = fmt.Sprintf("%%%s%%", *filter.AcademicYear)
+		data["academic_year"] = *filter.AcademicYear
 		wc = append(wc, "academic_year = :academic_year")
 	}
 

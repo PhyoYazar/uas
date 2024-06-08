@@ -105,6 +105,8 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodGet, "/subjects", subgh.Query)
 	app.Handle(http.MethodPost, "/subject", subgh.Create)
 	app.Handle(http.MethodGet, "/subjects/:subject_id", subgh.QueryByID)
+	app.Handle(http.MethodPut, "/subjects/:subject_id", subgh.Update)
+	app.Handle(http.MethodDelete, "/subjects/:subject_id", subgh.Delete)
 
 	// -------------------------------------------------------------------------
 	// student

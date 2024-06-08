@@ -87,3 +87,67 @@ func (app AppNewSubject) Validate() error {
 }
 
 // =============================================================================
+
+// AppUpdateUser contains information needed to update a user.
+type AppUpdateSubject struct {
+	Name         *string `json:"name"`
+	Code         *string `json:"code"`
+	Year         string  `json:"year"`
+	AcademicYear *string `json:"academicYear"`
+	Instructor   *string `json:"instructor"`
+	Semester     string  `json:"semester"`
+	Exam         *int    `json:"exam"`
+	Practical    *int    `json:"coursework"`
+}
+
+func toCoreUpdateSubject(app AppUpdateSubject) (subject.UpdateSubject, error) {
+
+	// var year subject.Year
+	// if app.Year != nil {
+	// 	var err error
+	// 	year, err = subject.ParseYear(*app.Year)
+	// 	if err != nil {
+	// 		return subject.UpdateSubject{}, fmt.Errorf("parse: %w", err)
+	// 	}
+	// }
+
+	// var semester subject.Semester
+	// if app.Semester != nil {
+	// 	var err error
+	// 	semester, err = subject.ParseSemester(*app.Semester)
+	// 	if err != nil {
+	// 		return subject.UpdateSubject{}, fmt.Errorf("parse: %w", err)
+	// 	}
+	// }
+
+	year, err := subject.ParseYear(app.Year)
+	if err != nil {
+		return subject.UpdateSubject{}, fmt.Errorf("error parsing year: %v", err)
+	}
+
+	semester, err := subject.ParseSemester(app.Semester)
+	if err != nil {
+		return subject.UpdateSubject{}, fmt.Errorf("error parsing semester: %v", err)
+	}
+
+	nSub := subject.UpdateSubject{
+		Name:         app.Name,
+		Code:         app.Code,
+		Year:         &year,
+		AcademicYear: app.AcademicYear,
+		Instructor:   app.Instructor,
+		Semester:     &semester,
+		Exam:         app.Exam,
+		Practical:    app.Practical,
+	}
+
+	return nSub, nil
+}
+
+// Validate checks the data in the model is considered clean.
+func (app AppUpdateSubject) Validate() error {
+	if err := validate.Check(app); err != nil {
+		return fmt.Errorf("validate: %w", err)
+	}
+	return nil
+}
