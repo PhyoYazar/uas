@@ -8,9 +8,11 @@ import (
 
 	"github.com/PhyoYazar/uas/business/core/coattribute"
 	"github.com/PhyoYazar/uas/business/core/mark"
+	"github.com/PhyoYazar/uas/business/sys/validate"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
+	"github.com/google/uuid"
 )
 
 // Handlers manages the set of ga endpoints.
@@ -48,6 +50,20 @@ func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 	}
 
 	return web.Respond(ctx, w, toAppMark(cm), http.StatusCreated)
+}
+
+// Delete removes a subject from the system.
+func (h *Handlers) Delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	markID, err := uuid.Parse(web.Param(r, "mark_id"))
+	if err != nil {
+		return validate.NewFieldsError("mark_id", err)
+	}
+
+	if err := h.mark.Delete(ctx, markID.String()); err != nil {
+		return fmt.Errorf("delete: markID[%s]: %w", markID, err)
+	}
+
+	return web.Respond(ctx, w, nil, http.StatusNoContent)
 }
 
 // Query returns a list of cos with paging.

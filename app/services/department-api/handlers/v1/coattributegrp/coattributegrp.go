@@ -7,9 +7,11 @@ import (
 	"net/http"
 
 	"github.com/PhyoYazar/uas/business/core/coattribute"
+	"github.com/PhyoYazar/uas/business/sys/validate"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
+	"github.com/google/uuid"
 )
 
 // Handlers manages the set of ga endpoints.
@@ -45,6 +47,20 @@ func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 	}
 
 	return web.Respond(ctx, w, toAppCoAttribute(cg), http.StatusCreated)
+}
+
+// Delete removes a subject from the system.
+func (h *Handlers) Delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	caID, err := uuid.Parse(web.Param(r, "co_attribute_id"))
+	if err != nil {
+		return validate.NewFieldsError("co_attribute_id", err)
+	}
+
+	if err := h.coattribute.Delete(ctx, caID.String()); err != nil {
+		return fmt.Errorf("delete: coAttributeID[%s]: %w", caID, err)
+	}
+
+	return web.Respond(ctx, w, nil, http.StatusNoContent)
 }
 
 // Query returns a list of cos with paging.

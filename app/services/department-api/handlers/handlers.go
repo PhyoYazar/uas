@@ -180,6 +180,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/co_attributes", cagh.Query)
 	app.Handle(http.MethodPost, "/co_attribute", cagh.Create)
+	app.Handle(http.MethodDelete, "/co_attribute/:co_attribute_id", cagh.Delete)
 
 	// -------------------------------------------------------------------------
 	// mark
@@ -190,6 +191,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/marks", mgh.Query)
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
+	app.Handle(http.MethodDelete, "/mark/:mark_id", mgh.Delete)
 	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
 
 	// -------------------------------------------------------------------------
@@ -219,6 +221,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/attributes_detail/:subject_id", vattgh.Query)
 	app.Handle(http.MethodGet, "/attributes_ga_mark", vattgh.QueryAttributeWithGaMark)
+	app.Handle(http.MethodDelete, "/remove_attribute/:attribute_id", vattgh.RemoveAttribute)
 
 	return app
 }

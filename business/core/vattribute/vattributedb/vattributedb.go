@@ -29,6 +29,60 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 	}
 }
 
+// Delete removes a user from the database.
+func (s *Store) RemoveMarks(ctx context.Context, ra vattribute.VRemoveAttribute) error {
+	data := struct {
+		SubjectID   string `db:"subject_id"`
+		AttributeID string `db:"attribute_id"`
+	}{
+		SubjectID:   ra.SubjectID.String(),
+		AttributeID: ra.AttributeID.String(),
+	}
+
+	const q = `
+	DELETE FROM
+		marks
+	WHERE
+		subject_id = :subject_id
+	AND
+		attribute_id = :attribute_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Delete removes a user from the database.
+func (s *Store) RemoveCoAttributes(ctx context.Context, ra vattribute.VRemoveAttribute) error {
+	data := struct {
+		SubjectID   string `db:"subject_id"`
+		AttributeID string `db:"attribute_id"`
+	}{
+		SubjectID:   ra.SubjectID.String(),
+		AttributeID: ra.AttributeID.String(),
+	}
+
+	const q = `
+	DELETE FROM
+		co_attributes ca
+	USING
+		course_outlines co
+	WHERE
+		co.co_id = ca.co_id
+	AND
+		co.subject_id = :subject_id
+	AND
+		ca.attribute_id = :attribute_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
 func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]vattribute.VAttributeWithGaMark, error) {
 
 	data := map[string]interface{}{

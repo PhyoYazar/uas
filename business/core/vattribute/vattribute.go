@@ -14,6 +14,9 @@ type Storer interface {
 
 	QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VAttributeWithGaMark, error)
 
+	RemoveMarks(ctx context.Context, ra VRemoveAttribute) error
+	RemoveCoAttributes(ctx context.Context, ra VRemoveAttribute) error
+
 	// Count(ctx context.Context, filter QueryFilter) (int, error)
 }
 
@@ -58,6 +61,18 @@ func (c *Core) QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter,
 	}
 
 	return atts, nil
+}
+
+func (c *Core) RemoveAttribute(ctx context.Context, ra VRemoveAttribute) error {
+	if err := c.storer.RemoveMarks(ctx, ra); err != nil {
+		return fmt.Errorf("remove marks by subjectID and attributeID: %w", err)
+	}
+
+	if err := c.storer.RemoveCoAttributes(ctx, ra); err != nil {
+		return fmt.Errorf("remove coAttributes by subjectID and attributeID: %w", err)
+	}
+
+	return nil
 }
 
 // // Count returns the total number of subjects in the store.

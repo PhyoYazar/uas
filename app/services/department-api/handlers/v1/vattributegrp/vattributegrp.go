@@ -93,3 +93,29 @@ func (h *Handlers) QueryAttributeWithGaMark(ctx context.Context, w http.Response
 
 	return web.Respond(ctx, w, paging.NewResponse(atts, 0, page.Number, page.RowsPerPage), http.StatusOK)
 }
+
+// Delete removes a subject from the system.
+func (h *Handlers) RemoveAttribute(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	attributeID, err := uuid.Parse(web.Param(r, "attribute_id"))
+	if err != nil {
+		return validate.NewFieldsError("attribute_id", err)
+	}
+
+	filter, err := parseFilter(r)
+	if err != nil {
+		return err
+	}
+
+	filter.ID = &attributeID
+
+	ra := vattribute.VRemoveAttribute{
+		SubjectID:   *filter.SubID,
+		AttributeID: attributeID,
+	}
+
+	if err := h.vattribute.RemoveAttribute(ctx, ra); err != nil {
+		return fmt.Errorf("remove: marks and ca[%s]: %w", attributeID, err)
+	}
+
+	return web.Respond(ctx, w, nil, http.StatusNoContent)
+}

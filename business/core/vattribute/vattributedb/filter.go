@@ -13,7 +13,7 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 
 	if filter.ID != nil {
 		data["attribute_id"] = *filter.ID
-		wc = append(wc, "attribute_id = :attribute_id")
+		wc = append(wc, "ca.attribute_id = :attribute_id AND m.attribute_id = :attribute_id")
 	}
 
 	if filter.SubID != nil {

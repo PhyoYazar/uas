@@ -46,6 +46,27 @@ func (s *Store) Create(ctx context.Context, cg coattribute.CoAttribute) error {
 	return nil
 }
 
+// Delete removes a user from the database.
+func (s *Store) Delete(ctx context.Context, caID string) error {
+	data := struct {
+		UserID string `db:"co_attribute_id"`
+	}{
+		UserID: caID,
+	}
+
+	const q = `
+	DELETE FROM
+		co_attributes
+	WHERE
+		co_attribute_id = :co_attribute_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
 // Query retrieves a list of existing gas from the database.
 func (s *Store) Query(ctx context.Context, filter coattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]coattribute.CoAttribute, error) {
 	data := map[string]interface{}{

@@ -56,3 +56,10 @@ type VAttributeWithGaMark struct {
 	Marks    []VMark   `json:"marks"`
 	Co       []VCo     `json:"co"`
 }
+
+//================================================================
+
+type VRemoveAttribute struct {
+	SubjectID   uuid.UUID `json:"subject_id"`
+	AttributeID uuid.UUID `json:"attribute_id"`
+}
