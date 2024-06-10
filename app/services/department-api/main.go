@@ -180,7 +180,8 @@ func run(log *zap.SugaredLogger) error {
 	api := http.Server{
 		Addr: cfg.Web.APIHost,
 		// Handler:      apiMux,
-		Handler:      cors.Default().Handler(apiMux),
+		// Handler:      cors.Default().Handler(apiMux),
+		Handler:      cors.AllowAll().Handler(apiMux),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 		IdleTimeout:  cfg.Web.IdleTimeout,
