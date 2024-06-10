@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/attribute"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -39,6 +40,27 @@ func (s *Store) Create(ctx context.Context, att attribute.Attribute) error {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("namedexeccontext: %w", attribute.ErrUniqueAttribute)
 		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Delete removes a user from the database.
+func (s *Store) Delete(ctx context.Context, attribute attribute.Attribute) error {
+	data := struct {
+		UserID string `db:"attribute_id"`
+	}{
+		UserID: attribute.ID.String(),
+	}
+
+	const q = `
+	DELETE FROM
+		attributes
+	WHERE
+		attribute_id = :attribute_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
 
@@ -80,6 +102,33 @@ func (s *Store) Query(ctx context.Context, filter attribute.QueryFilter, orderBy
 	}
 
 	return att, nil
+}
+
+// QueryByID gets the specified subject from the database.
+func (s *Store) QueryByID(ctx context.Context, attributeID uuid.UUID) (attribute.Attribute, error) {
+	data := struct {
+		ID string `db:"attribute_id"`
+	}{
+		ID: attributeID.String(),
+	}
+
+	const q = `
+	SELECT
+        attribute_id, name, type, instance, date_created, date_updated
+	FROM
+		attributes
+	WHERE
+		attribute_id = :attribute_id`
+
+	var dbAtt dbAttribute
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbAtt); err != nil {
+		if errors.Is(err, database.ErrDBNotFound) {
+			return attribute.Attribute{}, fmt.Errorf("db: %w", attribute.ErrNotFound)
+		}
+		return attribute.Attribute{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toCoreAttribute(dbAtt)
 }
 
 // Count returns the total number of cos in the DB.

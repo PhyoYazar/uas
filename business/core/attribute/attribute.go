@@ -20,10 +20,13 @@ var (
 // Storer interface declares the behavior this package needs to perists and
 // retrieve data.
 type Storer interface {
-	Create(ctx context.Context, mark Attribute) error
+	Create(ctx context.Context, attribute Attribute) error
+	Delete(ctx context.Context, attribute Attribute) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Attribute, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	QueryByID(ctx context.Context, attributeID uuid.UUID) (Attribute, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -59,6 +62,15 @@ func (c *Core) Create(ctx context.Context, attribute NewAttribute) (Attribute, e
 	return att, nil
 }
 
+// Delete removes a user from the database.
+func (c *Core) Delete(ctx context.Context, attribute Attribute) error {
+	if err := c.storer.Delete(ctx, attribute); err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
+}
+
 // Query retrieves a list of existing gas from the database.
 func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Attribute, error) {
 	att, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
@@ -68,6 +80,16 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 		fmt.Printf("=============: %v", err)
 
 		return nil, fmt.Errorf("query: %w", err)
+	}
+
+	return att, nil
+}
+
+// QueryByID finds the user by the specified ID.
+func (c *Core) QueryByID(ctx context.Context, attributeID uuid.UUID) (Attribute, error) {
+	att, err := c.storer.QueryByID(ctx, attributeID)
+	if err != nil {
+		return Attribute{}, fmt.Errorf("query: attributeID[%s]: %w", attributeID, err)
 	}
 
 	return att, nil

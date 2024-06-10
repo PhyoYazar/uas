@@ -147,6 +147,8 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/attributes", attributegh.Query)
 	app.Handle(http.MethodPost, "/attribute", attributegh.Create)
+	app.Handle(http.MethodGet, "/attribute/:attribute_id", attributegh.QueryByID)
+	app.Handle(http.MethodDelete, "/attribute/:attribute_id", attributegh.Delete)
 
 	// -------------------------------------------------------------------------
 	// student subject
