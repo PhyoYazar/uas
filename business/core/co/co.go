@@ -21,6 +21,7 @@ var (
 // retrieve data.
 type Storer interface {
 	Create(ctx context.Context, co Co) error
+	Delete(ctx context.Context, coID string) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Co, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
@@ -79,6 +80,15 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 	}
 
 	return cos, nil
+}
+
+// Delete removes a user from the database.
+func (c *Core) Delete(ctx context.Context, coID string) error {
+	if err := c.storer.Delete(ctx, coID); err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
 }
 
 // Count returns the total number of cos in the store.

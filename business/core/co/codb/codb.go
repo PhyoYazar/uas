@@ -45,6 +45,27 @@ func (s *Store) Create(ctx context.Context, c co.Co) error {
 	return nil
 }
 
+// Delete removes a user from the database.
+func (s *Store) Delete(ctx context.Context, coID string) error {
+	data := struct {
+		UserID string `db:"co_id"`
+	}{
+		UserID: coID,
+	}
+
+	const q = `
+	DELETE FROM
+		course_outlines
+	WHERE
+		co_id = :co_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
 // Query retrieves a list of existing cos from the database.
 func (s *Store) Query(ctx context.Context, filter co.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]co.Co, error) {
 	data := map[string]interface{}{

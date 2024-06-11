@@ -7,9 +7,11 @@ import (
 	"net/http"
 
 	"github.com/PhyoYazar/uas/business/core/co"
+	"github.com/PhyoYazar/uas/business/sys/validate"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
+	"github.com/google/uuid"
 )
 
 // Handlers manages the set of co endpoints.
@@ -45,6 +47,20 @@ func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 	}
 
 	return web.Respond(ctx, w, toAppCo(c), http.StatusCreated)
+}
+
+// Delete removes a subject from the system.
+func (h *Handlers) Delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	coID, err := uuid.Parse(web.Param(r, "co_id"))
+	if err != nil {
+		return validate.NewFieldsError("co_id", err)
+	}
+
+	if err := h.co.Delete(ctx, coID.String()); err != nil {
+		return fmt.Errorf("delete: coID[%s]: %w", coID, err)
+	}
+
+	return web.Respond(ctx, w, nil, http.StatusNoContent)
 }
 
 // Query returns a list of cos with paging.

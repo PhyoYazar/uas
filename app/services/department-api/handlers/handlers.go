@@ -127,6 +127,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/cos", cogh.Query)
 	app.Handle(http.MethodPost, "/co", cogh.Create)
+	app.Handle(http.MethodDelete, "/co/:co_id", cogh.Delete)
 
 	// -------------------------------------------------------------------------
 	// ga -> graduate attributes
