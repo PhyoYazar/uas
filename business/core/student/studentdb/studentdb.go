@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -31,14 +32,59 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 func (s *Store) Create(ctx context.Context, std student.Student) error {
 	const q = `
 	INSERT INTO students
-		(student_id, name, email, year, academic_year, roll_number, phone_number, date_created, date_updated)
+		(student_id, name, year, academic_year, roll_number, date_created, date_updated)
 	VALUES
-		(:student_id, :name, :email, :year, :academic_year, :roll_number, :phone_number, :date_created, :date_updated)`
+		(:student_id, :name, :year, :academic_year, :roll_number, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudent(std)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
-			return fmt.Errorf("namedexeccontext: %w", student.ErrUniqueEmail)
+			return fmt.Errorf("namedexeccontext: %w", student.ErrUniqueStudent)
 		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Update replaces a user document in the database.
+func (s *Store) Update(ctx context.Context, std student.Student) error {
+	const q = `
+	UPDATE
+		students
+	SET
+		"name" = :name,
+		"academic_year" = :academic_year,
+		"year" = :year,
+		"roll_number" = :roll_number,
+		"date_updated" = :date_updated
+	WHERE
+		student_id = :student_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudent(std)); err != nil {
+		if errors.Is(err, database.ErrDBDuplicatedEntry) {
+			return student.ErrUniqueStudent
+		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Delete removes a user from the database.
+func (s *Store) Delete(ctx context.Context, std student.Student) error {
+	data := struct {
+		UserID string `db:"student_id"`
+	}{
+		UserID: std.ID.String(),
+	}
+
+	const q = `
+	DELETE FROM
+		students
+	WHERE
+		student_id = :student_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
 
@@ -74,7 +120,34 @@ func (s *Store) Query(ctx context.Context, filter student.QueryFilter, orderBy o
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	return toCoreStudentSlice(dbStudents), nil
+	return toCoreStudentSlice(dbStudents)
+}
+
+// QueryByID gets the specified subject from the database.
+func (s *Store) QueryByID(ctx context.Context, studentID uuid.UUID) (student.Student, error) {
+	data := struct {
+		ID string `db:"student_id"`
+	}{
+		ID: studentID.String(),
+	}
+
+	const q = `
+	SELECT
+        student_id, name, roll_number, year, academic_year, date_created, date_updated
+	FROM
+		students
+	WHERE
+		student_id = :student_id`
+
+	var dbStd dbStudent
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbStd); err != nil {
+		if errors.Is(err, database.ErrDBNotFound) {
+			return student.Student{}, fmt.Errorf("db: %w", student.ErrNotFound)
+		}
+		return student.Student{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toCoreStudent(dbStd)
 }
 
 // Count returns the total number of students in the DB.

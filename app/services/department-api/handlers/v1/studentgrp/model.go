@@ -2,7 +2,6 @@ package studentgrp
 
 import (
 	"fmt"
-	"net/mail"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/core/student"
@@ -13,13 +12,13 @@ import (
 type AppStudent struct {
 	ID           string `json:"id"`
 	Name         string `json:"name"`
-	Email        string `json:"email"`
 	Year         string `json:"year"`
 	AcademicYear string `json:"academicYear"`
-	PhoneNumber  string `json:"phoneNumber"`
 	RollNumber   int    `json:"rollNumber"`
 	DateCreated  string `json:"dateCreated"`
 	DateUpdated  string `json:"dateUpdated"`
+	// Email        string `json:"email"`
+	// PhoneNumber  string `json:"phoneNumber"`
 }
 
 func toAppStudent(std student.Student) AppStudent {
@@ -27,13 +26,13 @@ func toAppStudent(std student.Student) AppStudent {
 	return AppStudent{
 		ID:           std.ID.String(),
 		Name:         std.Name,
-		Email:        std.Email.Address,
-		Year:         std.Year,
+		Year:         std.Year.Name(),
 		AcademicYear: std.AcademicYear,
-		PhoneNumber:  std.PhoneNumber,
 		RollNumber:   std.RollNumber,
 		DateCreated:  std.DateCreated.Format(time.RFC3339),
 		DateUpdated:  std.DateUpdated.Format(time.RFC3339),
+		// Email:        std.Email.Address,
+		// PhoneNumber:  std.PhoneNumber,
 	}
 }
 
@@ -42,27 +41,32 @@ func toAppStudent(std student.Student) AppStudent {
 // AppNewStudent contains information needed to create a new student.
 type AppNewStudent struct {
 	Name         string `json:"name" validate:"required"`
-	Email        string `json:"email" validate:"required,email"`
 	Year         string `json:"year" validate:"required"`
 	AcademicYear string `json:"academicYear" validate:"required"`
-	PhoneNumber  string `json:"phoneNumber" validate:"required"`
 	RollNumber   int    `json:"rollNumber" validate:"required"`
+	// PhoneNumber  string `json:"phoneNumber" validate:"required"`
+	// Email        string `json:"email" validate:"required,email"`
 }
 
 func toCoreNewStudent(app AppNewStudent) (student.NewStudent, error) {
 
-	addr, err := mail.ParseAddress(app.Email)
+	// addr, err := mail.ParseAddress(app.Email)
+	// if err != nil {
+	// 	return student.NewStudent{}, fmt.Errorf("parsing email: %w", err)
+	// }
+
+	year, err := student.ParseYear(app.Year)
 	if err != nil {
-		return student.NewStudent{}, fmt.Errorf("parsing email: %w", err)
+		return student.NewStudent{}, fmt.Errorf("error parsing year: %v", err)
 	}
 
 	std := student.NewStudent{
 		Name:         app.Name,
-		Email:        *addr,
-		Year:         app.Year,
+		Year:         year,
 		AcademicYear: app.AcademicYear,
-		PhoneNumber:  app.PhoneNumber,
 		RollNumber:   app.RollNumber,
+		// Email:        *addr,
+		// PhoneNumber:  app.PhoneNumber,
 	}
 
 	return std, nil
@@ -77,3 +81,31 @@ func (app AppNewStudent) Validate() error {
 }
 
 // =============================================================================
+
+// AppUpdateStudent contains information needed to update a student.
+type AppUpdateStudent struct {
+	Name         *string      `json:"name"`
+	RollNumber   *int         `json:"rollNumber"`
+	Year         student.Year `json:"year"`
+	AcademicYear *string      `json:"academicYear"`
+}
+
+func toCoreUpdateStudent(app AppUpdateStudent) (student.UpdateStudent, error) {
+
+	nSub := student.UpdateStudent{
+		Name:         app.Name,
+		RollNumber:   app.RollNumber,
+		Year:         app.Year,
+		AcademicYear: app.AcademicYear,
+	}
+
+	return nSub, nil
+}
+
+// Validate checks the data in the model is considered clean.
+func (app AppUpdateStudent) Validate() error {
+	if err := validate.Check(app); err != nil {
+		return fmt.Errorf("validate: %w", err)
+	}
+	return nil
+}

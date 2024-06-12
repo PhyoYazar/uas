@@ -10,6 +10,6 @@ var DefaultOrderBy = order.NewBy(OrderByID, order.ASC)
 const (
 	OrderByID         = "studentid"
 	OrderByName       = "name"
-	OrderByEmail      = "email"
 	OrderByRollNumber = "rollnumber"
+	// OrderByEmail      = "email"
 )

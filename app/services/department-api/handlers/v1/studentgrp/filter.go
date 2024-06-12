@@ -2,7 +2,6 @@ package studentgrp
 
 import (
 	"net/http"
-	"net/mail"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/core/student"
@@ -23,13 +22,13 @@ func parseFilter(r *http.Request) (student.QueryFilter, error) {
 		filter.WithStudentID(id)
 	}
 
-	if email := values.Get("email"); email != "" {
-		addr, err := mail.ParseAddress(email)
-		if err != nil {
-			return student.QueryFilter{}, validate.NewFieldsError("email", err)
-		}
-		filter.WithEmail(*addr)
-	}
+	// if email := values.Get("email"); email != "" {
+	// 	addr, err := mail.ParseAddress(email)
+	// 	if err != nil {
+	// 		return student.QueryFilter{}, validate.NewFieldsError("email", err)
+	// 	}
+	// 	filter.WithEmail(*addr)
+	// }
 
 	if createdDate := values.Get("start_created_date"); createdDate != "" {
 		t, err := time.Parse(time.RFC3339, createdDate)
@@ -63,9 +62,9 @@ func parseFilter(r *http.Request) (student.QueryFilter, error) {
 		filter.WithRollNumber(rollNumber)
 	}
 
-	if phoneNumber := values.Get("phone_number"); phoneNumber != "" {
-		filter.WithPhoneNumber(phoneNumber)
-	}
+	// if phoneNumber := values.Get("phone_number"); phoneNumber != "" {
+	// 	filter.WithPhoneNumber(phoneNumber)
+	// }
 
 	if err := filter.Validate(); err != nil {
 		return student.QueryFilter{}, err

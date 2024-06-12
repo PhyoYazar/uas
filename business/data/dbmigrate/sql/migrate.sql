@@ -176,3 +176,20 @@ ALTER TABLE marks ADD CONSTRAINT marks_attribute_id_subject_id_key UNIQUE (attri
 -- Description: roll back version 1.14 to original (attribute_id & subject_id & ga_id) to the marks table
 ALTER TABLE marks DROP CONSTRAINT marks_attribute_id_subject_id_key;
 ALTER TABLE marks ADD CONSTRAINT marks_attribute_id_subject_id_ga_id_key UNIQUE (attribute_id, subject_id, ga_id);
+
+-- Version: 1.16
+-- Description: Drop email and phone number columns from student table & create full_mark table
+ALTER TABLE students DROP COLUMN email, DROP COLUMN phone_number;
+CREATE TABLE full_marks (
+	full_mark_id	  UUID        NOT NULL,
+	attribute_id	  UUID        NOT NULL,
+	subject_id		  UUID 		  NOT NULL,
+	mark 				  INT 		  NOT NULL,
+	date_created  	  TIMESTAMP   NOT NULL,
+	date_updated  	  TIMESTAMP   NOT NULL,
+
+	PRIMARY KEY (full_mark_id),
+	UNIQUE (subject_id, attribute_id),
+	FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id) ON DELETE CASCADE,
+	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE
+);

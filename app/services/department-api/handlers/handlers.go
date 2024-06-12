@@ -117,6 +117,9 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/students", stdgh.Query)
 	app.Handle(http.MethodPost, "/student", stdgh.Create)
+	app.Handle(http.MethodGet, "/student/:student_id", stdgh.QueryByID)
+	app.Handle(http.MethodPut, "/student/:student_id", stdgh.Update)
+	app.Handle(http.MethodDelete, "/student/:student_id", stdgh.Delete)
 
 	// -------------------------------------------------------------------------
 	// co -> course outlines

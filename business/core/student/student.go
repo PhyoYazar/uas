@@ -12,8 +12,8 @@ import (
 
 // Set of error variables for CRUD operations.
 var (
-	ErrNotFound              = errors.New("user not found")
-	ErrUniqueEmail           = errors.New("email is not unique")
+	ErrNotFound              = errors.New("student not found")
+	ErrUniqueStudent         = errors.New("student is not unique")
 	ErrAuthenticationFailure = errors.New("authentication failed")
 )
 
@@ -21,9 +21,13 @@ var (
 // retrieve data.
 type Storer interface {
 	Create(ctx context.Context, std Student) error
+	Update(ctx context.Context, sub Student) error
+	Delete(ctx context.Context, sub Student) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Student, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	QueryByID(ctx context.Context, studentID uuid.UUID) (Student, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -46,13 +50,13 @@ func (c *Core) Create(ctx context.Context, ns NewStudent) (Student, error) {
 	std := Student{
 		ID:           uuid.New(),
 		Name:         ns.Name,
-		Email:        ns.Email,
 		RollNumber:   ns.RollNumber,
-		PhoneNumber:  ns.PhoneNumber,
 		Year:         ns.Year,
 		AcademicYear: ns.AcademicYear,
 		DateCreated:  now,
 		DateUpdated:  now,
+		// Email:        ns.Email,
+		// PhoneNumber:  ns.PhoneNumber,
 	}
 
 	if err := c.storer.Create(ctx, std); err != nil {
@@ -60,6 +64,33 @@ func (c *Core) Create(ctx context.Context, ns NewStudent) (Student, error) {
 	}
 
 	return std, nil
+}
+
+// Update replaces a user document in the database.
+func (c *Core) Update(ctx context.Context, std Student, uStd UpdateStudent) (Student, error) {
+	if uStd.Name != nil {
+		std.Name = *uStd.Name
+	}
+	if uStd.AcademicYear != nil {
+		std.AcademicYear = *uStd.AcademicYear
+	}
+
+	std.DateUpdated = time.Now()
+
+	if err := c.storer.Update(ctx, std); err != nil {
+		return Student{}, fmt.Errorf("update: %w", err)
+	}
+
+	return std, nil
+}
+
+// Delete removes a user from the database.
+func (c *Core) Delete(ctx context.Context, std Student) error {
+	if err := c.storer.Delete(ctx, std); err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
 }
 
 // Query retrieves a list of existing students from the database.
@@ -74,6 +105,16 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 	}
 
 	return stds, nil
+}
+
+// QueryByID finds the user by the specified ID.
+func (c *Core) QueryByID(ctx context.Context, studentID uuid.UUID) (Student, error) {
+	std, err := c.storer.QueryByID(ctx, studentID)
+	if err != nil {
+		return Student{}, fmt.Errorf("query: studentID[%s]: %w", studentID, err)
+	}
+
+	return std, nil
 }
 
 // Count returns the total number of students in the store.

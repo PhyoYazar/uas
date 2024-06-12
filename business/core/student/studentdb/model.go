@@ -1,7 +1,7 @@
 package studentdb
 
 import (
-	"net/mail"
+	"fmt"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/core/student"
@@ -13,13 +13,13 @@ import (
 type dbStudent struct {
 	ID           uuid.UUID `db:"student_id"`
 	Name         string    `db:"name"`
-	Email        string    `db:"email"`
 	Year         string    `db:"year"`
 	AcademicYear string    `db:"academic_year"`
-	PhoneNumber  string    `db:"phone_number"`
 	RollNumber   int       `db:"roll_number"`
 	DateCreated  time.Time `db:"date_created"`
 	DateUpdated  time.Time `db:"date_updated"`
+	// Email        string    `db:"email"`
+	// PhoneNumber string    `db:"phone_number"`
 }
 
 func toDBStudent(std student.Student) dbStudent {
@@ -27,42 +27,52 @@ func toDBStudent(std student.Student) dbStudent {
 	student := dbStudent{
 		ID:           std.ID,
 		Name:         std.Name,
-		Email:        std.Email.Address,
-		Year:         std.Year,
+		Year:         std.Year.Name(),
 		AcademicYear: std.AcademicYear,
 		RollNumber:   std.RollNumber,
-		PhoneNumber:  std.PhoneNumber,
 		DateCreated:  std.DateCreated.UTC(),
 		DateUpdated:  std.DateUpdated.UTC(),
+		// Email:        std.Email.Address,
+		// PhoneNumber:  std.PhoneNumber,
 	}
 
 	return student
 }
 
-func toCoreStudent(dbStd dbStudent) student.Student {
-	addr := mail.Address{
-		Address: dbStd.Email,
+func toCoreStudent(dbStd dbStudent) (student.Student, error) {
+	// addr := mail.Address{
+	// 	Address: dbStd.Email,
+	// }
+
+	year, err := student.ParseYear(dbStd.Year)
+	if err != nil {
+		return student.Student{}, fmt.Errorf("parse type: %w", err)
 	}
 
 	std := student.Student{
 		ID:           dbStd.ID,
 		Name:         dbStd.Name,
-		Email:        addr,
-		Year:         dbStd.Year,
+		Year:         year,
 		AcademicYear: dbStd.AcademicYear,
-		PhoneNumber:  dbStd.PhoneNumber,
 		RollNumber:   dbStd.RollNumber,
 		DateCreated:  dbStd.DateCreated.In(time.Local),
 		DateUpdated:  dbStd.DateUpdated.In(time.Local),
+		// Email:        addr,
+		// PhoneNumber:  dbStd.PhoneNumber,
 	}
 
-	return std
+	return std, nil
 }
 
-func toCoreStudentSlice(dbStudents []dbStudent) []student.Student {
+func toCoreStudentSlice(dbStudents []dbStudent) ([]student.Student, error) {
 	stds := make([]student.Student, len(dbStudents))
 	for i, dbStudent := range dbStudents {
-		stds[i] = toCoreStudent(dbStudent)
+		var err error
+		stds[i], err = toCoreStudent(dbStudent)
+
+		if err != nil {
+			return nil, fmt.Errorf("parse type: %w", err)
+		}
 	}
-	return stds
+	return stds, nil
 }

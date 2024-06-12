@@ -2,7 +2,6 @@ package student
 
 import (
 	"fmt"
-	"net/mail"
 	"time"
 
 	"github.com/PhyoYazar/uas/business/sys/validate"
@@ -11,15 +10,15 @@ import (
 
 // QueryFilter holds the available fields a query can be filtered on.
 type QueryFilter struct {
-	ID               *uuid.UUID    `validate:"omitempty"`
-	Name             *string       `validate:"omitempty,min=3"`
-	Email            *mail.Address `validate:"omitempty"`
-	RollNumber       *string       `validate:"omitempty,min=3"`
-	PhoneNumber      *string       `validate:"omitempty,min=3"`
-	Year             *string       `validate:"omitempty"`
-	AcademicYear     *string       `validate:"omitempty"`
-	StartCreatedDate *time.Time    `validate:"omitempty"`
-	EndCreatedDate   *time.Time    `validate:"omitempty"`
+	ID               *uuid.UUID `validate:"omitempty"`
+	Name             *string    `validate:"omitempty,min=3"`
+	RollNumber       *string    `validate:"omitempty,min=3"`
+	Year             *string    `validate:"omitempty"`
+	AcademicYear     *string    `validate:"omitempty"`
+	StartCreatedDate *time.Time `validate:"omitempty"`
+	EndCreatedDate   *time.Time `validate:"omitempty"`
+	// Email            *mail.Address `validate:"omitempty"`
+	// PhoneNumber      *string       `validate:"omitempty,min=3"`
 }
 
 // Validate checks the data in the model is considered clean.
@@ -40,10 +39,15 @@ func (qf *QueryFilter) WithName(name string) {
 	qf.Name = &name
 }
 
-// WithEmail sets the Email field of the QueryFilter value.
-func (qf *QueryFilter) WithEmail(email mail.Address) {
-	qf.Email = &email
-}
+// // WithEmail sets the Email field of the QueryFilter value.
+// func (qf *QueryFilter) WithEmail(email mail.Address) {
+// 	qf.Email = &email
+// }
+
+// // WithPhoneNumber sets the Instructor field of the QueryFilter value.
+// func (qf *QueryFilter) WithPhoneNumber(phoneNumber string) {
+// 	qf.PhoneNumber = &phoneNumber
+// }
 
 // WithYear sets the Year field of the QueryFilter value.
 func (qf *QueryFilter) WithYear(year string) {
@@ -53,11 +57,6 @@ func (qf *QueryFilter) WithYear(year string) {
 // WithAcademicYear sets the AcademicYear field of the QueryFilter value.
 func (qf *QueryFilter) WithAcademicYear(academicYear string) {
 	qf.AcademicYear = &academicYear
-}
-
-// WithPhoneNumber sets the Instructor field of the QueryFilter value.
-func (qf *QueryFilter) WithPhoneNumber(phoneNumber string) {
-	qf.PhoneNumber = &phoneNumber
 }
 
 // WithRollNumber sets the Instructor field of the QueryFilter value.

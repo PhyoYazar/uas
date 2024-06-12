@@ -21,10 +21,15 @@ func (s *Store) applyFilter(filter student.QueryFilter, data map[string]interfac
 		wc = append(wc, "name LIKE :name")
 	}
 
-	if filter.Email != nil {
-		data["email"] = (*filter.Email).String()
-		wc = append(wc, "email = :email")
-	}
+	// if filter.Email != nil {
+	// 	data["email"] = (*filter.Email).String()
+	// 	wc = append(wc, "email = :email")
+	// }
+
+	// if filter.PhoneNumber != nil {
+	// 	data["phone_number"] = fmt.Sprintf("%%%s%%", *filter.PhoneNumber)
+	// 	wc = append(wc, "phone_number LIKE :phone_number")
+	// }
 
 	if filter.Year != nil {
 		data["year"] = fmt.Sprintf("%%%s%%", *filter.Year)
@@ -34,11 +39,6 @@ func (s *Store) applyFilter(filter student.QueryFilter, data map[string]interfac
 	if filter.AcademicYear != nil {
 		data["academic_year"] = fmt.Sprintf("%%%s%%", *filter.AcademicYear)
 		wc = append(wc, "academic_year = :academic_year")
-	}
-
-	if filter.PhoneNumber != nil {
-		data["phone_number"] = fmt.Sprintf("%%%s%%", *filter.PhoneNumber)
-		wc = append(wc, "phone_number LIKE :phone_number")
 	}
 
 	if filter.RollNumber != nil {
