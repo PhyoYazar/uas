@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/coattributegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/cogrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/fullmarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
@@ -27,6 +28,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/coattribute/coattributedb"
 	"github.com/PhyoYazar/uas/business/core/coga"
 	"github.com/PhyoYazar/uas/business/core/coga/cogadb"
+	"github.com/PhyoYazar/uas/business/core/fullmark"
+	"github.com/PhyoYazar/uas/business/core/fullmark/fullmarkdb"
 	"github.com/PhyoYazar/uas/business/core/ga"
 	"github.com/PhyoYazar/uas/business/core/ga/gadb"
 	"github.com/PhyoYazar/uas/business/core/mark"
@@ -197,6 +200,17 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
 	app.Handle(http.MethodDelete, "/mark/:mark_id", mgh.Delete)
 	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
+
+	// -------------------------------------------------------------------------
+	// full mark
+
+	fmCore := fullmark.NewCore(fullmarkdb.NewStore(cfg.Log, cfg.DB))
+
+	fmgh := fullmarkgrp.New(fmCore)
+
+	app.Handle(http.MethodGet, "/full_marks", fmgh.Query)
+	app.Handle(http.MethodPost, "/full_mark", fmgh.Create)
+	app.Handle(http.MethodDelete, "/full_mark/:full_mark_id", fmgh.Delete)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------
