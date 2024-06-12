@@ -193,3 +193,22 @@ CREATE TABLE full_marks (
 	FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id) ON DELETE CASCADE,
 	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE
 );
+
+-- Version: 1.17
+-- Description: Drop student_subjects table & create student_marks table
+DROP TABLE IF EXISTS student_subjects;
+CREATE TABLE student_marks (
+	student_mark_id	  	UUID        NOT NULL,
+	attribute_id	  		UUID        NOT NULL,
+	student_id		  		UUID        NOT NULL,
+	subject_id		  		UUID 		   NOT NULL,
+	mark 				  		INT 		   NULL,
+	date_created  	  		TIMESTAMP   NOT NULL,
+	date_updated  	  		TIMESTAMP   NOT NULL,
+
+	PRIMARY KEY (student_mark_id),
+	UNIQUE (subject_id, student_id, attribute_id),
+	FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id) ON DELETE CASCADE,
+	FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE
+);
