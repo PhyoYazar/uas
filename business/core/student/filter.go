@@ -12,7 +12,7 @@ import (
 type QueryFilter struct {
 	ID               *uuid.UUID `validate:"omitempty"`
 	Name             *string    `validate:"omitempty,min=3"`
-	RollNumber       *string    `validate:"omitempty,min=3"`
+	RollNumber       *string    `validate:"omitempty,min=1"`
 	Year             *string    `validate:"omitempty"`
 	AcademicYear     *string    `validate:"omitempty"`
 	StartCreatedDate *time.Time `validate:"omitempty"`
