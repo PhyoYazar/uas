@@ -32,18 +32,18 @@ func (s *Store) applyFilter(filter student.QueryFilter, data map[string]interfac
 	// }
 
 	if filter.Year != nil {
-		data["year"] = fmt.Sprintf("%%%s%%", *filter.Year)
+		data["year"] = *filter.Year
 		wc = append(wc, "year = :year")
 	}
 
 	if filter.AcademicYear != nil {
-		data["academic_year"] = fmt.Sprintf("%%%s%%", *filter.AcademicYear)
+		data["academic_year"] = *filter.AcademicYear
 		wc = append(wc, "academic_year = :academic_year")
 	}
 
 	if filter.RollNumber != nil {
-		data["roll_number"] = fmt.Sprintf("%%%s%%", *filter.RollNumber)
-		wc = append(wc, "roll_number LIKE :roll_number")
+		data["roll_number"] = *filter.RollNumber
+		wc = append(wc, "roll_number = :roll_number")
 	}
 
 	if filter.StartCreatedDate != nil {

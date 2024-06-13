@@ -74,6 +74,12 @@ func (c *Core) Update(ctx context.Context, std Student, uStd UpdateStudent) (Stu
 	if uStd.AcademicYear != nil {
 		std.AcademicYear = *uStd.AcademicYear
 	}
+	if uStd.Year != (Year{}) {
+		std.Year = uStd.Year
+	}
+	if uStd.RollNumber != nil {
+		std.RollNumber = *uStd.RollNumber
+	}
 
 	std.DateUpdated = time.Now()
 
