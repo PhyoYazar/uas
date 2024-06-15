@@ -23,7 +23,7 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 
 	if filter.Name != nil {
 		data["name"] = fmt.Sprintf("%%%s%%", *filter.Name)
-		wc = append(wc, "name LIKE :name")
+		wc = append(wc, "a.name LIKE :name")
 	}
 
 	if filter.Type != nil {
