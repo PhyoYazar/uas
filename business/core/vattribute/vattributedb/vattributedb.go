@@ -55,6 +55,31 @@ func (s *Store) RemoveMarks(ctx context.Context, ra vattribute.VRemoveAttribute)
 }
 
 // Delete removes a user from the database.
+func (s *Store) RemoveFullMarks(ctx context.Context, ra vattribute.VRemoveAttribute) error {
+	data := struct {
+		SubjectID   string `db:"subject_id"`
+		AttributeID string `db:"attribute_id"`
+	}{
+		SubjectID:   ra.SubjectID.String(),
+		AttributeID: ra.AttributeID.String(),
+	}
+
+	const q = `
+	DELETE FROM
+		full_marks
+	WHERE
+		subject_id = :subject_id
+	AND
+		attribute_id = :attribute_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Delete removes a user from the database.
 func (s *Store) RemoveCoAttributes(ctx context.Context, ra vattribute.VRemoveAttribute) error {
 	data := struct {
 		SubjectID   string `db:"subject_id"`
