@@ -190,18 +190,6 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodDelete, "/co_attribute/:co_attribute_id", cagh.Delete)
 
 	// -------------------------------------------------------------------------
-	// mark
-
-	mCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
-
-	mgh := markgrp.New(mCore, caCore)
-
-	app.Handle(http.MethodGet, "/marks", mgh.Query)
-	app.Handle(http.MethodPost, "/mark", mgh.Create)
-	app.Handle(http.MethodDelete, "/mark/:mark_id", mgh.Delete)
-	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
-
-	// -------------------------------------------------------------------------
 	// full mark
 
 	fmCore := fullmark.NewCore(fullmarkdb.NewStore(cfg.Log, cfg.DB))
@@ -211,6 +199,18 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodGet, "/full_marks", fmgh.Query)
 	app.Handle(http.MethodPost, "/full_mark", fmgh.Create)
 	app.Handle(http.MethodDelete, "/full_mark/:full_mark_id", fmgh.Delete)
+
+	// -------------------------------------------------------------------------
+	// mark
+
+	mCore := mark.NewCore(markdb.NewStore(cfg.Log, cfg.DB))
+
+	mgh := markgrp.New(mCore, caCore, fmCore)
+
+	app.Handle(http.MethodGet, "/marks", mgh.Query)
+	app.Handle(http.MethodPost, "/mark", mgh.Create)
+	app.Handle(http.MethodDelete, "/mark/:mark_id", mgh.Delete)
+	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------
@@ -238,7 +238,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	vattgh := vattributegrp.New(vattCore)
 
 	app.Handle(http.MethodGet, "/attributes_detail/:subject_id", vattgh.Query)
-	app.Handle(http.MethodGet, "/attributes_ga_mark", vattgh.QueryAttributeWithGaMark)
+	app.Handle(http.MethodGet, "/attributes_ga_mark/:subject_id", vattgh.QueryAttributeWithGaMark)
 	app.Handle(http.MethodDelete, "/remove_attribute/:attribute_id", vattgh.RemoveAttribute)
 
 	return app

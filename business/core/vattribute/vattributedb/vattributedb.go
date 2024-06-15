@@ -83,9 +83,10 @@ func (s *Store) RemoveCoAttributes(ctx context.Context, ra vattribute.VRemoveAtt
 	return nil
 }
 
-func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]vattribute.VAttributeWithGaMark, error) {
+func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]vattribute.VAttributeWithGaMark, error) {
 
 	data := map[string]interface{}{
+		"subject_id":    subjectID.String(),
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
 	}
@@ -96,6 +97,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
          a.name,
          a.instance,
          a.type,
+			fm.mark full_mark,
          m.mark_id,
          m.ga_id,
          m.mark,
@@ -114,7 +116,13 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 		LEFT JOIN
 			co_attributes ca ON ca.attribute_id = a.attribute_id
 		LEFT JOIN
-			course_outlines co ON co.co_id = ca.co_id AND co.co_id = cg.co_id`
+			course_outlines co ON co.co_id = ca.co_id AND co.co_id = cg.co_id
+		LEFT JOIN
+	 		full_marks fm ON fm.attribute_id = a.attribute_id AND fm.subject_id = :subject_id
+		WHERE
+			m.subject_id = :subject_id
+		AND
+			co.subject_id = :subject_id`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -141,6 +149,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			attributeName     string
 			attributeInstance int
 			attributeType     string
+			fullMark          sql.NullInt64
 			markID            sql.NullString
 			gaID              sql.NullString
 			mark              sql.NullInt64
@@ -152,6 +161,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 
 		err := rows.Scan(
 			&attributeID, &attributeName, &attributeInstance, &attributeType,
+			&fullMark,
 			&markID, &gaID, &mark, &gaSlug,
 			&coID, &coName, &coInstance,
 		)
@@ -166,6 +176,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 				Name:     attributeName,
 				Instance: attributeInstance,
 				Type:     attributeType,
+				FullMark: int(fullMark.Int64),
 				Marks:    []vattribute.VMark{},
 			}
 			attributesMap[attributeID] = attribute

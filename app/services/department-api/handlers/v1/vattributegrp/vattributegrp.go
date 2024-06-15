@@ -61,10 +61,10 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 
 // Query returns a list of subjects with paging.
 func (h *Handlers) QueryAttributeWithGaMark(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	// subjectID, err := uuid.Parse(web.Param(r, "subject_id"))
-	// if err != nil {
-	// 	return validate.NewFieldsError("subject_id", err)
-	// }
+	subjectID, err := uuid.Parse(web.Param(r, "subject_id"))
+	if err != nil {
+		return validate.NewFieldsError("subject_id", err)
+	}
 
 	page, err := paging.ParseRequest(r)
 	if err != nil {
@@ -81,7 +81,7 @@ func (h *Handlers) QueryAttributeWithGaMark(ctx context.Context, w http.Response
 		return err
 	}
 
-	atts, err := h.vattribute.QueryAttributeWithGaMark(ctx, filter, orderBy, page.Number, page.RowsPerPage)
+	atts, err := h.vattribute.QueryAttributeWithGaMark(ctx, filter, orderBy, page.Number, page.RowsPerPage, subjectID)
 	if err != nil {
 		return fmt.Errorf("query: %w", err)
 	}

@@ -94,4 +94,5 @@ type MarkByConnectingCOGA struct {
 	Gas         []GaMark    `json:"gas"`
 	SubjectID   uuid.UUID   `json:"subjectID"`
 	AttributeID uuid.UUID   `json:"attributeID"`
+	FullMark    int         `json:"fullMark"`
 }

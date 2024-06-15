@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/PhyoYazar/uas/business/core/coattribute"
+	"github.com/PhyoYazar/uas/business/core/fullmark"
 	"github.com/PhyoYazar/uas/business/core/mark"
 	"github.com/PhyoYazar/uas/business/sys/validate"
 	v1 "github.com/PhyoYazar/uas/business/web/v1"
@@ -19,13 +20,15 @@ import (
 type Handlers struct {
 	mark        *mark.Core
 	coAttribute *coattribute.Core
+	fullmark    *fullmark.Core
 }
 
 // New constructs a handlers for route access.
-func New(mark *mark.Core, coAttribute *coattribute.Core) *Handlers {
+func New(mark *mark.Core, coAttribute *coattribute.Core, fullMark *fullmark.Core) *Handlers {
 	return &Handlers{
 		mark:        mark,
 		coAttribute: coAttribute,
+		fullmark:    fullMark,
 	}
 }
 
@@ -134,7 +137,20 @@ func (h *Handlers) CreateMarkByConnectingCOGA(ctx context.Context, w http.Respon
 			}
 			return fmt.Errorf("create: mark[%+v]: %w", m, err)
 		}
+	}
 
+	// 3. full mark of the attributes
+	fm, err := h.fullmark.Create(ctx,
+		fullmark.NewFullMark{
+			SubjectID:   App.SubjectID,
+			AttributeID: App.AttributeID,
+			Mark:        App.FullMark,
+		})
+	if err != nil {
+		if errors.Is(err, fullmark.ErrUniqueFullMark) {
+			return v1.NewRequestError(err, http.StatusConflict)
+		}
+		return fmt.Errorf("create: fullmark with cogaattribute[%+v]: %w", fm, err)
 	}
 
 	return nil

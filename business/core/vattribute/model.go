@@ -53,6 +53,7 @@ type VAttributeWithGaMark struct {
 	Name     string    `json:"name"`
 	Instance int       `json:"instance"`
 	Type     string    `json:"type"`
+	FullMark int       `json:"fullMark"`
 	Marks    []VMark   `json:"marks"`
 	Co       []VCo     `json:"co"`
 }

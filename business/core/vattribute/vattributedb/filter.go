@@ -16,10 +16,10 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 		wc = append(wc, "ca.attribute_id = :attribute_id AND m.attribute_id = :attribute_id")
 	}
 
-	if filter.SubID != nil {
-		data["subject_id"] = *filter.SubID
-		wc = append(wc, "m.subject_id = :subject_id AND co.subject_id = :subject_id") //! Careful comparison
-	}
+	// if filter.SubID != nil {
+	// 	data["subject_id"] = *filter.SubID
+	// 	wc = append(wc, "m.subject_id = :subject_id AND co.subject_id = :subject_id") //! Careful comparison
+	// }
 
 	if filter.Name != nil {
 		data["name"] = fmt.Sprintf("%%%s%%", *filter.Name)
@@ -32,7 +32,8 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 	}
 
 	if len(wc) > 0 {
-		buf.WriteString(" WHERE ")
+		// buf.WriteString(" WHERE ")
+		buf.WriteString(" AND ")
 		buf.WriteString(strings.Join(wc, " AND "))
 	}
 }

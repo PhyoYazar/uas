@@ -12,7 +12,7 @@ import (
 type Storer interface {
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttribute, error)
 
-	QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VAttributeWithGaMark, error)
+	QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttributeWithGaMark, error)
 
 	RemoveMarks(ctx context.Context, ra VRemoveAttribute) error
 	RemoveCoAttributes(ctx context.Context, ra VRemoveAttribute) error
@@ -50,8 +50,8 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 }
 
 // Query retrieves a list of existing subjects from the database.
-func (c *Core) QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VAttributeWithGaMark, error) {
-	atts, err := c.storer.QueryAttributeWithGaMark(ctx, filter, orderBy, pageNumber, rowsPerPage)
+func (c *Core) QueryAttributeWithGaMark(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VAttributeWithGaMark, error) {
+	atts, err := c.storer.QueryAttributeWithGaMark(ctx, filter, orderBy, pageNumber, rowsPerPage, subjectID)
 	if err != nil {
 
 		fmt.Printf("=============: %v", atts)

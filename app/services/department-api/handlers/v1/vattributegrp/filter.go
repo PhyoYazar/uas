@@ -26,7 +26,7 @@ func parseFilter(r *http.Request) (vattribute.QueryFilter, error) {
 	if subID := values.Get("subject_id"); subID != "" {
 		id, err := uuid.Parse(subID)
 		if err != nil {
-			return vattribute.QueryFilter{}, validate.NewFieldsError("attribute_id", err)
+			return vattribute.QueryFilter{}, validate.NewFieldsError("subject_id", err)
 		}
 		filter.WithSubjectID(id)
 	}
