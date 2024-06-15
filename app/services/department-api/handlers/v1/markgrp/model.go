@@ -85,14 +85,14 @@ func (app AppNewMark) Validate() error {
 // =============================================================================
 
 type GaMark struct {
-	GaId uuid.UUID `json:"gaID"`
-	Mark int       `json:"mark"`
+	GaId uuid.UUID `json:"gaID" validate:"required"`
+	Mark int       `json:"mark" validate:"required"`
 }
 
 type MarkByConnectingCOGA struct {
-	CoIDs       []uuid.UUID `json:"coIDs"`
-	Gas         []GaMark    `json:"gas"`
-	SubjectID   uuid.UUID   `json:"subjectID"`
-	AttributeID uuid.UUID   `json:"attributeID"`
-	FullMark    int         `json:"fullMark"`
+	CoIDs       []uuid.UUID `json:"coIDs" validate:"required"`
+	Gas         []GaMark    `json:"gas" validate:"required"`
+	SubjectID   uuid.UUID   `json:"subjectID" validate:"required"`
+	AttributeID uuid.UUID   `json:"attributeID" validate:"required"`
+	FullMark    int         `json:"fullMark" validate:"required"`
 }
