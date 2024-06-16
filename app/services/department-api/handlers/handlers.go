@@ -222,7 +222,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	vsmgh := vstudentmarkgrp.New(vsmCore)
 
-	app.Handle(http.MethodGet, "/student_marks/:subject_id", vsmgh.Query)
+	app.Handle(http.MethodGet, "/student_attributes_marks", vsmgh.Query)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------

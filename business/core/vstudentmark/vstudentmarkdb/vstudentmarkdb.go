@@ -29,9 +29,8 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 }
 
 // Query retrieves a list of existing students from the database.
-func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]vstudentmark.VStudentMark, error) {
+func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]vstudentmark.VStudentMark, error) {
 	data := map[string]interface{}{
-		"subject_id":    subjectID.String(),
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
 	}
@@ -49,9 +48,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 	LEFT JOIN
 		student_marks sm ON sm.student_id = s.student_id
 	LEFT JOIN
-		attributes a ON a.attribute_id = sm.attribute_id
-	WHERE
-		sm.subject_id = :subject_id AND `
+		attributes a ON a.attribute_id = sm.attribute_id`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -134,7 +131,7 @@ func (s *Store) Count(ctx context.Context, filter vstudentmark.QueryFilter) (int
 	SELECT
 		count(1)
 	FROM
-		students WHERE `
+		students`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

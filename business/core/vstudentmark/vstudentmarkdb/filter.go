@@ -26,8 +26,7 @@ func (s *Store) applyFilter(filter vstudentmark.QueryFilter, data map[string]int
 	}
 
 	if len(wc) > 0 {
-		// buf.WriteString(" WHERE ")
-		// buf.WriteString(" AND ")
+		buf.WriteString(" WHERE ")
 		buf.WriteString(strings.Join(wc, " AND "))
 	}
 }

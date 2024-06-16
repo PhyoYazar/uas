@@ -6,11 +6,10 @@ import (
 	"fmt"
 
 	"github.com/PhyoYazar/uas/business/data/order"
-	"github.com/google/uuid"
 )
 
 type Storer interface {
-	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VStudentMark, error)
+	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VStudentMark, error)
 
 	// RemoveStudentMarks(ctx context.Context, rs VRemoveStudent) error
 
@@ -33,8 +32,8 @@ var (
 )
 
 // Query retrieves a list of existing subjects from the database.
-func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int, subjectID uuid.UUID) ([]VStudentMark, error) {
-	atts, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage, subjectID)
+func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]VStudentMark, error) {
+	atts, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
 	if err != nil {
 
 		fmt.Printf("=============: %v", atts)

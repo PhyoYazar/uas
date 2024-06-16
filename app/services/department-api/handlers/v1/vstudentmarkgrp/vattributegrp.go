@@ -6,10 +6,8 @@ import (
 	"net/http"
 
 	"github.com/PhyoYazar/uas/business/core/vstudentmark"
-	"github.com/PhyoYazar/uas/business/sys/validate"
 	"github.com/PhyoYazar/uas/business/web/v1/paging"
 	"github.com/PhyoYazar/uas/foundation/web"
-	"github.com/google/uuid"
 )
 
 // Handlers manages the set of user endpoints.
@@ -26,10 +24,6 @@ func New(vstudentmark *vstudentmark.Core) *Handlers {
 
 // Query returns a list of subjects with paging.
 func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	subjectID, err := uuid.Parse(web.Param(r, "subject_id"))
-	if err != nil {
-		return validate.NewFieldsError("subject_id", err)
-	}
 
 	page, err := paging.ParseRequest(r)
 	if err != nil {
@@ -46,7 +40,7 @@ func (h *Handlers) Query(ctx context.Context, w http.ResponseWriter, r *http.Req
 		return err
 	}
 
-	atts, err := h.vstudentmark.Query(ctx, filter, orderBy, page.Number, page.RowsPerPage, subjectID)
+	atts, err := h.vstudentmark.Query(ctx, filter, orderBy, page.Number, page.RowsPerPage)
 	if err != nil {
 		return fmt.Errorf("query: %w", err)
 	}
