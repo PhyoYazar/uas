@@ -1,4 +1,4 @@
-package studentsubject
+package studentmark
 
 import "github.com/PhyoYazar/uas/business/data/order"
 
@@ -8,8 +8,9 @@ var DefaultOrderBy = order.NewBy(OrderByID, order.ASC)
 // Set of fields that the results can be ordered by. These are the names
 // that should be used by the application layer.
 const (
-	OrderByID        = "studentsubjectid"
-	OrderByMark      = "mark"
-	OrderByStudentID = "student_id"
-	OrderBySubjectID = "subject_id"
+	OrderByID          = "studentmarkid"
+	OrderByMark        = "mark"
+	OrderByStudentID   = "student_id"
+	OrderBySubjectID   = "subject_id"
+	OrderByAttributeID = "attribute_id"
 )

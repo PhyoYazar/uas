@@ -1,4 +1,4 @@
-package studentsubjectdb
+package studentmarkdb
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PhyoYazar/uas/business/core/studentsubject"
+	"github.com/PhyoYazar/uas/business/core/studentmark"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
 	"github.com/jmoiron/sqlx"
@@ -28,17 +28,17 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 }
 
 // Create inserts a new ga into the database.
-func (s *Store) Create(ctx context.Context, ss studentsubject.StudentSubject) error {
+func (s *Store) Create(ctx context.Context, ss studentmark.StudentMark) error {
 
 	const q = `
-	INSERT INTO student_subjects
-		(student_subject_id, mark, student_id, subject_id, date_created, date_updated)
+	INSERT INTO student_marks
+		(student_mark_id, mark, student_id, subject_id, attribute_id,date_created, date_updated)
 	VALUES
-		(:student_subject_id, :mark, :student_id, :subject_id, :date_created, :date_updated)`
+		(:student_mark_id, :mark, :student_id, :subject_id, :attribute_id, :date_created, :date_updated)`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudentSubject(ss)); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudentMark(ss)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
-			return fmt.Errorf("namedexeccontext: %w", studentsubject.ErrUniqueStudentSubject)
+			return fmt.Errorf("namedexeccontext: %w", studentmark.ErrUniqueStudentMark)
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -47,7 +47,7 @@ func (s *Store) Create(ctx context.Context, ss studentsubject.StudentSubject) er
 }
 
 // Query retrieves a list of existing gas from the database.
-func (s *Store) Query(ctx context.Context, filter studentsubject.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]studentsubject.StudentSubject, error) {
+func (s *Store) Query(ctx context.Context, filter studentmark.QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]studentmark.StudentMark, error) {
 	data := map[string]interface{}{
 		"offset":        (pageNumber - 1) * rowsPerPage,
 		"rows_per_page": rowsPerPage,
@@ -57,7 +57,7 @@ func (s *Store) Query(ctx context.Context, filter studentsubject.QueryFilter, or
 	SELECT
 	*
 	FROM
-	student_subjects`
+	student_marks`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)
@@ -70,12 +70,12 @@ func (s *Store) Query(ctx context.Context, filter studentsubject.QueryFilter, or
 	buf.WriteString(orderByClause)
 	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
-	var dbSs []dbStudentSubject
+	var dbSs []dbStudentMark
 	if err := database.NamedQuerySlice(ctx, s.log, s.db, buf.String(), data, &dbSs); err != nil {
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	mark, err := toCoreStudentSubjectSlice(dbSs)
+	mark, err := toCoreStudentMarkSlice(dbSs)
 	if err != nil {
 		return nil, err
 	}
@@ -84,14 +84,14 @@ func (s *Store) Query(ctx context.Context, filter studentsubject.QueryFilter, or
 }
 
 // Count returns the total number of cos in the DB.
-func (s *Store) Count(ctx context.Context, filter studentsubject.QueryFilter) (int, error) {
+func (s *Store) Count(ctx context.Context, filter studentmark.QueryFilter) (int, error) {
 	data := map[string]interface{}{}
 
 	const q = `
 	SELECT
 		count(1)
 	FROM
-	student_subjects`
+	student_marks`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

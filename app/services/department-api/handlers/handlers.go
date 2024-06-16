@@ -13,7 +13,7 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/gagrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/markgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentgrp"
-	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentsubjectgrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/studentmarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/subjectgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
@@ -36,8 +36,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/mark/markdb"
 	"github.com/PhyoYazar/uas/business/core/student"
 	"github.com/PhyoYazar/uas/business/core/student/studentdb"
-	"github.com/PhyoYazar/uas/business/core/studentsubject"
-	"github.com/PhyoYazar/uas/business/core/studentsubject/studentsubjectdb"
+	"github.com/PhyoYazar/uas/business/core/studentmark"
+	"github.com/PhyoYazar/uas/business/core/studentmark/studentmarkdb"
 	"github.com/PhyoYazar/uas/business/core/subject"
 	"github.com/PhyoYazar/uas/business/core/subject/subjectdb"
 	"github.com/PhyoYazar/uas/business/core/user"
@@ -158,14 +158,14 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodDelete, "/attribute/:attribute_id", attributegh.Delete)
 
 	// -------------------------------------------------------------------------
-	// student subject
+	// student mark
 
-	ssCore := studentsubject.NewCore(studentsubjectdb.NewStore(cfg.Log, cfg.DB))
+	smCore := studentmark.NewCore(studentmarkdb.NewStore(cfg.Log, cfg.DB))
 
-	ssgh := studentsubjectgrp.New(ssCore)
+	smgh := studentmarkgrp.New(smCore)
 
-	app.Handle(http.MethodGet, "/student_subjects", ssgh.Query)
-	app.Handle(http.MethodPost, "/student_subject", ssgh.Create)
+	app.Handle(http.MethodGet, "/student_marks", smgh.Query)
+	app.Handle(http.MethodPost, "/student_mark", smgh.Create)
 
 	// -------------------------------------------------------------------------
 	// co ga
