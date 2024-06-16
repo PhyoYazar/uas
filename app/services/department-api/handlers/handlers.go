@@ -19,6 +19,7 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vattributegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vcogrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vstudentmarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vsubjectgrp"
 	"github.com/PhyoYazar/uas/business/core/attribute"
 	"github.com/PhyoYazar/uas/business/core/attribute/attributedb"
@@ -46,6 +47,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/vattribute/vattributedb"
 	"github.com/PhyoYazar/uas/business/core/vco"
 	"github.com/PhyoYazar/uas/business/core/vco/vcodb"
+	"github.com/PhyoYazar/uas/business/core/vstudentmark"
+	"github.com/PhyoYazar/uas/business/core/vstudentmark/vstudentmarkdb"
 	"github.com/PhyoYazar/uas/business/core/vsubject"
 	"github.com/PhyoYazar/uas/business/core/vsubject/vsubjectdb"
 	"github.com/PhyoYazar/uas/business/web/auth"
@@ -211,6 +214,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
 	app.Handle(http.MethodDelete, "/mark/:mark_id", mgh.Delete)
 	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
+
+	// -------------------------------------------------------------------------
+	// student marks
+
+	vsmCore := vstudentmark.NewCore(vstudentmarkdb.NewStore(cfg.Log, cfg.DB))
+
+	vsmgh := vstudentmarkgrp.New(vsmCore)
+
+	app.Handle(http.MethodGet, "/student_marks/:subject_id", vsmgh.Query)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------

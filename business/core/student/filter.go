@@ -39,16 +39,6 @@ func (qf *QueryFilter) WithName(name string) {
 	qf.Name = &name
 }
 
-// // WithEmail sets the Email field of the QueryFilter value.
-// func (qf *QueryFilter) WithEmail(email mail.Address) {
-// 	qf.Email = &email
-// }
-
-// // WithPhoneNumber sets the Instructor field of the QueryFilter value.
-// func (qf *QueryFilter) WithPhoneNumber(phoneNumber string) {
-// 	qf.PhoneNumber = &phoneNumber
-// }
-
 // WithYear sets the Year field of the QueryFilter value.
 func (qf *QueryFilter) WithYear(year string) {
 	qf.Year = &year
