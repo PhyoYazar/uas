@@ -39,7 +39,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 	SELECT
 		s.student_id,
 		s.roll_number,
-		s.name student_name,
+		s.student_number,
 		sm.student_mark_id,
 		sm.mark,
 		a.attribute_id
@@ -73,14 +73,14 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 		var (
 			studentID         uuid.UUID
 			studentRollNumber int
-			studentName       string
+			studentNumber     int
 			studentMarkID     sql.NullString
 			studentFullMark   sql.NullInt64
 			attributeID       sql.NullString
 		)
 
 		err := rows.Scan(
-			&studentID, &studentRollNumber, &studentName,
+			&studentID, &studentRollNumber, &studentNumber,
 			&studentMarkID, &studentFullMark,
 			&attributeID,
 		)
@@ -91,10 +91,10 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 		student, ok := studentsMap[studentID]
 		if !ok {
 			student = vstudentmark.VStudentMark{
-				ID:          studentID,
-				RollNumber:  studentRollNumber,
-				StudentName: studentName,
-				Attributes:  []vstudentmark.VAttributes{},
+				ID:            studentID,
+				RollNumber:    studentRollNumber,
+				StudentNumber: studentNumber,
+				Attributes:    []vstudentmark.VAttributes{},
 			}
 			studentsMap[studentID] = student
 		}
