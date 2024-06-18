@@ -83,3 +83,28 @@ func (app AppNewStudentMark) Validate() error {
 }
 
 // =============================================================================
+
+// AppUpdateStudentMark contains information needed to update a studentMark.
+type AppUpdateStudentMark struct {
+	Mark        *int    `json:"mark"`
+	SubjectID   *string `json:"subjectId"`
+	StudentID   *string `json:"studentId"`
+	AttributeID *string `json:"attributeId"`
+}
+
+func toCoreUpdateStudentMark(app AppUpdateStudentMark) (studentmark.UpdateStudentMark, error) {
+
+	nSub := studentmark.UpdateStudentMark{
+		Mark: app.Mark,
+	}
+
+	return nSub, nil
+}
+
+// Validate checks the data in the model is considered clean.
+func (app AppUpdateStudentMark) Validate() error {
+	if err := validate.Check(app); err != nil {
+		return fmt.Errorf("validate: %w", err)
+	}
+	return nil
+}

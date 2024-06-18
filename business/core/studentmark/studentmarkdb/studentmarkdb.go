@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/studentmark"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -40,6 +41,48 @@ func (s *Store) Create(ctx context.Context, ss studentmark.StudentMark) error {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("namedexeccontext: %w", studentmark.ErrUniqueStudentMark)
 		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Update replaces a user document in the database.
+func (s *Store) Update(ctx context.Context, std studentmark.StudentMark) error {
+	const q = `
+	UPDATE
+		student_marks
+	SET
+		"mark" = :mark,
+		"date_updated" = :date_updated
+	WHERE
+		student_mark_id = :student_mark_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudentMark(std)); err != nil {
+		if errors.Is(err, database.ErrDBDuplicatedEntry) {
+			return studentmark.ErrUniqueStudentMark
+		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Delete removes a user from the database.
+func (s *Store) Delete(ctx context.Context, std studentmark.StudentMark) error {
+	data := struct {
+		UserID string `db:"student_mark_id"`
+	}{
+		UserID: std.ID.String(),
+	}
+
+	const q = `
+	DELETE FROM
+		student_marks
+	WHERE
+		student_mark_id = :student_mark_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
 
@@ -81,6 +124,33 @@ func (s *Store) Query(ctx context.Context, filter studentmark.QueryFilter, order
 	}
 
 	return mark, nil
+}
+
+// QueryByID gets the specified subject from the database.
+func (s *Store) QueryByID(ctx context.Context, studentMarkID uuid.UUID) (studentmark.StudentMark, error) {
+	data := struct {
+		ID string `db:"student_mark_id"`
+	}{
+		ID: studentMarkID.String(),
+	}
+
+	const q = `
+	SELECT
+        student_mark_id, attribute_id, subject_id, student_id, date_created, date_updated
+	FROM
+		student_marks
+	WHERE
+		student_mark_id = :student_mark_id`
+
+	var dbStd dbStudentMark
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbStd); err != nil {
+		if errors.Is(err, database.ErrDBNotFound) {
+			return studentmark.StudentMark{}, fmt.Errorf("db: %w", studentmark.ErrNotFound)
+		}
+		return studentmark.StudentMark{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toCoreStudentMark(dbStd)
 }
 
 // Count returns the total number of cos in the DB.

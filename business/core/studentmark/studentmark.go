@@ -21,9 +21,13 @@ var (
 // retrieve data.
 type Storer interface {
 	Create(ctx context.Context, ss StudentMark) error
+	Update(ctx context.Context, sub StudentMark) error
+	Delete(ctx context.Context, sub StudentMark) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]StudentMark, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	QueryByID(ctx context.Context, studentMarkID uuid.UUID) (StudentMark, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -60,6 +64,30 @@ func (c *Core) Create(ctx context.Context, sm NewStudentMark) (StudentMark, erro
 	return mk, nil
 }
 
+// Update replaces a user document in the database.
+func (c *Core) Update(ctx context.Context, std StudentMark, uStd UpdateStudentMark) (StudentMark, error) {
+	if uStd.Mark != nil {
+		std.Mark = *uStd.Mark
+	}
+
+	std.DateUpdated = time.Now()
+
+	if err := c.storer.Update(ctx, std); err != nil {
+		return StudentMark{}, fmt.Errorf("update: %w", err)
+	}
+
+	return std, nil
+}
+
+// Delete removes a user from the database.
+func (c *Core) Delete(ctx context.Context, stdMark StudentMark) error {
+	if err := c.storer.Delete(ctx, stdMark); err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
+}
+
 // Query retrieves a list of existing gas from the database.
 func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]StudentMark, error) {
 	sm, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
@@ -77,4 +105,14 @@ func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, 
 // Count returns the total number of cos in the store.
 func (c *Core) Count(ctx context.Context, filter QueryFilter) (int, error) {
 	return c.storer.Count(ctx, filter)
+}
+
+// QueryByID finds the user by the specified ID.
+func (c *Core) QueryByID(ctx context.Context, studentMarkID uuid.UUID) (StudentMark, error) {
+	std, err := c.storer.QueryByID(ctx, studentMarkID)
+	if err != nil {
+		return StudentMark{}, fmt.Errorf("query: studentMarkID[%s]: %w", studentMarkID, err)
+	}
+
+	return std, nil
 }

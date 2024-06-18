@@ -27,8 +27,8 @@ type NewStudentMark struct {
 
 // UpdateStudentMark contains information needed to update a StudentMark.
 type UpdateStudentMark struct {
-	StudentID   *uuid.UUID
-	SubjectID   *uuid.UUID
-	AttributeID uuid.UUID
-	Mark        *int
+	// StudentID   *uuid.UUID
+	// SubjectID   *uuid.UUID
+	// AttributeID *uuid.UUID
+	Mark *int
 }

@@ -169,6 +169,9 @@ func APIMux(cfg APIMuxConfig) *web.App {
 
 	app.Handle(http.MethodGet, "/student_marks", smgh.Query)
 	app.Handle(http.MethodPost, "/student_mark", smgh.Create)
+	app.Handle(http.MethodGet, "/student_mark/:student_mark_id", smgh.QueryByID)
+	app.Handle(http.MethodPut, "/student_mark/:student_mark_id", smgh.Update)
+	app.Handle(http.MethodDelete, "/student_mark/:student_mark_id", smgh.Delete)
 
 	// -------------------------------------------------------------------------
 	// co ga
@@ -216,7 +219,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
 
 	// -------------------------------------------------------------------------
-	// student marks
+	// view student marks
 
 	vsmCore := vstudentmark.NewCore(vstudentmarkdb.NewStore(cfg.Log, cfg.DB))
 
