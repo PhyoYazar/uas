@@ -212,3 +212,9 @@ CREATE TABLE student_marks (
 	FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
 	FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE
 );
+
+
+-- Version: 1.18
+-- Description: change student name column to student number column
+ALTER TABLE students DROP COLUMN name;
+ALTER TABLE students ADD COLUMN student_number INT NOT NULL;

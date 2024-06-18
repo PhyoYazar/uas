@@ -3,23 +3,23 @@ package vstudentmark
 import "github.com/google/uuid"
 
 type VAttributes struct {
-	StudentMarkID uuid.UUID
-	AttributeID   uuid.UUID
+	StudentMarkID uuid.UUID `json:"studentMarkId"`
+	AttributeID   uuid.UUID `json:"attributeId"`
+	FullMark      int       `json:"fullMark"`
 	// Name          string
 	// Instance      string
 	// Type          string
-	FullMark int
 }
 
 type VStudentMark struct {
-	ID          uuid.UUID
-	RollNumber  int
-	StudentName string
-	Attributes  []VAttributes
+	ID          uuid.UUID     `json:"id"`
+	RollNumber  int           `json:"rollNumber"`
+	StudentName string        `json:"studentName"`
+	Attributes  []VAttributes `json:"attributes"`
 }
 
 type VRemoveStudent struct {
-	SubjectID   uuid.UUID
-	StudentID   uuid.UUID
-	AttributeID uuid.UUID
+	SubjectID   uuid.UUID `json:"subjectId"`
+	StudentID   uuid.UUID `json:"studentId"`
+	AttributeID uuid.UUID `json:"attributeId"`
 }

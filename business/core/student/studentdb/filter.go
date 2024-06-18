@@ -2,7 +2,6 @@ package studentdb
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	"github.com/PhyoYazar/uas/business/core/student"
@@ -16,20 +15,10 @@ func (s *Store) applyFilter(filter student.QueryFilter, data map[string]interfac
 		wc = append(wc, "student_id = :student_id")
 	}
 
-	if filter.Name != nil {
-		data["name"] = fmt.Sprintf("%%%s%%", *filter.Name)
-		wc = append(wc, "name LIKE :name")
+	if filter.StudentNumber != nil {
+		data["student_number"] = *filter.StudentNumber
+		wc = append(wc, "student_number = :student_number")
 	}
-
-	// if filter.Email != nil {
-	// 	data["email"] = (*filter.Email).String()
-	// 	wc = append(wc, "email = :email")
-	// }
-
-	// if filter.PhoneNumber != nil {
-	// 	data["phone_number"] = fmt.Sprintf("%%%s%%", *filter.PhoneNumber)
-	// 	wc = append(wc, "phone_number LIKE :phone_number")
-	// }
 
 	if filter.Year != nil {
 		data["year"] = *filter.Year

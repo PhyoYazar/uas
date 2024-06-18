@@ -8,33 +8,27 @@ import (
 
 // Student represents information about an individual student.
 type Student struct {
-	ID           uuid.UUID
-	Name         string
-	RollNumber   int
-	Year         Year
-	AcademicYear string
-	DateCreated  time.Time
-	DateUpdated  time.Time
-	// Email        mail.Address
-	// PhoneNumber  string
+	ID            uuid.UUID
+	StudentNumber int
+	RollNumber    int
+	Year          Year
+	AcademicYear  string
+	DateCreated   time.Time
+	DateUpdated   time.Time
 }
 
 // NewStudent contains information needed to create a new student.
 type NewStudent struct {
-	Name         string
-	RollNumber   int
-	Year         Year
-	AcademicYear string
-	// Email        mail.Address
-	// PhoneNumber  string
+	RollNumber    int
+	StudentNumber int
+	Year          Year
+	AcademicYear  string
 }
 
 // UpdateStudent contains information needed to update a student.
 type UpdateStudent struct {
-	Name         *string
-	RollNumber   *int
-	Year         Year
-	AcademicYear *string
-	// Email        *mail.Address
-	// PhoneNumber  *string
+	StudentNumber *int
+	RollNumber    *int
+	Year          Year
+	AcademicYear  *string
 }

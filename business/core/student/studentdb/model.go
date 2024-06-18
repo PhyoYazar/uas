@@ -11,38 +11,31 @@ import (
 // dbStudent represent the structure we need for moving data
 // between the app and the database.
 type dbStudent struct {
-	ID           uuid.UUID `db:"student_id"`
-	Name         string    `db:"name"`
-	Year         string    `db:"year"`
-	AcademicYear string    `db:"academic_year"`
-	RollNumber   int       `db:"roll_number"`
-	DateCreated  time.Time `db:"date_created"`
-	DateUpdated  time.Time `db:"date_updated"`
-	// Email        string    `db:"email"`
-	// PhoneNumber string    `db:"phone_number"`
+	ID            uuid.UUID `db:"student_id"`
+	StudentNumber int       `db:"student_number"`
+	Year          string    `db:"year"`
+	AcademicYear  string    `db:"academic_year"`
+	RollNumber    int       `db:"roll_number"`
+	DateCreated   time.Time `db:"date_created"`
+	DateUpdated   time.Time `db:"date_updated"`
 }
 
 func toDBStudent(std student.Student) dbStudent {
 
 	student := dbStudent{
-		ID:           std.ID,
-		Name:         std.Name,
-		Year:         std.Year.Name(),
-		AcademicYear: std.AcademicYear,
-		RollNumber:   std.RollNumber,
-		DateCreated:  std.DateCreated.UTC(),
-		DateUpdated:  std.DateUpdated.UTC(),
-		// Email:        std.Email.Address,
-		// PhoneNumber:  std.PhoneNumber,
+		ID:            std.ID,
+		StudentNumber: std.StudentNumber,
+		Year:          std.Year.Name(),
+		AcademicYear:  std.AcademicYear,
+		RollNumber:    std.RollNumber,
+		DateCreated:   std.DateCreated.UTC(),
+		DateUpdated:   std.DateUpdated.UTC(),
 	}
 
 	return student
 }
 
 func toCoreStudent(dbStd dbStudent) (student.Student, error) {
-	// addr := mail.Address{
-	// 	Address: dbStd.Email,
-	// }
 
 	year, err := student.ParseYear(dbStd.Year)
 	if err != nil {
@@ -50,13 +43,13 @@ func toCoreStudent(dbStd dbStudent) (student.Student, error) {
 	}
 
 	std := student.Student{
-		ID:           dbStd.ID,
-		Name:         dbStd.Name,
-		Year:         year,
-		AcademicYear: dbStd.AcademicYear,
-		RollNumber:   dbStd.RollNumber,
-		DateCreated:  dbStd.DateCreated.In(time.Local),
-		DateUpdated:  dbStd.DateUpdated.In(time.Local),
+		ID:            dbStd.ID,
+		StudentNumber: dbStd.StudentNumber,
+		Year:          year,
+		AcademicYear:  dbStd.AcademicYear,
+		RollNumber:    dbStd.RollNumber,
+		DateCreated:   dbStd.DateCreated.In(time.Local),
+		DateUpdated:   dbStd.DateUpdated.In(time.Local),
 		// Email:        addr,
 		// PhoneNumber:  dbStd.PhoneNumber,
 	}

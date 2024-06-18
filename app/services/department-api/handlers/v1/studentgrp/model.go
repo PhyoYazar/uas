@@ -10,29 +10,25 @@ import (
 
 // AppStudent represents information about an individual student.
 type AppStudent struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	Year         string `json:"year"`
-	AcademicYear string `json:"academicYear"`
-	RollNumber   int    `json:"rollNumber"`
-	DateCreated  string `json:"dateCreated"`
-	DateUpdated  string `json:"dateUpdated"`
-	// Email        string `json:"email"`
-	// PhoneNumber  string `json:"phoneNumber"`
+	ID            string `json:"id"`
+	StudentNumber int    `json:"studentNumber"`
+	Year          string `json:"year"`
+	AcademicYear  string `json:"academicYear"`
+	RollNumber    int    `json:"rollNumber"`
+	DateCreated   string `json:"dateCreated"`
+	DateUpdated   string `json:"dateUpdated"`
 }
 
 func toAppStudent(std student.Student) AppStudent {
 
 	return AppStudent{
-		ID:           std.ID.String(),
-		Name:         std.Name,
-		Year:         std.Year.Name(),
-		AcademicYear: std.AcademicYear,
-		RollNumber:   std.RollNumber,
-		DateCreated:  std.DateCreated.Format(time.RFC3339),
-		DateUpdated:  std.DateUpdated.Format(time.RFC3339),
-		// Email:        std.Email.Address,
-		// PhoneNumber:  std.PhoneNumber,
+		ID:            std.ID.String(),
+		StudentNumber: std.StudentNumber,
+		Year:          std.Year.Name(),
+		AcademicYear:  std.AcademicYear,
+		RollNumber:    std.RollNumber,
+		DateCreated:   std.DateCreated.Format(time.RFC3339),
+		DateUpdated:   std.DateUpdated.Format(time.RFC3339),
 	}
 }
 
@@ -40,20 +36,13 @@ func toAppStudent(std student.Student) AppStudent {
 
 // AppNewStudent contains information needed to create a new student.
 type AppNewStudent struct {
-	Name         string `json:"name" validate:"required"`
-	Year         string `json:"year" validate:"required"`
-	AcademicYear string `json:"academicYear" validate:"required"`
-	RollNumber   int    `json:"rollNumber" validate:"required"`
-	// PhoneNumber  string `json:"phoneNumber" validate:"required"`
-	// Email        string `json:"email" validate:"required,email"`
+	StudentNumber int    `json:"studentNumber" validate:"required"`
+	Year          string `json:"year" validate:"required"`
+	AcademicYear  string `json:"academicYear" validate:"required"`
+	RollNumber    int    `json:"rollNumber" validate:"required"`
 }
 
 func toCoreNewStudent(app AppNewStudent) (student.NewStudent, error) {
-
-	// addr, err := mail.ParseAddress(app.Email)
-	// if err != nil {
-	// 	return student.NewStudent{}, fmt.Errorf("parsing email: %w", err)
-	// }
 
 	year, err := student.ParseYear(app.Year)
 	if err != nil {
@@ -61,10 +50,10 @@ func toCoreNewStudent(app AppNewStudent) (student.NewStudent, error) {
 	}
 
 	std := student.NewStudent{
-		Name:         app.Name,
-		Year:         year,
-		AcademicYear: app.AcademicYear,
-		RollNumber:   app.RollNumber,
+		StudentNumber: app.StudentNumber,
+		Year:          year,
+		AcademicYear:  app.AcademicYear,
+		RollNumber:    app.RollNumber,
 		// Email:        *addr,
 		// PhoneNumber:  app.PhoneNumber,
 	}
@@ -84,19 +73,19 @@ func (app AppNewStudent) Validate() error {
 
 // AppUpdateStudent contains information needed to update a student.
 type AppUpdateStudent struct {
-	Name         *string      `json:"name"`
-	RollNumber   *int         `json:"rollNumber"`
-	Year         student.Year `json:"year"`
-	AcademicYear *string      `json:"academicYear"`
+	StudentNumber *int         `json:"studentNumber"`
+	RollNumber    *int         `json:"rollNumber"`
+	Year          student.Year `json:"year"`
+	AcademicYear  *string      `json:"academicYear"`
 }
 
 func toCoreUpdateStudent(app AppUpdateStudent) (student.UpdateStudent, error) {
 
 	nSub := student.UpdateStudent{
-		Name:         app.Name,
-		RollNumber:   app.RollNumber,
-		Year:         app.Year,
-		AcademicYear: app.AcademicYear,
+		StudentNumber: app.StudentNumber,
+		RollNumber:    app.RollNumber,
+		Year:          app.Year,
+		AcademicYear:  app.AcademicYear,
 	}
 
 	return nSub, nil

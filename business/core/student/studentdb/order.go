@@ -8,9 +8,9 @@ import (
 )
 
 var orderByFields = map[string]string{
-	student.OrderByID:         "student_id",
-	student.OrderByName:       "name",
-	student.OrderByRollNumber: "roll_number",
+	student.OrderByID:            "student_id",
+	student.OrderByStudentNumber: "student_number",
+	student.OrderByRollNumber:    "roll_number",
 	// student.OrderByEmail:      "email",
 }
 

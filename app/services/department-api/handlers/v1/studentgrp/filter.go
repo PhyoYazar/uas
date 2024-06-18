@@ -22,14 +22,6 @@ func parseFilter(r *http.Request) (student.QueryFilter, error) {
 		filter.WithStudentID(id)
 	}
 
-	// if email := values.Get("email"); email != "" {
-	// 	addr, err := mail.ParseAddress(email)
-	// 	if err != nil {
-	// 		return student.QueryFilter{}, validate.NewFieldsError("email", err)
-	// 	}
-	// 	filter.WithEmail(*addr)
-	// }
-
 	if createdDate := values.Get("start_created_date"); createdDate != "" {
 		t, err := time.Parse(time.RFC3339, createdDate)
 		if err != nil {
@@ -46,25 +38,21 @@ func parseFilter(r *http.Request) (student.QueryFilter, error) {
 		filter.WithEndCreatedDate(t)
 	}
 
-	if name := values.Get("name"); name != "" {
-		filter.WithName(name)
+	if stdNumber := values.Get("student_number"); stdNumber != "" {
+		filter.WithStudentNumber(stdNumber)
 	}
 
 	if year := values.Get("year"); year != "" {
 		filter.WithYear(year)
 	}
 
-	if academicYear := values.Get("academicYear"); academicYear != "" {
+	if academicYear := values.Get("academic_year"); academicYear != "" {
 		filter.WithAcademicYear(academicYear)
 	}
 
 	if rollNumber := values.Get("roll_number"); rollNumber != "" {
 		filter.WithRollNumber(rollNumber)
 	}
-
-	// if phoneNumber := values.Get("phone_number"); phoneNumber != "" {
-	// 	filter.WithPhoneNumber(phoneNumber)
-	// }
 
 	if err := filter.Validate(); err != nil {
 		return student.QueryFilter{}, err
