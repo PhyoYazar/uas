@@ -11,14 +11,12 @@ import (
 // QueryFilter holds the available fields a query can be filtered on.
 type QueryFilter struct {
 	ID               *uuid.UUID `validate:"omitempty"`
-	StudentNumber    *string    `validate:"omitempty,min=1"`
+	StudentName      *string    `validate:"omitempty,min=1"`
 	RollNumber       *string    `validate:"omitempty,min=1"`
 	Year             *string    `validate:"omitempty"`
 	AcademicYear     *string    `validate:"omitempty"`
 	StartCreatedDate *time.Time `validate:"omitempty"`
 	EndCreatedDate   *time.Time `validate:"omitempty"`
-	// Email            *mail.Address `validate:"omitempty"`
-	// PhoneNumber      *string       `validate:"omitempty,min=3"`
 }
 
 // Validate checks the data in the model is considered clean.
@@ -35,8 +33,8 @@ func (qf *QueryFilter) WithStudentID(studentID uuid.UUID) {
 }
 
 // WithName sets the Name field of the QueryFilter value.
-func (qf *QueryFilter) WithStudentNumber(stdNumber string) {
-	qf.StudentNumber = &stdNumber
+func (qf *QueryFilter) WithStudentName(stdName string) {
+	qf.StudentName = &stdName
 }
 
 // WithYear sets the Year field of the QueryFilter value.

@@ -48,13 +48,13 @@ func (c *Core) Create(ctx context.Context, ns NewStudent) (Student, error) {
 	now := time.Now()
 
 	std := Student{
-		ID:            uuid.New(),
-		StudentNumber: ns.StudentNumber,
-		RollNumber:    ns.RollNumber,
-		Year:          ns.Year,
-		AcademicYear:  ns.AcademicYear,
-		DateCreated:   now,
-		DateUpdated:   now,
+		ID:           uuid.New(),
+		StudentName:  ns.StudentName,
+		RollNumber:   ns.RollNumber,
+		Year:         ns.Year,
+		AcademicYear: ns.AcademicYear,
+		DateCreated:  now,
+		DateUpdated:  now,
 		// Email:        ns.Email,
 		// PhoneNumber:  ns.PhoneNumber,
 	}
@@ -68,8 +68,8 @@ func (c *Core) Create(ctx context.Context, ns NewStudent) (Student, error) {
 
 // Update replaces a user document in the database.
 func (c *Core) Update(ctx context.Context, std Student, uStd UpdateStudent) (Student, error) {
-	if uStd.StudentNumber != nil {
-		std.StudentNumber = *uStd.StudentNumber
+	if uStd.StudentName != nil {
+		std.StudentName = *uStd.StudentName
 	}
 	if uStd.AcademicYear != nil {
 		std.AcademicYear = *uStd.AcademicYear

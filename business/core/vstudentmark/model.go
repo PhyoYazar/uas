@@ -12,10 +12,10 @@ type VAttributes struct {
 }
 
 type VStudentMark struct {
-	ID            uuid.UUID     `json:"id"`
-	RollNumber    int           `json:"rollNumber"`
-	StudentNumber int           `json:"studentNumber"`
-	Attributes    []VAttributes `json:"attributes"`
+	ID          uuid.UUID     `json:"id"`
+	RollNumber  int           `json:"rollNumber"`
+	StudentName string        `json:"studentName"`
+	Attributes  []VAttributes `json:"attributes"`
 }
 
 type VRemoveStudent struct {

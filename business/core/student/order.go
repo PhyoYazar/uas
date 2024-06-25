@@ -8,7 +8,7 @@ var DefaultOrderBy = order.NewBy(OrderByID, order.ASC)
 // Set of fields that the results can be ordered by. These are the names
 // that should be used by the application layer.
 const (
-	OrderByID            = "studentid"
-	OrderByStudentNumber = "studentnumber"
-	OrderByRollNumber    = "rollnumber"
+	OrderByID          = "studentid"
+	OrderByStudentName = "studentname"
+	OrderByRollNumber  = "rollnumber"
 )

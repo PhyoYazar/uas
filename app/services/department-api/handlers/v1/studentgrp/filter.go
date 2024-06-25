@@ -38,8 +38,8 @@ func parseFilter(r *http.Request) (student.QueryFilter, error) {
 		filter.WithEndCreatedDate(t)
 	}
 
-	if stdNumber := values.Get("student_number"); stdNumber != "" {
-		filter.WithStudentNumber(stdNumber)
+	if stdName := values.Get("student_name"); stdName != "" {
+		filter.WithStudentName(stdName)
 	}
 
 	if year := values.Get("year"); year != "" {

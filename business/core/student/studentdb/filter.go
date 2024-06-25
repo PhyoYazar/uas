@@ -15,9 +15,9 @@ func (s *Store) applyFilter(filter student.QueryFilter, data map[string]interfac
 		wc = append(wc, "student_id = :student_id")
 	}
 
-	if filter.StudentNumber != nil {
-		data["student_number"] = *filter.StudentNumber
-		wc = append(wc, "student_number = :student_number")
+	if filter.StudentName != nil {
+		data["student_name"] = *filter.StudentName
+		wc = append(wc, "student_name = :student_name")
 	}
 
 	if filter.Year != nil {

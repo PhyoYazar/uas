@@ -218,3 +218,8 @@ CREATE TABLE student_marks (
 -- Description: change student name column to student number column
 ALTER TABLE students DROP COLUMN name;
 ALTER TABLE students ADD COLUMN student_number INT NOT NULL;
+
+-- Version: 1.19
+-- Description: change student number column to student name column
+ALTER TABLE students DROP COLUMN student_number;
+ALTER TABLE students ADD COLUMN student_name TEXT NOT NULL;

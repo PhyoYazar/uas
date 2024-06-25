@@ -32,9 +32,9 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 func (s *Store) Create(ctx context.Context, std student.Student) error {
 	const q = `
 	INSERT INTO students
-		(student_id, student_number, year, academic_year, roll_number, date_created, date_updated)
+		(student_id, student_name, year, academic_year, roll_number, date_created, date_updated)
 	VALUES
-		(:student_id, :student_number, :year, :academic_year, :roll_number, :date_created, :date_updated)`
+		(:student_id, :student_name, :year, :academic_year, :roll_number, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBStudent(std)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
@@ -52,7 +52,7 @@ func (s *Store) Update(ctx context.Context, std student.Student) error {
 	UPDATE
 		students
 	SET
-		"student_number" = :student_number,
+		"student_name" = :student_name,
 		"academic_year" = :academic_year,
 		"year" = :year,
 		"roll_number" = :roll_number,
@@ -133,7 +133,7 @@ func (s *Store) QueryByID(ctx context.Context, studentID uuid.UUID) (student.Stu
 
 	const q = `
 	SELECT
-        student_id, student_number, roll_number, year, academic_year, date_created, date_updated
+        student_id, student_name, roll_number, year, academic_year, date_created, date_updated
 	FROM
 		students
 	WHERE
