@@ -227,3 +227,9 @@ ALTER TABLE students ADD COLUMN student_name TEXT NOT NULL;
 -- Version: 1.20
 -- Description: change student number column to student name column
 ALTER TABLE course_outlines ADD COLUMN mark INT NOT NULL;
+
+-- Version: 1.21
+-- Description: add tutorial, lab, assignment column into subject table
+ALTER TABLE subjects ADD COLUMN lab INT NOT NULL;
+ALTER TABLE subjects ADD COLUMN assignment INT NOT NULL;
+ALTER TABLE subjects ADD COLUMN tutorial INT NOT NULL;

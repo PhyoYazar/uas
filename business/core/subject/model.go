@@ -17,6 +17,9 @@ type Subject struct {
 	Instructor   string
 	Exam         int
 	Practical    int
+	Tutorial     int
+	Lab          int
+	Assignment   int
 	DateCreated  time.Time
 	DateUpdated  time.Time
 }
@@ -30,6 +33,10 @@ type NewSubject struct {
 	Semester     Semester
 	Instructor   string
 	Exam         int
+	Tutorial     int
+	Lab          int
+	Assignment   int
+	Practical    int
 }
 
 // UpdateSubject contains information needed to update a subject.
@@ -42,4 +49,7 @@ type UpdateSubject struct {
 	Semester     Semester
 	Exam         *int
 	Practical    *int
+	Tutorial     *int
+	Lab          *int
+	Assignment   *int
 }

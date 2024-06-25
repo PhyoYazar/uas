@@ -19,6 +19,9 @@ type dbSubject struct {
 	Semester     string    `db:"semester"`
 	Instructor   string    `db:"instructor"`
 	Exam         int       `db:"exam"`
+	Tutorial     int       `db:"tutorial"`
+	Lab          int       `db:"lab"`
+	Assignment   int       `db:"assignment"`
 	Practical    int       `db:"practical"`
 	DateCreated  time.Time `db:"date_created"`
 	DateUpdated  time.Time `db:"date_updated"`
@@ -35,6 +38,9 @@ func toDBSubject(sub subject.Subject) dbSubject {
 		Semester:     sub.Semester.Name(),
 		Instructor:   sub.Instructor,
 		Exam:         sub.Exam,
+		Tutorial:     sub.Tutorial,
+		Assignment:   sub.Assignment,
+		Lab:          sub.Lab,
 		Practical:    sub.Practical,
 		DateCreated:  sub.DateCreated.UTC(),
 		DateUpdated:  sub.DateUpdated.UTC(),
@@ -64,6 +70,9 @@ func toCoreSubject(dbSubject dbSubject) (subject.Subject, error) {
 		Semester:     semester,
 		Instructor:   dbSubject.Instructor,
 		Exam:         dbSubject.Exam,
+		Tutorial:     dbSubject.Tutorial,
+		Lab:          dbSubject.Lab,
+		Assignment:   dbSubject.Assignment,
 		Practical:    dbSubject.Practical,
 		DateCreated:  dbSubject.DateCreated.In(time.Local),
 		DateUpdated:  dbSubject.DateUpdated.In(time.Local),

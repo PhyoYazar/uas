@@ -19,6 +19,9 @@ type AppSubject struct {
 	Instructor   string `json:"instructor"`
 	Exam         int    `json:"exam"`
 	Practical    int    `json:"practical"`
+	Tutorial     int    `json:"tutorial"`
+	Assignment   int    `json:"assignment"`
+	Lab          int    `json:"lab"`
 	DateCreated  string `json:"dateCreated"`
 	DateUpdated  string `json:"dateUpdated"`
 }
@@ -35,6 +38,9 @@ func toAppSubject(sub subject.Subject) AppSubject {
 		Instructor:   sub.Instructor,
 		Exam:         sub.Exam,
 		Practical:    sub.Practical,
+		Lab:          sub.Lab,
+		Tutorial:     sub.Tutorial,
+		Assignment:   sub.Assignment,
 		DateCreated:  sub.DateCreated.Format(time.RFC3339),
 		DateUpdated:  sub.DateUpdated.Format(time.RFC3339),
 	}
@@ -51,6 +57,10 @@ type AppNewSubject struct {
 	Semester     string `json:"semester" validate:"required"`
 	Instructor   string `json:"instructor" validate:"required"`
 	Exam         int    `json:"exam" validate:"required"`
+	Practical    int    `json:"practical"`
+	Tutorial     int    `json:"tutorial"`
+	Assignment   int    `json:"assignment"`
+	Lab          int    `json:"lab"`
 }
 
 func toCoreNewSubject(app AppNewSubject) (subject.NewSubject, error) {
@@ -73,6 +83,10 @@ func toCoreNewSubject(app AppNewSubject) (subject.NewSubject, error) {
 		Semester:     semester,
 		Instructor:   app.Instructor,
 		Exam:         app.Exam,
+		Lab:          app.Lab,
+		Tutorial:     app.Tutorial,
+		Assignment:   app.Assignment,
+		Practical:    app.Practical,
 	}
 
 	return sub, nil
@@ -97,7 +111,10 @@ type AppUpdateSubject struct {
 	Instructor   *string          `json:"instructor"`
 	Semester     subject.Semester `json:"semester"`
 	Exam         *int             `json:"exam"`
-	Practical    *int             `json:"coursework"`
+	Practical    *int             `json:"practical"`
+	Tutorial     *int             `json:"tutorial"`
+	Assignment   *int             `json:"assignment"`
+	Lab          *int             `json:"lab"`
 }
 
 func toCoreUpdateSubject(app AppUpdateSubject) (subject.UpdateSubject, error) {
@@ -139,6 +156,9 @@ func toCoreUpdateSubject(app AppUpdateSubject) (subject.UpdateSubject, error) {
 		Semester:     app.Semester,
 		Exam:         app.Exam,
 		Practical:    app.Practical,
+		Tutorial:     app.Tutorial,
+		Assignment:   app.Assignment,
+		Lab:          app.Lab,
 	}
 
 	return nSub, nil

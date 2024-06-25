@@ -32,9 +32,9 @@ func NewStore(log *zap.SugaredLogger, db *sqlx.DB) *Store {
 func (s *Store) Create(ctx context.Context, sub subject.Subject) error {
 	const q = `
 	INSERT INTO subjects
-		(subject_id, name, code, year, semester, academic_year, instructor, exam, practical, date_created, date_updated)
+		(subject_id, name, code, year, semester, academic_year, instructor, exam, practical, tutorial, lab, assignment, date_created, date_updated)
 	VALUES
-		(:subject_id, :name, :code, :year, :semester, :academic_year, :instructor, :exam, :practical, :date_created, :date_updated)`
+		(:subject_id, :name, :code, :year, :semester, :academic_year, :instructor, :exam, :practical, :tutorial, :lab, :assignment, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBSubject(sub)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
@@ -59,6 +59,9 @@ func (s *Store) Update(ctx context.Context, sub subject.Subject) error {
 		"instructor" = :instructor,
 		"semester" = :semester,
 		"exam" = :exam,
+		"tutorial" = :tutorial,
+      "lab" = :lab,
+      "assignment" = :assignment,
 		"practical" = :practical,
 		"date_updated" = :date_updated
 	WHERE
@@ -142,7 +145,7 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (subject.Sub
 
 	const q = `
 	SELECT
-        subject_id, name, instructor, year, academic_year, code, semester, exam, practical, date_created, date_updated
+        subject_id, name, instructor, year, academic_year, code, semester, exam, practical, tutorial, lab, assignment, date_created, date_updated
 	FROM
 		subjects
 	WHERE

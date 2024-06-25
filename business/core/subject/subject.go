@@ -56,7 +56,10 @@ func (c *Core) Create(ctx context.Context, ns NewSubject) (Subject, error) {
 		Semester:     ns.Semester,
 		Instructor:   ns.Instructor,
 		Exam:         ns.Exam,
-		Practical:    100 - ns.Exam,
+		Practical:    ns.Practical,
+		Tutorial:     ns.Tutorial,
+		Lab:          ns.Lab,
+		Assignment:   ns.Assignment,
 		DateCreated:  now,
 		DateUpdated:  now,
 	}
@@ -93,6 +96,15 @@ func (c *Core) Update(ctx context.Context, sub Subject, uSub UpdateSubject) (Sub
 	}
 	if uSub.Practical != nil {
 		sub.Practical = *uSub.Practical
+	}
+	if uSub.Lab != nil {
+		sub.Lab = *uSub.Lab
+	}
+	if uSub.Assignment != nil {
+		sub.Assignment = *uSub.Assignment
+	}
+	if uSub.Tutorial != nil {
+		sub.Tutorial = *uSub.Tutorial
 	}
 
 	sub.DateUpdated = time.Now()
