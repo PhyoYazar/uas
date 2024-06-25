@@ -223,3 +223,7 @@ ALTER TABLE students ADD COLUMN student_number INT NOT NULL;
 -- Description: change student number column to student name column
 ALTER TABLE students DROP COLUMN student_number;
 ALTER TABLE students ADD COLUMN student_name TEXT NOT NULL;
+
+-- Version: 1.20
+-- Description: change student number column to student name column
+ALTER TABLE course_outlines ADD COLUMN mark INT NOT NULL;
