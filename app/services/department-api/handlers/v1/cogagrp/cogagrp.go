@@ -97,6 +97,7 @@ func (h *Handlers) ConnectCoWithGa(ctx context.Context, w http.ResponseWriter, r
 		Name:      app.CoName,
 		SubjectID: app.SubjectID,
 		Instance:  app.CoInstance,
+		Mark:      app.CoMark,
 	})
 	if err != nil {
 		if errors.Is(err, co.ErrUniqueCo) {

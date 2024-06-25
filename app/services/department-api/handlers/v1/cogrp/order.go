@@ -13,6 +13,7 @@ var orderByFields = map[string]struct{}{
 	co.OrderByID:       {},
 	co.OrderByName:     {},
 	co.OrderByInstance: {},
+	co.OrderByMark:     {},
 }
 
 func parseOrder(r *http.Request) (order.By, error) {

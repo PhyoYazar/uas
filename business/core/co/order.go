@@ -11,4 +11,5 @@ const (
 	OrderByID       = "coid"
 	OrderByName     = "name"
 	OrderByInstance = "instance"
+	OrderByMark     = "mark"
 )

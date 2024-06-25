@@ -29,9 +29,17 @@ func parseFilter(r *http.Request) (co.QueryFilter, error) {
 	if instance := values.Get("instance"); instance != "" {
 		inst, err := strconv.ParseInt(instance, 10, 64)
 		if err != nil {
-			return co.QueryFilter{}, validate.NewFieldsError("mark", err)
+			return co.QueryFilter{}, validate.NewFieldsError("instance", err)
 		}
 		filter.WithInstance(int(inst))
+	}
+
+	if mark := values.Get("mark"); mark != "" {
+		mark, err := strconv.ParseInt(mark, 10, 64)
+		if err != nil {
+			return co.QueryFilter{}, validate.NewFieldsError("mark", err)
+		}
+		filter.WithInstance(int(mark))
 	}
 
 	if err := filter.Validate(); err != nil {

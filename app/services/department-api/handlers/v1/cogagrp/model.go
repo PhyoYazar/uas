@@ -75,5 +75,6 @@ type AppConnectCoGa struct {
 	SubjectID  uuid.UUID   `json:"subjectID" validate:"required"`
 	CoName     string      `json:"coName" validate:"required"`
 	CoInstance int         `json:"coInstance" validate:"required"`
+	CoMark     int         `json:"mark" validate:"required"`
 	GaID       []uuid.UUID `json:"gaIDs" validate:"required"`
 }

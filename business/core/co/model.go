@@ -12,6 +12,7 @@ type Co struct {
 	SubjectID   uuid.UUID
 	Name        string
 	Instance    int
+	Mark        int
 	DateCreated time.Time
 	DateUpdated time.Time
 }
@@ -21,6 +22,7 @@ type NewCo struct {
 	Name      string
 	SubjectID uuid.UUID
 	Instance  int
+	Mark      int
 }
 
 // UpdateCo contains information needed to update a Co.
@@ -28,4 +30,5 @@ type UpdateCo struct {
 	Name      *string
 	SubjectID uuid.UUID
 	Instance  *int
+	Mark      *int
 }

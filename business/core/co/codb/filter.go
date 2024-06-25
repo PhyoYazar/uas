@@ -21,8 +21,12 @@ func (s *Store) applyFilter(filter co.QueryFilter, data map[string]interface{}, 
 		wc = append(wc, "name LIKE :name")
 	}
 	if filter.Instance != nil {
-		data["instance"] = fmt.Sprintf("%%%d%%", *filter.Instance)
+		data["instance"] = *filter.Instance
 		wc = append(wc, "instance = :instance")
+	}
+	if filter.Mark != nil {
+		data["mark"] = *filter.Mark
+		wc = append(wc, "mark = :mark")
 	}
 
 	if len(wc) > 0 {

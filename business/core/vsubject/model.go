@@ -15,6 +15,7 @@ type VCo struct {
 	Instance int       `json:"instance"`
 	Name     string    `json:"name"`
 	Ga       []VGa     `json:"ga"`
+	Mark     int       `json:"mark"`
 }
 
 type VSubject struct {

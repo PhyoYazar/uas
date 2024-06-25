@@ -12,6 +12,7 @@ type QueryFilter struct {
 	ID       *uuid.UUID `validate:"omitempty"`
 	Name     *string    `validate:"omitempty,min=3"`
 	Instance *int       `validate:"omitempty"`
+	Mark     *int       `validate:"omitempty"`
 }
 
 // Validate checks the data in the model is considered clean.
@@ -35,4 +36,9 @@ func (qf *QueryFilter) WithName(name string) {
 // WithInstance sets the Instance field of the QueryFilter value.
 func (qf *QueryFilter) WithInstance(instance int) {
 	qf.Instance = &instance
+}
+
+// WithMark sets the Instance field of the QueryFilter value.
+func (qf *QueryFilter) WithMark(mark int) {
+	qf.Mark = &mark
 }

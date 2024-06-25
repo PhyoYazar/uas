@@ -39,7 +39,7 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 
 	const q = `
 	SELECT
-		s.subject_id, s.name, s.code, s.academic_year, s.instructor, s.semester, co.co_id, co.instance, co.name, ga.ga_id, ga.name, ga.slug
+		s.subject_id, s.name, s.code, s.academic_year, s.instructor, s.semester, co.co_id, co.instance, co.name, co.mark, ga.ga_id, ga.name, ga.slug
 	FROM
 		subjects s
 	LEFT JOIN
@@ -61,67 +61,15 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 
 	defer rows.Close()
 
-	// subjectMap := make(map[uuid.UUID]*vsubject.VSubject)
-	// coMap := make(map[uuid.UUID]*vsubject.VCo)
-
-	// for rows.Next() {
-	// 	var subjectID, coID, gaID uuid.UUID
-	// 	var subjectName, subjectCode, academicYear, instructor, semester, coName, gaName, gaSlug sql.NullString
-
-	// 	err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coName, &gaID, &gaName, &gaSlug)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-
-	// 	// Initialize subject if it doesn't exist in the map
-	// 	if _, exists := subjectMap[subjectID]; !exists {
-	// 		subjectMap[subjectID] = &vsubject.VSubject{
-	// 			ID:           subjectID,
-	// 			Name:         subjectName.String,
-	// 			Code:         subjectCode.String,
-	// 			AcademicYear: academicYear.String,
-	// 			Instructor:   instructor.String,
-	// 			Semester:     semester.String,
-	// 			Co:           []vsubject.VCo{},
-	// 		}
-	// 	}
-
-	// 	// Initialize course outline if it doesn't exist in the map
-	// 	if _, exists := coMap[coID]; !exists {
-	// 		coMap[coID] = &vsubject.VCo{
-	// 			ID:   coID,
-	// 			Name: coName.String,
-	// 			Ga:   []vsubject.VGa{},
-	// 		}
-	// 		subjectMap[subjectID].Co = append(subjectMap[subjectID].Co, *coMap[coID])
-	// 	}
-
-	// 	// Add graduate attribute to the course outline
-	// 	if gaID != uuid.Nil {
-	// 		ga := vsubject.VGa{
-	// 			ID:   gaID,
-	// 			Name: gaName.String,
-	// 			Slug: gaSlug.String,
-	// 		}
-	// 		coMap[coID].Ga = append(coMap[coID].Ga, ga)
-	// 	}
-	// }
-
-	// // Convert map to slice
-	// var subjects []vsubject.VSubject
-	// for _, subject := range subjectMap {
-	// 	subjects = append(subjects, *subject)
-	// }
-
 	var subject vsubject.VSubject
 	coMap := make(map[uuid.UUID]*vsubject.VCo)
 
 	for rows.Next() {
 		var subjectID, coID, gaID uuid.UUID
 		var subjectName, subjectCode, academicYear, instructor, semester, coName, gaName, gaSlug sql.NullString
-		var coInstance sql.NullInt64
+		var coInstance, coMark sql.NullInt64
 
-		err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coInstance, &coName, &gaID, &gaName, &gaSlug)
+		err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coInstance, &coName, &coMark, &gaID, &gaName, &gaSlug)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -144,6 +92,7 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 			coMap[coID] = &vsubject.VCo{
 				ID:       coID,
 				Instance: int(coInstance.Int64),
+				Mark:     int(coMark.Int64),
 				Name:     coName.String,
 				Ga:       []vsubject.VGa{},
 			}

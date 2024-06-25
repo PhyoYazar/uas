@@ -57,6 +57,7 @@ func (c *Core) Create(ctx context.Context, co NewCo) (Co, error) {
 		Name:        co.Name,
 		SubjectID:   co.SubjectID,
 		Instance:    co.Instance,
+		Mark:        co.Mark,
 		DateCreated: now,
 		DateUpdated: now,
 	}
