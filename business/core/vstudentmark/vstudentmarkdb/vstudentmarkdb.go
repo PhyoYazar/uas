@@ -42,6 +42,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 		s.student_name,
 		sm.student_mark_id,
 		sm.mark,
+		a.name,
 		a.attribute_id
 	FROM
 		students s
@@ -76,13 +77,14 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 			studentName       string
 			studentMarkID     sql.NullString
 			studentFullMark   sql.NullInt64
+			attributeName     string
 			attributeID       sql.NullString
 		)
 
 		err := rows.Scan(
 			&studentID, &studentRollNumber, &studentName,
 			&studentMarkID, &studentFullMark,
-			&attributeID,
+			&attributeName, &attributeID,
 		)
 		if err != nil {
 			return nil, err
@@ -104,6 +106,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 				StudentMarkID: uuid.MustParse(studentMarkID.String),
 				AttributeID:   uuid.MustParse(attributeID.String),
 				FullMark:      int(studentFullMark.Int64),
+				Name:          attributeName,
 			}
 
 			student.Attributes = append(student.Attributes, attribute)

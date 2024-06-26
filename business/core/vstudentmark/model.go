@@ -6,7 +6,7 @@ type VAttributes struct {
 	StudentMarkID uuid.UUID `json:"studentMarkId"`
 	AttributeID   uuid.UUID `json:"attributeId"`
 	FullMark      int       `json:"fullMark"`
-	// Name          string
+	Name          string    `json:"name"`
 	// Instance      string
 	// Type          string
 }
