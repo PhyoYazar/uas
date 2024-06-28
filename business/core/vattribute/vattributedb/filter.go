@@ -2,7 +2,6 @@ package vattributedb
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	"github.com/PhyoYazar/uas/business/core/vattribute"
@@ -22,8 +21,8 @@ func (s *Store) applyFilter(filter vattribute.QueryFilter, data map[string]inter
 	// }
 
 	if filter.Name != nil {
-		data["name"] = fmt.Sprintf("%%%s%%", *filter.Name)
-		wc = append(wc, "a.name LIKE :name")
+		data["name"] = *filter.Name
+		wc = append(wc, "a.name = :name")
 	}
 
 	if filter.Type != nil {

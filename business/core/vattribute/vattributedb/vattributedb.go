@@ -158,7 +158,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 	}
 
 	buf.WriteString(orderByClause)
-	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
+	// buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
 	rows, err := database.NamedQueryRows(ctx, s.log, s.db, buf.String(), data)
 	if err != nil {
@@ -190,6 +190,7 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 			&markID, &gaID, &mark, &gaSlug,
 			&coID, &coName, &coInstance,
 		)
+
 		if err != nil {
 			return nil, err
 		}
@@ -244,6 +245,9 @@ func (s *Store) QueryAttributeWithGaMark(ctx context.Context, filter vattribute.
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+
+	// fmt.Printf("-------------------------------- ==========================>> ")
+	// fmt.Printf("--------------------------------> %v", attributesMap)
 
 	return result, nil
 }
