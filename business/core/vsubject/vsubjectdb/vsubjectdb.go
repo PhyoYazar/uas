@@ -39,7 +39,7 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 
 	const q = `
 	SELECT
-		s.subject_id, s.name, s.code, s.academic_year, s.instructor, s.semester, co.co_id, co.instance, co.name, co.mark, ga.ga_id, ga.name, ga.slug
+		s.subject_id, s.name, s.code, s.academic_year, s.year, s.instructor, s.semester, co.co_id, co.instance, co.name, co.mark, ga.ga_id, ga.name, ga.slug
 	FROM
 		subjects s
 	LEFT JOIN
@@ -66,10 +66,10 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 
 	for rows.Next() {
 		var subjectID, coID, gaID uuid.UUID
-		var subjectName, subjectCode, academicYear, instructor, semester, coName, gaName, gaSlug sql.NullString
+		var subjectName, subjectCode, academicYear, year, instructor, semester, coName, gaName, gaSlug sql.NullString
 		var coInstance, coMark sql.NullInt64
 
-		err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coInstance, &coName, &coMark, &gaID, &gaName, &gaSlug)
+		err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &year, &instructor, &semester, &coID, &coInstance, &coName, &coMark, &gaID, &gaName, &gaSlug)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -81,6 +81,7 @@ func (s *Store) QueryByID(ctx context.Context, subjectID uuid.UUID) (vsubject.VS
 				Name:         subjectName.String,
 				Code:         subjectCode.String,
 				AcademicYear: academicYear.String,
+				Year:         year.String,
 				Instructor:   instructor.String,
 				Semester:     semester.String,
 				Co:           []vsubject.VCo{},

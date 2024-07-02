@@ -22,7 +22,8 @@ type VSubject struct {
 	ID           uuid.UUID `json:"id"`
 	Name         string    `json:"name"`
 	Code         string    `json:"code"`
-	AcademicYear string    `json:"academic_year"`
+	AcademicYear string    `json:"academicYear"`
+	Year         string    `json:"year"`
 	Instructor   string    `json:"instructor"`
 	Semester     string    `json:"semester"`
 	Co           []VCo     `json:"co"`
