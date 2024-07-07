@@ -21,8 +21,10 @@ to see json format 'make query | jq' [| jq]
   SELECT
      s.student_id,
      s.student_name,
+     s.roll_number,
      co.co_id,
-     co.name AS co_name, co.instance co_instance,
+     co.name AS co_name,
+     co.instance co_instance,
      SUM(fm.mark) AS total_full_marks,
      SUM(sm.mark) AS total_marks
  FROM

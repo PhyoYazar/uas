@@ -233,3 +233,11 @@ ALTER TABLE course_outlines ADD COLUMN mark INT NOT NULL;
 ALTER TABLE subjects ADD COLUMN lab INT NOT NULL;
 ALTER TABLE subjects ADD COLUMN assignment INT NOT NULL;
 ALTER TABLE subjects ADD COLUMN tutorial INT NOT NULL;
+
+-- Version: 1.22
+-- Description: add gaMark column into marks table
+ALTER TABLE marks ADD COLUMN ga_mark INT NULL;
+
+-- Version: 1.23
+-- Description: add coMark column into co_attributes table
+ALTER TABLE co_attributes ADD COLUMN co_mark INT NULL;
