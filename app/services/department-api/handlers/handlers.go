@@ -18,6 +18,7 @@ import (
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/testgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/usergrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vattributegrp"
+	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vcogradegrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vcogrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vstudentmarkgrp"
 	"github.com/PhyoYazar/uas/app/services/department-api/handlers/v1/vsubjectgrp"
@@ -47,6 +48,8 @@ import (
 	"github.com/PhyoYazar/uas/business/core/vattribute/vattributedb"
 	"github.com/PhyoYazar/uas/business/core/vco"
 	"github.com/PhyoYazar/uas/business/core/vco/vcodb"
+	"github.com/PhyoYazar/uas/business/core/vcograde"
+	"github.com/PhyoYazar/uas/business/core/vcograde/vcogradedb"
 	"github.com/PhyoYazar/uas/business/core/vstudentmark"
 	"github.com/PhyoYazar/uas/business/core/vstudentmark/vstudentmarkdb"
 	"github.com/PhyoYazar/uas/business/core/vsubject"
@@ -226,6 +229,15 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	vsmgh := vstudentmarkgrp.New(vsmCore)
 
 	app.Handle(http.MethodGet, "/student_attributes_marks", vsmgh.Query)
+
+	// -------------------------------------------------------------------------
+	// view student marks
+
+	vcogCore := vcograde.NewCore(vcogradedb.NewStore(cfg.Log, cfg.DB))
+
+	vscoggh := vcogradegrp.New(vcogCore)
+
+	app.Handle(http.MethodGet, "/student_co_grades", vscoggh.Query)
 
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------

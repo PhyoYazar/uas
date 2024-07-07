@@ -17,9 +17,3 @@ type VStudentMark struct {
 	StudentName string        `json:"studentName"`
 	Attributes  []VAttributes `json:"attributes"`
 }
-
-type VRemoveStudent struct {
-	SubjectID   uuid.UUID `json:"subjectId"`
-	StudentID   uuid.UUID `json:"studentId"`
-	AttributeID uuid.UUID `json:"attributeId"`
-}
