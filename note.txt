@@ -11,3 +11,33 @@ to see json format 'make query | jq' [| jq]
 ===> `select subjects.name as sub_name, course_outlines.name as co_name, graduate_attributes.name as co_name  from subjects join    course_outlines ON course_outlines.subject_id = subjects.subject_id join co_ga ON
  co_ga.co_id = course_outlines.co_id join graduate_attributes ON graduate_attributes.ga_id = co_ga.ga_id WHERE subjects.subject_id
  = 'beb865d7-909f-4038-ba2d-49a7e418d8ef';`
+
+
+
+
+
+
+ ===> `
+  SELECT
+     s.student_id,
+     s.student_name,
+     co.co_id,
+     co.name AS co_name, co.instance co_instance,
+     SUM(fm.mark) AS total_full_marks,
+     SUM(sm.mark) AS total_marks
+ FROM
+     students s
+ JOIN
+     student_marks sm ON s.student_id = sm.student_id
+ JOIN
+     attributes a ON sm.attribute_id = a.attribute_id
+ JOIN
+     co_attributes ca ON a.attribute_id = ca.attribute_id
+ JOIN
+     course_outlines co ON ca.co_id = co.co_id
+ JOIN
+     full_marks fm ON sm.subject_id = fm.subject_id AND sm.attribute_id = fm.attribute_id where s.academic_year = '2010-2011' and s.year = 'Second Year'
+ GROUP BY
+     s.student_id, s.student_name, co.co_id, co_name
+ ORDER BY
+     s.student_id, co.co_id;`

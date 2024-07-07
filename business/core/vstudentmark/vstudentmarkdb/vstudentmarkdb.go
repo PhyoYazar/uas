@@ -60,7 +60,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 	}
 
 	buf.WriteString(orderByClause)
-	buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
+	// buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
 	rows, err := database.NamedQueryRows(ctx, s.log, s.db, buf.String(), data)
 	if err != nil {
@@ -76,14 +76,14 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 			studentRollNumber int
 			studentName       sql.NullString
 			studentMarkID     sql.NullString
-			studentFullMark   sql.NullInt64
+			studentMark       sql.NullInt64
 			attributeName     sql.NullString
 			attributeID       sql.NullString
 		)
 
 		err := rows.Scan(
 			&studentID, &studentRollNumber, &studentName,
-			&studentMarkID, &studentFullMark,
+			&studentMarkID, &studentMark,
 			&attributeName, &attributeID,
 		)
 		if err != nil {
@@ -101,11 +101,11 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 			studentsMap[studentID] = student
 		}
 
-		if studentFullMark.Valid && studentMarkID.Valid && attributeID.Valid {
+		if studentMark.Valid && studentMarkID.Valid && attributeID.Valid {
 			attribute := vstudentmark.VAttributes{
 				StudentMarkID: uuid.MustParse(studentMarkID.String),
 				AttributeID:   uuid.MustParse(attributeID.String),
-				FullMark:      int(studentFullMark.Int64),
+				Mark:          int(studentMark.Int64),
 				Name:          attributeName.String,
 			}
 
