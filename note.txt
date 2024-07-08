@@ -17,29 +17,32 @@ to see json format 'make query | jq' [| jq]
 
 
 
- ===> `
-  SELECT
-     s.student_id,
-     s.student_name,
-     s.roll_number,
-     co.co_id,
-     co.name AS co_name,
-     co.instance co_instance,
-     SUM(fm.mark) AS total_full_marks,
-     SUM(sm.mark) AS total_marks
+ ===> `select a.name, a.instance, ga.slug, m.mark, m.ga_mark from attributes a join marks m on a.attribute_id = m.attribute_id join graduate_attributes
+ ga on ga.ga_id = m.ga_id  where m.subject_id = '9da602c9-f30a-4447-8cf3-4f6bbe2c7fdd'`
+
+ ===> `select a.name, a.instance, co.instance, ca.co_mark from attributes a join co_attributes ca on ca.attribute_id = a.attribute_id join course_outlin
+ es co on co.co_id = ca.co_id where co.subject_id = '9da602c9-f30a-4447-8cf3-4f6bbe2c7fdd'`
+
+ ===> ` SELECT
+ s.student_id,
+ s.student_name,
+ s.roll_number,
+ ga.ga_id,
+ ga.slug,
+ CAST(SUM(sm.mark) AS FLOAT) * 100.0 / CAST(SUM(fm.mark) AS FLOAT) AS percentage_marks
  FROM
-     students s
+ students s
  JOIN
-     student_marks sm ON s.student_id = sm.student_id
+ student_marks sm ON s.student_id = sm.student_id
  JOIN
-     attributes a ON sm.attribute_id = a.attribute_id
+ attributes a ON sm.attribute_id = a.attribute_id
  JOIN
-     co_attributes ca ON a.attribute_id = ca.attribute_id
+ marks m ON m.attribute_id = a.attribute_id
  JOIN
-     course_outlines co ON ca.co_id = co.co_id
+ graduate_attributes ga ON m.ga_id = ga.ga_id
  JOIN
-     full_marks fm ON sm.subject_id = fm.subject_id AND sm.attribute_id = fm.attribute_id where s.academic_year = '2010-2011' and s.year = 'Second Year'
+ full_marks fm ON fm.subject_id = sm.subject_id AND sm.attribute_id = fm.attribute_id
  GROUP BY
-     s.student_id, s.student_name, co.co_id, co_name
+ s.student_id, s.student_name, s.roll_number, ga.ga_id, ga.slug
  ORDER BY
-     s.student_id, co.co_id;`
+ s.student_id, ga.ga_id;`
