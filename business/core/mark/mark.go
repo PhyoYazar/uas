@@ -21,10 +21,13 @@ var (
 // retrieve data.
 type Storer interface {
 	Create(ctx context.Context, cm Mark) error
+	Update(ctx context.Context, cm Mark) error
 	Delete(ctx context.Context, mark string) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Mark, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	QueryByID(ctx context.Context, markID uuid.UUID) (Mark, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -61,6 +64,22 @@ func (c *Core) Create(ctx context.Context, m NewMark) (Mark, error) {
 	return mk, nil
 }
 
+// Update replaces a user document in the database.
+func (c *Core) Update(ctx context.Context, mark Mark, uMark UpdateMark) (Mark, error) {
+
+	if uMark.GaMark != nil {
+		mark.GaMark = *uMark.GaMark
+	}
+
+	mark.DateUpdated = time.Now()
+
+	if err := c.storer.Update(ctx, mark); err != nil {
+		return Mark{}, fmt.Errorf("update: %w", err)
+	}
+
+	return mark, nil
+}
+
 // Query retrieves a list of existing ms from the database.
 func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]Mark, error) {
 	m, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
@@ -82,6 +101,17 @@ func (c *Core) Delete(ctx context.Context, mark string) error {
 	}
 
 	return nil
+}
+
+// QueryByID finds the user by the specified ID.
+func (c *Core) QueryByID(ctx context.Context, markID uuid.UUID) (Mark, error) {
+	std, err := c.storer.QueryByID(ctx, markID)
+
+	if err != nil {
+		return Mark{}, fmt.Errorf("query: markID[%s]: %w", markID, err)
+	}
+
+	return std, nil
 }
 
 // Count returns the total number of cos in the store.

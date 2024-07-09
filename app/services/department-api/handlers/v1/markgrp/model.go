@@ -16,6 +16,7 @@ type AppMark struct {
 	GaID        string `json:"gaID"`
 	AttributeID string `json:"attributeID"`
 	Mark        int    `json:"mark"`
+	GaMark      int    `json:"gaMark"`
 	DateCreated string `json:"dateCreated"`
 	DateUpdated string `json:"dateUpdated"`
 }
@@ -28,6 +29,7 @@ func toAppMark(m mark.Mark) AppMark {
 		GaID:        m.GaID.String(),
 		AttributeID: m.AttributeID.String(),
 		Mark:        m.Mark,
+		GaMark:      m.GaMark,
 		DateCreated: m.DateCreated.Format(time.RFC3339),
 		DateUpdated: m.DateUpdated.Format(time.RFC3339),
 	}
@@ -95,4 +97,28 @@ type MarkByConnectingCOGA struct {
 	SubjectID   uuid.UUID   `json:"subjectID" validate:"required"`
 	AttributeID uuid.UUID   `json:"attributeID" validate:"required"`
 	FullMark    int         `json:"fullMark" validate:"required"`
+}
+
+// =============================================================================
+
+// AppUpdateStudent contains information needed to update a student.
+type AppUpdateMark struct {
+	GaMark *int `json:"gaMark"`
+}
+
+func toCoreUpdateMark(app AppUpdateMark) (mark.UpdateMark, error) {
+
+	nSub := mark.UpdateMark{
+		GaMark: app.GaMark,
+	}
+
+	return nSub, nil
+}
+
+// Validate checks the data in the model is considered clean.
+func (app AppUpdateMark) Validate() error {
+	if err := validate.Check(app); err != nil {
+		return fmt.Errorf("validate: %w", err)
+	}
+	return nil
 }

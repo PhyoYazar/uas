@@ -13,6 +13,7 @@ type Mark struct {
 	GaID        uuid.UUID
 	AttributeID uuid.UUID
 	Mark        int
+	GaMark      int
 	DateCreated time.Time
 	DateUpdated time.Time
 }
@@ -27,8 +28,5 @@ type NewMark struct {
 
 // UpdateMark contains information needed to update a Mark.
 type UpdateMark struct {
-	SubjectID   *uuid.UUID
-	GaID        *uuid.UUID
-	AttributeID *uuid.UUID
-	Mark        *int
+	GaMark *int
 }

@@ -7,15 +7,19 @@ import (
 )
 
 type VGa struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-	Slug string    `json:"slug"`
+	ID     uuid.UUID `json:"id"`
+	MarkID uuid.UUID `json:"mark_id"`
+	Name   string    `json:"name"`
+	Slug   string    `json:"slug"`
+	GaMark int       `json:"gaMark"`
 }
 
 type VCo struct {
-	ID       uuid.UUID `json:"id"`
-	Name     string    `json:"name"`
-	Instance int       `json:"instance"`
+	ID            uuid.UUID `json:"id"`
+	CoAttributeID uuid.UUID `json:"co_attribute_id"`
+	Name          string    `json:"name"`
+	Instance      int       `json:"instance"`
+	CoMark        int       `json:"coMark"`
 }
 
 // Implement the GetID method for VCo
@@ -28,6 +32,7 @@ type VAttribute struct {
 	Name        string    `json:"name"`
 	Instance    int       `json:"instance"`
 	Type        string    `json:"type"`
+	FullMark    int       `json:"full_mark"`
 	DateCreated time.Time `json:"date_created"`
 	DateUpdated time.Time `json:"date_updated"`
 	Co          []VCo     `json:"co"`

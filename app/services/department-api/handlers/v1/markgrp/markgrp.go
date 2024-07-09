@@ -55,6 +55,41 @@ func (h *Handlers) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 	return web.Respond(ctx, w, toAppMark(cm), http.StatusCreated)
 }
 
+// Update updates a student in the system.
+func (h *Handlers) Update(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	var app AppUpdateMark
+	if err := web.Decode(r, &app); err != nil {
+		return err
+	}
+
+	markID, err := uuid.Parse(web.Param(r, "mark_id"))
+	if err != nil {
+		return validate.NewFieldsError("mark_id", err)
+	}
+
+	mk, err := h.mark.QueryByID(ctx, markID)
+	if err != nil {
+		switch {
+		case errors.Is(err, mark.ErrNotFound):
+			return v1.NewRequestError(err, http.StatusNotFound)
+		default:
+			return fmt.Errorf("querybyid: markID[%s]: %w", markID, err)
+		}
+	}
+
+	uMark, err := toCoreUpdateMark(app)
+	if err != nil {
+		return v1.NewRequestError(err, http.StatusBadRequest)
+	}
+
+	mk, err = h.mark.Update(ctx, mk, uMark)
+	if err != nil {
+		return fmt.Errorf("update: markID[%s] uMark[%+v]: %w", markID, uMark, err)
+	}
+
+	return web.Respond(ctx, w, toAppMark(mk), http.StatusOK)
+}
+
 // Delete removes a subject from the system.
 func (h *Handlers) Delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	markID, err := uuid.Parse(web.Param(r, "mark_id"))
@@ -154,4 +189,24 @@ func (h *Handlers) CreateMarkByConnectingCOGA(ctx context.Context, w http.Respon
 	}
 
 	return nil
+}
+
+// QueryByID returns a student by its ID.
+func (h *Handlers) QueryByID(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	markID, err := uuid.Parse(web.Param(r, "mark_id"))
+	if err != nil {
+		return validate.NewFieldsError("mark_id", err)
+	}
+
+	mk, err := h.mark.QueryByID(ctx, markID)
+	if err != nil {
+		switch {
+		case errors.Is(err, mark.ErrNotFound):
+			return v1.NewRequestError(err, http.StatusNotFound)
+		default:
+			return fmt.Errorf("querybyid: markID[%s]: %w", markID, err)
+		}
+	}
+
+	return web.Respond(ctx, w, toAppMark(mk), http.StatusOK)
 }

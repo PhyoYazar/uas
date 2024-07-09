@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/mark"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -39,6 +40,27 @@ func (s *Store) Create(ctx context.Context, cm mark.Mark) error {
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBMark(cm)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("namedexeccontext: %w", mark.ErrUniqueMark)
+		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Update replaces a user document in the database.
+func (s *Store) Update(ctx context.Context, m mark.Mark) error {
+	const q = `
+	UPDATE
+		marks
+	SET
+		"ga_mark" = :ga_mark,
+		"date_updated" = :date_updated
+	WHERE
+		mark_id = :mark_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBMark(m)); err != nil {
+		if errors.Is(err, database.ErrDBDuplicatedEntry) {
+			return mark.ErrUniqueMark
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -102,6 +124,33 @@ func (s *Store) Query(ctx context.Context, filter mark.QueryFilter, orderBy orde
 	}
 
 	return m, nil
+}
+
+// QueryByID gets the specified subject from the database.
+func (s *Store) QueryByID(ctx context.Context, markID uuid.UUID) (mark.Mark, error) {
+	data := struct {
+		ID string `db:"mark_id"`
+	}{
+		ID: markID.String(),
+	}
+
+	const q = `
+	SELECT
+      *
+	FROM
+		marks
+	WHERE
+		mark_id = :mark_id`
+
+	var dbMark dbMark
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbMark); err != nil {
+		if errors.Is(err, database.ErrDBNotFound) {
+			return mark.Mark{}, fmt.Errorf("db: %w", mark.ErrNotFound)
+		}
+		return mark.Mark{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toCoreMark(dbMark)
 }
 
 // Count returns the total number of cos in the DB.

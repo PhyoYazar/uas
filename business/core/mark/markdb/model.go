@@ -15,6 +15,7 @@ type dbMark struct {
 	SubjectID   uuid.UUID `db:"subject_id"`
 	GaID        uuid.UUID `db:"ga_id"`
 	AttributeID uuid.UUID `db:"attribute_id"`
+	GaMark      int       `db:"ga_mark"`
 	Mark        int       `db:"mark"`
 	DateCreated time.Time `db:"date_created"`
 	DateUpdated time.Time `db:"date_updated"`
@@ -28,6 +29,7 @@ func toDBMark(mark mark.Mark) dbMark {
 		GaID:        mark.GaID,
 		AttributeID: mark.AttributeID,
 		Mark:        mark.Mark,
+		GaMark:      mark.GaMark,
 		DateCreated: mark.DateCreated.UTC(),
 		DateUpdated: mark.DateUpdated.UTC(),
 	}
@@ -43,6 +45,7 @@ func toCoreMark(dbMark dbMark) (mark.Mark, error) {
 		GaID:        dbMark.GaID,
 		AttributeID: dbMark.AttributeID,
 		Mark:        dbMark.Mark,
+		GaMark:      dbMark.GaMark,
 		DateCreated: dbMark.DateCreated.In(time.Local),
 		DateUpdated: dbMark.DateUpdated.In(time.Local),
 	}

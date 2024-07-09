@@ -260,27 +260,24 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 		ID: subjectID.String(),
 	}
 
-	// pdata := map[string]interface{}{
-	// 	"offset":        (pageNumber - 1) * rowsPerPage,
-	// 	"rows_per_page": rowsPerPage,
-	// }
-
 	const q = `
 	SELECT
-		a.attribute_id, a.name, a.instance, a.type, a.date_created, a.date_updated,
-		co.co_id, co.name, co.instance,
-		ga.ga_id, ga.name, ga.slug
+		a.attribute_id, a.name, a.instance, a.type, fm.mark, a.date_created, a.date_updated,
+		co.co_id, co.name, co.instance, ca.co_mark, ca.co_attribute_id,
+		ga.ga_id, ga.name, ga.slug, m.ga_mark, m.mark_id
 	FROM
 		attributes a
-	LEFT JOIN
+	JOIN
 		co_attributes ca ON ca.attribute_id = a.attribute_id
-	LEFT JOIN
+	JOIN
 		course_outlines co ON co.co_id = ca.co_id
-	LEFT JOIN
+	JOIN
+		full_marks fm ON fm.attribute_id = a.attribute_id
+	JOIN
 		marks m ON m.attribute_id = a.attribute_id
-	LEFT JOIN
+	JOIN
 		graduate_attributes ga ON ga.ga_id = m.ga_id
-	LEFT JOIN
+	JOIN
 		co_ga cg ON cg.ga_id = ga.ga_id
 	WHERE
 		cg.co_id = ca.co_id
@@ -292,12 +289,13 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 	buf := bytes.NewBufferString(q)
 	// s.applyFilter(filter, pdata, buf)
 
-	orderByClause, err := orderByClause(orderBy)
-	if err != nil {
-		return nil, err
-	}
+	// orderByClause, err := orderByClause(orderBy)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	buf.WriteString(orderByClause)
+	// buf.WriteString(orderByClause)
+	buf.WriteString(" ORDER BY a.name, a.instance")
 	// buf.WriteString(" OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY")
 
 	rows, err := database.NamedQueryRows(ctx, s.log, s.db, buf.String(), data)
@@ -314,20 +312,25 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 			attributeName string
 			instance      int
 			attributeType string
+			fullMark      sql.NullInt64
 			dateCreated   time.Time
 			dateUpdated   time.Time
 			coID          sql.NullString
+			coAttributeID sql.NullString
 			coName        sql.NullString
 			coInstance    sql.NullInt64
+			coMark        sql.NullInt64
 			gaID          sql.NullString
+			markID        sql.NullString
 			gaName        sql.NullString
 			gaSlug        sql.NullString
+			gaMark        sql.NullInt64
 		)
 
 		err := rows.Scan(
-			&attributeID, &attributeName, &instance, &attributeType, &dateCreated, &dateUpdated,
-			&coID, &coName, &coInstance,
-			&gaID, &gaName, &gaSlug,
+			&attributeID, &attributeName, &instance, &attributeType, &fullMark, &dateCreated, &dateUpdated,
+			&coID, &coName, &coInstance, &coMark, &coAttributeID,
+			&gaID, &gaName, &gaSlug, &gaMark, &markID,
 		)
 		if err != nil {
 			return nil, err
@@ -341,6 +344,7 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 				Name:        attributeName,
 				Instance:    instance,
 				Type:        attributeType,
+				FullMark:    int(fullMark.Int64),
 				DateCreated: dateCreated,
 				DateUpdated: dateUpdated,
 				Co:          []vattribute.VCo{},
@@ -350,11 +354,13 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 		}
 
 		// Append Co if not NULL
-		if coID.Valid && coName.Valid && coInstance.Valid {
+		if coID.Valid && coName.Valid && coInstance.Valid && coAttributeID.Valid {
 			co := vattribute.VCo{
-				ID:       uuid.MustParse(coID.String),
-				Name:     coName.String,
-				Instance: int(coInstance.Int64),
+				ID:            uuid.MustParse(coID.String),
+				Name:          coName.String,
+				Instance:      int(coInstance.Int64),
+				CoMark:        int(coMark.Int64),
+				CoAttributeID: uuid.MustParse(coAttributeID.String),
 			}
 
 			if coIsExist := existInSlice(attribute.Co, co); !coIsExist {
@@ -363,19 +369,19 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 		}
 
 		// Append Ga if not NULL
-		if gaID.Valid && gaName.Valid && gaSlug.Valid {
+		if gaID.Valid && gaName.Valid && gaSlug.Valid && markID.Valid {
 			ga := vattribute.VGa{
-				ID:   uuid.MustParse(gaID.String),
-				Name: gaName.String,
-				Slug: gaSlug.String,
+				ID:     uuid.MustParse(gaID.String),
+				Name:   gaName.String,
+				Slug:   gaSlug.String,
+				GaMark: int(gaMark.Int64),
+				MarkID: uuid.MustParse(markID.String),
 			}
 
 			attribute.Ga = append(attribute.Ga, ga)
 		}
 
 		attributesMap[attributeID] = attribute
-
-		// result = append(result, attributesMap[attributeID])
 	}
 
 	for _, value := range attributesMap {
@@ -388,173 +394,3 @@ func (s *Store) Query(ctx context.Context, filter vattribute.QueryFilter, orderB
 
 	return result, nil
 }
-
-// // QueryByID gets the specified subject from the database.
-// func (s *Store) QueryByID(ctx context.Context, coID uuid.UUID) (vco.VCo, error) {
-// 	data := struct {
-// 		ID string `db:"co_id"`
-// 	}{
-// 		ID: coID.String(),
-// 	}
-
-// 	const q = `
-// 	SELECT
-// 		s.subject_id, s.name, s.code, s.academic_year, s.instructor, s.semester, co.co_id, co.name,co.instance, ga.ga_id, ga.name, ga.slug, co.date_created, co.date_updated
-// 	FROM
-// 		course_outlines co
-// 	LEFT JOIN
-// 		subjects s ON co.subject_id = s.subject_id
-// 	LEFT JOIN
-// 		co_ga cg ON cg.co_id = co.co_id
-// 	LEFT JOIN
-// 		graduate_attributes ga ON ga.ga_id = cg.ga_id
-// 	WHERE
-// 		co.co_id = :co_id`
-
-// 	rows, err := database.NamedQueryRows(ctx, s.log, s.db, q, data)
-// 	if err != nil {
-// 		if errors.Is(err, database.ErrDBNotFound) {
-// 			return vco.VCo{}, fmt.Errorf("db: %w", vco.ErrNotFound)
-// 		}
-// 		return vco.VCo{}, fmt.Errorf("db: %w", err)
-// 	}
-
-// 	defer rows.Close()
-
-// 	// var subject vsubject.VSubject
-// 	// coMap := make(map[uuid.UUID]*vsubject.VCo)
-
-// 	// for rows.Next() {
-// 	// 	var subjectID, coID, gaID uuid.UUID
-// 	// 	var subjectName, subjectCode, academicYear, instructor, semester, coName, gaName, gaSlug sql.NullString
-
-// 	// 	err := rows.Scan(&subjectID, &subjectName, &subjectCode, &academicYear, &instructor, &semester, &coID, &coName, &gaID, &gaName, &gaSlug)
-// 	// 	if err != nil {
-// 	// 		log.Fatal(err)
-// 	// 	}
-
-// 	// 	// Initialize subject if it hasn't been initialized yet
-// 	// 	if subject.ID == uuid.Nil {
-// 	// 		subject = vsubject.VSubject{
-// 	// 			ID:           subjectID,
-// 	// 			Name:         subjectName.String,
-// 	// 			Code:         subjectCode.String,
-// 	// 			AcademicYear: academicYear.String,
-// 	// 			Instructor:   instructor.String,
-// 	// 			Semester:     semester.String,
-// 	// 			Co:           []vsubject.VCo{},
-// 	// 		}
-// 	// 	}
-
-// 	// 	// Initialize course outline if it doesn't exist in the map
-// 	// 	if _, exists := coMap[coID]; !exists {
-// 	// 		coMap[coID] = &vsubject.VCo{
-// 	// 			ID:   coID,
-// 	// 			Name: coName.String,
-// 	// 			Ga:   []vsubject.VGa{},
-// 	// 		}
-// 	// 		subject.Co = append(subject.Co, *coMap[coID])
-// 	// 	}
-
-// 	// 	// Add graduate attribute to the course outline
-// 	// 	if gaID != uuid.Nil {
-// 	// 		ga := vsubject.VGa{
-// 	// 			ID:   gaID,
-// 	// 			Name: gaName.String,
-// 	// 			Slug: gaSlug.String,
-// 	// 		}
-// 	// 		// Find the course outline in the subject's list and update its Ga field
-// 	// 		for i := range subject.Co {
-// 	// 			if subject.Co[i].ID == coID {
-// 	// 				subject.Co[i].Ga = append(subject.Co[i].Ga, ga)
-// 	// 				break
-// 	// 			}
-// 	// 		}
-// 	// 	}
-// 	// }
-
-// 	// // Check for errors during row iteration
-// 	// if err := rows.Err(); err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
-
-// 	// if subject.ID == uuid.Nil {
-// 	// 	return vsubject.VSubject{}, errors.New("subject not found")
-// 	// }
-
-// 	var co vco.VCo
-// 	var gaMap = make(map[uuid.UUID]vco.VGa)
-
-// 	for rows.Next() {
-// 		var row vco.CourseOutlineRow
-// 		err := rows.Scan(
-// 			&row.SubjectID, &row.SubjectName, &row.SubjectCode, &row.AcademicYear, &row.Instructor, &row.Semester,
-// 			&row.CoID, &row.CoName, &row.CoInstance,
-// 			&row.GaID, &row.GaName, &row.GaSlug,
-// 			&row.DateCreated, &row.DateUpdated,
-// 		)
-// 		if err != nil {
-// 			return vco.VCo{}, err
-// 		}
-
-// 		if co.ID == uuid.Nil {
-// 			co = vco.VCo{
-// 				ID:       row.CoID,
-// 				Name:     row.CoName,
-// 				Instance: row.CoInstance,
-// 				Subject: vco.VSubject{
-// 					ID:           row.SubjectID,
-// 					Name:         row.SubjectName,
-// 					Code:         row.SubjectCode,
-// 					AcademicYear: row.AcademicYear,
-// 					Instructor:   row.Instructor,
-// 					Semester:     row.Semester,
-// 				},
-// 				DateCreated: row.DateCreated,
-// 				DateUpdated: row.DateUpdated,
-// 				Ga:          []vco.VGa{},
-// 			}
-// 		}
-
-// 		if row.GaID != uuid.Nil {
-// 			if _, exists := gaMap[row.GaID]; !exists {
-// 				ga := vco.VGa{
-// 					ID:   row.GaID,
-// 					Name: row.GaName,
-// 					Slug: row.GaSlug,
-// 				}
-// 				co.Ga = append(co.Ga, ga)
-// 				gaMap[row.GaID] = ga
-// 			}
-// 		}
-// 	}
-
-// 	if err := rows.Err(); err != nil {
-// 		return vco.VCo{}, err
-// 	}
-
-// 	return co, nil
-// }
-
-// // Count returns the total number of subjects in the DB.
-// func (s *Store) Count(ctx context.Context, filter subject.QueryFilter) (int, error) {
-// 	data := map[string]interface{}{}
-
-// 	const q = `
-// 	SELECT
-// 		count(1)
-// 	FROM
-// 		subjects`
-
-// 	buf := bytes.NewBufferString(q)
-// 	s.applyFilter(filter, data, buf)
-
-// 	var count struct {
-// 		Count int `db:"count"`
-// 	}
-// 	if err := database.NamedQueryStruct(ctx, s.log, s.db, buf.String(), data, &count); err != nil {
-// 		return 0, fmt.Errorf("namedquerystruct: %w", err)
-// 	}
-
-// 	return count.Count, nil
-// }

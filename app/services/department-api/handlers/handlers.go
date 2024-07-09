@@ -220,7 +220,9 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	mgh := markgrp.New(mCore, caCore, fmCore)
 
 	app.Handle(http.MethodGet, "/marks", mgh.Query)
+	app.Handle(http.MethodGet, "/mark/:mark_id", mgh.QueryByID)
 	app.Handle(http.MethodPost, "/mark", mgh.Create)
+	app.Handle(http.MethodPut, "/mark/:mark_id", mgh.Update)
 	app.Handle(http.MethodDelete, "/mark/:mark_id", mgh.Delete)
 	app.Handle(http.MethodPost, "/create_mark_with_co_ga", mgh.CreateMarkByConnectingCOGA)
 
