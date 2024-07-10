@@ -11,6 +11,7 @@ type CoAttribute struct {
 	ID          uuid.UUID
 	CoID        uuid.UUID
 	AttributeID uuid.UUID
+	CoMark      int
 	DateCreated time.Time
 	DateUpdated time.Time
 }
@@ -23,6 +24,5 @@ type NewCoAttribute struct {
 
 // UpdateCoAttribute contains information needed to update a CoAttribute.
 type UpdateCoAttribute struct {
-	CoID        *uuid.UUID
-	AttributeID *uuid.UUID
+	CoMark *int
 }

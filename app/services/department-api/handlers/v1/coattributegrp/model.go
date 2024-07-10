@@ -14,18 +14,20 @@ type AppCoAttribute struct {
 	ID          string `json:"id"`
 	CoID        string `json:"coID"`
 	AttributeID string `json:"attributeID"`
+	CoMark      int    `json:"coMark"`
 	DateCreated string `json:"dateCreated"`
 	DateUpdated string `json:"dateUpdated"`
 }
 
-func toAppCoAttribute(mark coattribute.CoAttribute) AppCoAttribute {
+func toAppCoAttribute(ca coattribute.CoAttribute) AppCoAttribute {
 
 	return AppCoAttribute{
-		ID:          mark.ID.String(),
-		CoID:        mark.CoID.String(),
-		AttributeID: mark.AttributeID.String(),
-		DateCreated: mark.DateCreated.Format(time.RFC3339),
-		DateUpdated: mark.DateUpdated.Format(time.RFC3339),
+		ID:          ca.ID.String(),
+		CoID:        ca.CoID.String(),
+		AttributeID: ca.AttributeID.String(),
+		CoMark:      ca.CoMark,
+		DateCreated: ca.DateCreated.Format(time.RFC3339),
+		DateUpdated: ca.DateUpdated.Format(time.RFC3339),
 	}
 }
 
@@ -69,3 +71,25 @@ func (app AppNewCoAttribute) Validate() error {
 }
 
 // =============================================================================
+
+// AppUpdateStudent contains information needed to update a student.
+type AppUpdateCoAttribute struct {
+	CoMark *int `json:"coMark"`
+}
+
+func toCoreUpdateCoAttribute(app AppUpdateCoAttribute) (coattribute.UpdateCoAttribute, error) {
+
+	ca := coattribute.UpdateCoAttribute{
+		CoMark: app.CoMark,
+	}
+
+	return ca, nil
+}
+
+// Validate checks the data in the model is considered clean.
+func (app AppUpdateCoAttribute) Validate() error {
+	if err := validate.Check(app); err != nil {
+		return fmt.Errorf("validate: %w", err)
+	}
+	return nil
+}

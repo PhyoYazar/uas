@@ -9,6 +9,7 @@ import (
 	"github.com/PhyoYazar/uas/business/core/coattribute"
 	"github.com/PhyoYazar/uas/business/data/order"
 	database "github.com/PhyoYazar/uas/business/sys/database/pgx"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -39,6 +40,27 @@ func (s *Store) Create(ctx context.Context, cg coattribute.CoAttribute) error {
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCoAttribute(cg)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("namedexeccontext: %w", coattribute.ErrUniqueCoAttribute)
+		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Update replaces a user document in the database.
+func (s *Store) Update(ctx context.Context, ca coattribute.CoAttribute) error {
+	const q = `
+	UPDATE
+		co_attributes
+	SET
+		"co_mark" = :co_mark,
+		"date_updated" = :date_updated
+	WHERE
+		co_attribute_id = :co_attribute_id`
+
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCoAttribute(ca)); err != nil {
+		if errors.Is(err, database.ErrDBDuplicatedEntry) {
+			return coattribute.ErrUniqueCoAttribute
 		}
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
@@ -102,6 +124,33 @@ func (s *Store) Query(ctx context.Context, filter coattribute.QueryFilter, order
 	}
 
 	return cg, nil
+}
+
+// QueryByID gets the specified subject from the database.
+func (s *Store) QueryByID(ctx context.Context, caID uuid.UUID) (coattribute.CoAttribute, error) {
+	data := struct {
+		ID string `db:"co_attribute_id"`
+	}{
+		ID: caID.String(),
+	}
+
+	const q = `
+	SELECT
+      *
+	FROM
+		co_attributes
+	WHERE
+		co_attribute_id = :co_attribute_id`
+
+	var dbCA dbCoAttribute
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbCA); err != nil {
+		if errors.Is(err, database.ErrDBNotFound) {
+			return coattribute.CoAttribute{}, fmt.Errorf("db: %w", coattribute.ErrNotFound)
+		}
+		return coattribute.CoAttribute{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toCoreCoAttribute(dbCA)
 }
 
 // Count returns the total number of cos in the DB.

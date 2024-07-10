@@ -20,11 +20,14 @@ var (
 // Storer interface declares the behavior this package needs to perists and
 // retrieve data.
 type Storer interface {
-	Create(ctx context.Context, sa CoAttribute) error
+	Create(ctx context.Context, ca CoAttribute) error
+	Update(ctx context.Context, ca CoAttribute) error
 	Delete(ctx context.Context, caID string) error
 
 	Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]CoAttribute, error)
 	Count(ctx context.Context, filter QueryFilter) (int, error)
+
+	QueryByID(ctx context.Context, caID uuid.UUID) (CoAttribute, error)
 }
 
 // Core manages the set of APIs for user access.
@@ -59,6 +62,22 @@ func (c *Core) Create(ctx context.Context, cg NewCoAttribute) (CoAttribute, erro
 	return coga, nil
 }
 
+// Update replaces a user document in the database.
+func (c *Core) Update(ctx context.Context, ca CoAttribute, uCa UpdateCoAttribute) (CoAttribute, error) {
+
+	if uCa.CoMark != nil {
+		ca.CoMark = *uCa.CoMark
+	}
+
+	ca.DateUpdated = time.Now()
+
+	if err := c.storer.Update(ctx, ca); err != nil {
+		return CoAttribute{}, fmt.Errorf("update: %w", err)
+	}
+
+	return ca, nil
+}
+
 // Query retrieves a list of existing gas from the database.
 func (c *Core) Query(ctx context.Context, filter QueryFilter, orderBy order.By, pageNumber int, rowsPerPage int) ([]CoAttribute, error) {
 	coga, err := c.storer.Query(ctx, filter, orderBy, pageNumber, rowsPerPage)
@@ -80,6 +99,17 @@ func (c *Core) Delete(ctx context.Context, caID string) error {
 	}
 
 	return nil
+}
+
+// QueryByID finds the user by the specified ID.
+func (c *Core) QueryByID(ctx context.Context, caID uuid.UUID) (CoAttribute, error) {
+	ca, err := c.storer.QueryByID(ctx, caID)
+
+	if err != nil {
+		return CoAttribute{}, fmt.Errorf("query: caID[%s]: %w", caID, err)
+	}
+
+	return ca, nil
 }
 
 // Count returns the total number of cos in the store.

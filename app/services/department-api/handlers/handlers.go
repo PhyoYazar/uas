@@ -198,7 +198,9 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	cagh := coattributegrp.New(caCore)
 
 	app.Handle(http.MethodGet, "/co_attributes", cagh.Query)
-	app.Handle(http.MethodPost, "/co_attribute", cagh.Create)
+	app.Handle(http.MethodGet, "/co_attribute/:co_attribute_id", cagh.QueryByID)
+	app.Handle(http.MethodPost, "/co_attribute/:co_attribute_id", cagh.Create)
+	app.Handle(http.MethodPut, "/co_attribute/:co_attribute_id", cagh.Update)
 	app.Handle(http.MethodDelete, "/co_attribute/:co_attribute_id", cagh.Delete)
 
 	// -------------------------------------------------------------------------

@@ -14,18 +14,20 @@ type dbCoAttribute struct {
 	ID          uuid.UUID `db:"co_attribute_id"`
 	CoID        uuid.UUID `db:"co_id"`
 	AttributeID uuid.UUID `db:"attribute_id"`
+	CoMark      int       `db:"co_mark"`
 	DateCreated time.Time `db:"date_created"`
 	DateUpdated time.Time `db:"date_updated"`
 }
 
-func toDBCoAttribute(coga coattribute.CoAttribute) dbCoAttribute {
+func toDBCoAttribute(ca coattribute.CoAttribute) dbCoAttribute {
 
 	cg := dbCoAttribute{
-		ID:          coga.ID,
-		CoID:        coga.CoID,
-		AttributeID: coga.AttributeID,
-		DateCreated: coga.DateCreated.UTC(),
-		DateUpdated: coga.DateUpdated.UTC(),
+		ID:          ca.ID,
+		CoID:        ca.CoID,
+		AttributeID: ca.AttributeID,
+		CoMark:      ca.CoMark,
+		DateCreated: ca.DateCreated.UTC(),
+		DateUpdated: ca.DateUpdated.UTC(),
 	}
 
 	return cg
@@ -37,6 +39,7 @@ func toCoreCoAttribute(dbCoAtt dbCoAttribute) (coattribute.CoAttribute, error) {
 		ID:          dbCoAtt.ID,
 		CoID:        dbCoAtt.CoID,
 		AttributeID: dbCoAtt.AttributeID,
+		CoMark:      dbCoAtt.CoMark,
 		DateCreated: dbCoAtt.DateCreated.In(time.Local),
 		DateUpdated: dbCoAtt.DateUpdated.In(time.Local),
 	}
@@ -44,9 +47,9 @@ func toCoreCoAttribute(dbCoAtt dbCoAttribute) (coattribute.CoAttribute, error) {
 	return cg, nil
 }
 
-func toCoreCoGaSlice(cogas []dbCoAttribute) ([]coattribute.CoAttribute, error) {
-	cg := make([]coattribute.CoAttribute, len(cogas))
-	for i, dbCoGa := range cogas {
+func toCoreCoGaSlice(cas []dbCoAttribute) ([]coattribute.CoAttribute, error) {
+	cg := make([]coattribute.CoAttribute, len(cas))
+	for i, dbCoGa := range cas {
 		var err error
 		cg[i], err = toCoreCoAttribute(dbCoGa)
 		if err != nil {
