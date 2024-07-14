@@ -15,6 +15,11 @@ func (s *Store) applyFilter(filter vcograde.QueryFilter, data map[string]interfa
 		wc = append(wc, "student_id = :student_id")
 	}
 
+	if filter.SubjectID != nil {
+		data["subject_id"] = *filter.SubjectID
+		wc = append(wc, "co.subject_id = :subject_id")
+	}
+
 	if filter.Year != nil {
 		data["year"] = *filter.Year
 		wc = append(wc, "year = :year")

@@ -10,6 +10,7 @@ import (
 // QueryFilter holds the available fields a query can be filtered on.
 type QueryFilter struct {
 	ID           *uuid.UUID `validate:"omitempty"`
+	SubjectID    *uuid.UUID `validate:"omitempty"`
 	Year         *string    `validate:"omitempty,required"`
 	AcademicYear *string    `validate:"omitempty,required"`
 }
@@ -25,6 +26,10 @@ func (qf *QueryFilter) Validate() error {
 // WithStudentID sets the ID field of the QueryFilter value.
 func (qf *QueryFilter) WithStudentID(studentID uuid.UUID) {
 	qf.ID = &studentID
+}
+
+func (qf *QueryFilter) WithSubjectID(subID uuid.UUID) {
+	qf.SubjectID = &subID
 }
 
 // WithYear sets the Year field of the QueryFilter value.

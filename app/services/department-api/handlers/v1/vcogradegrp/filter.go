@@ -21,6 +21,14 @@ func parseFilter(r *http.Request) (vcograde.QueryFilter, error) {
 		filter.WithStudentID(id)
 	}
 
+	if subjectID := values.Get("subject_id"); subjectID != "" {
+		id, err := uuid.Parse(subjectID)
+		if err != nil {
+			return vcograde.QueryFilter{}, validate.NewFieldsError("subject_id", err)
+		}
+		filter.WithSubjectID(id)
+	}
+
 	if year := values.Get("year"); year != "" {
 		filter.WithYear(year)
 	}
