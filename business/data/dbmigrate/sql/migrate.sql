@@ -241,3 +241,7 @@ ALTER TABLE marks ADD COLUMN ga_mark INT NULL;
 -- Version: 1.23
 -- Description: add coMark column into co_attributes table
 ALTER TABLE co_attributes ADD COLUMN co_mark INT NULL;
+
+-- Version: 1.24
+-- Description: change mark column INT to FLOAT from student_marks table
+ALTER TABLE student_marks ALTER COLUMN mark TYPE FLOAT USING mark::FLOAT;
