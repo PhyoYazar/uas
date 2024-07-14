@@ -44,7 +44,7 @@ func (s *Store) Query(ctx context.Context, filter vcograde.QueryFilter, orderBy 
      co.name AS co_name,
      co.instance co_instance,
      SUM(fm.mark) AS total_full_marks,
-     SUM(sm.mark) AS total_marks
+     CAST(SUM(sm.mark) AS FLOAT) AS total_marks
  FROM
      students s
  JOIN
@@ -87,7 +87,7 @@ func (s *Store) Query(ctx context.Context, filter vcograde.QueryFilter, orderBy 
 			coName            string
 			coInstance        int
 			total_full_marks  int
-			total_marks       int
+			total_marks       float64
 		)
 
 		err := rows.Scan(

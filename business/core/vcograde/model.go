@@ -7,7 +7,7 @@ type VCo struct {
 	CoName         string    `json:"coName"`
 	CoInstance     int       `json:"coInstance"`
 	TotalFullMarks int       `json:"totalFullMarks"`
-	TotalMarks     int       `json:"totalMarks"`
+	TotalMarks     float64   `json:"totalMarks"`
 }
 
 type VStudentMark struct {
