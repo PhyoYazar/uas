@@ -5,7 +5,7 @@ import "github.com/google/uuid"
 type VAttributes struct {
 	StudentMarkID uuid.UUID `json:"studentMarkId"`
 	AttributeID   uuid.UUID `json:"attributeId"`
-	Mark          int       `json:"mark"`
+	Mark          float64   `json:"mark"`
 	Name          string    `json:"name"`
 	// Instance      string
 	// Type          string

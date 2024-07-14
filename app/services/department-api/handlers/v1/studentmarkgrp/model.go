@@ -11,13 +11,13 @@ import (
 
 // AppMark represents information about an individual mark.
 type AppStudentMark struct {
-	ID          string `json:"id"`
-	StudentID   string `json:"studentID"`
-	SubjectID   string `json:"subjectID"`
-	AttributeID string `json:"attributeID"`
-	Mark        int    `json:"mark"`
-	DateCreated string `json:"dateCreated"`
-	DateUpdated string `json:"dateUpdated"`
+	ID          string  `json:"id"`
+	StudentID   string  `json:"studentID"`
+	SubjectID   string  `json:"subjectID"`
+	AttributeID string  `json:"attributeID"`
+	Mark        float64 `json:"mark"`
+	DateCreated string  `json:"dateCreated"`
+	DateUpdated string  `json:"dateUpdated"`
 }
 
 func toAppStudentMark(mark studentmark.StudentMark) AppStudentMark {
@@ -37,10 +37,10 @@ func toAppStudentMark(mark studentmark.StudentMark) AppStudentMark {
 
 // AppNewMark contains information needed to create a new mark.
 type AppNewStudentMark struct {
-	StudentID   string `json:"studentID" validate:"required"`
-	SubjectID   string `json:"subjectID" validate:"required"`
-	AttributeID string `json:"attributeID" validate:"required"`
-	Mark        int    `json:"mark" validate:"required"`
+	StudentID   string  `json:"studentID" validate:"required"`
+	SubjectID   string  `json:"subjectID" validate:"required"`
+	AttributeID string  `json:"attributeID" validate:"required"`
+	Mark        float64 `json:"mark" validate:"required"`
 }
 
 func toCoreNewStudentMark(app AppNewStudentMark) (studentmark.NewStudentMark, error) {
@@ -86,10 +86,10 @@ func (app AppNewStudentMark) Validate() error {
 
 // AppUpdateStudentMark contains information needed to update a studentMark.
 type AppUpdateStudentMark struct {
-	Mark        *int    `json:"mark"`
-	SubjectID   *string `json:"subjectId"`
-	StudentID   *string `json:"studentId"`
-	AttributeID *string `json:"attributeId"`
+	Mark        *float64 `json:"mark"`
+	SubjectID   *string  `json:"subjectId"`
+	StudentID   *string  `json:"studentId"`
+	AttributeID *string  `json:"attributeId"`
 }
 
 func toCoreUpdateStudentMark(app AppUpdateStudentMark) (studentmark.UpdateStudentMark, error) {

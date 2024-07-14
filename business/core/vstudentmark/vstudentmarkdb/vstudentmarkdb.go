@@ -76,7 +76,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 			studentRollNumber int
 			studentName       sql.NullString
 			studentMarkID     sql.NullString
-			studentMark       sql.NullInt64
+			studentMark       sql.NullFloat64
 			attributeName     sql.NullString
 			attributeID       sql.NullString
 		)
@@ -105,7 +105,7 @@ func (s *Store) Query(ctx context.Context, filter vstudentmark.QueryFilter, orde
 			attribute := vstudentmark.VAttributes{
 				StudentMarkID: uuid.MustParse(studentMarkID.String),
 				AttributeID:   uuid.MustParse(attributeID.String),
-				Mark:          int(studentMark.Int64),
+				Mark:          float64(studentMark.Float64),
 				Name:          attributeName.String,
 			}
 

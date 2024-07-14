@@ -15,7 +15,7 @@ type dbStudentMark struct {
 	StudentID   uuid.UUID `db:"student_id"`
 	SubjectID   uuid.UUID `db:"subject_id"`
 	AttributeID uuid.UUID `db:"attribute_id"`
-	Mark        int       `db:"mark"`
+	Mark        float64   `db:"mark"`
 	DateCreated time.Time `db:"date_created"`
 	DateUpdated time.Time `db:"date_updated"`
 }

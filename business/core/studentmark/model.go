@@ -12,7 +12,7 @@ type StudentMark struct {
 	StudentID   uuid.UUID
 	SubjectID   uuid.UUID
 	AttributeID uuid.UUID
-	Mark        int
+	Mark        float64
 	DateCreated time.Time
 	DateUpdated time.Time
 }
@@ -22,7 +22,7 @@ type NewStudentMark struct {
 	StudentID   uuid.UUID
 	SubjectID   uuid.UUID
 	AttributeID uuid.UUID
-	Mark        int
+	Mark        float64
 }
 
 // UpdateStudentMark contains information needed to update a StudentMark.
@@ -30,5 +30,5 @@ type UpdateStudentMark struct {
 	// StudentID   *uuid.UUID
 	// SubjectID   *uuid.UUID
 	// AttributeID *uuid.UUID
-	Mark *int
+	Mark *float64
 }

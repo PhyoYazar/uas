@@ -47,11 +47,11 @@ func parseFilter(r *http.Request) (studentmark.QueryFilter, error) {
 	}
 
 	if mark := values.Get("mark"); mark != "" {
-		mk, err := strconv.ParseInt(mark, 10, 64)
+		mk, err := strconv.ParseFloat(mark, 64)
 		if err != nil {
 			return studentmark.QueryFilter{}, validate.NewFieldsError("mark", err)
 		}
-		filter.WithMark(int(mk))
+		filter.WithMark(float64(mk))
 	}
 
 	if err := filter.Validate(); err != nil {

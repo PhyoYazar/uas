@@ -17,7 +17,7 @@ func (s *Store) applyFilter(filter studentmark.QueryFilter, data map[string]inte
 	}
 
 	if filter.Mark != nil {
-		data["mark"] = fmt.Sprintf("%%%d%%", *filter.Mark)
+		data["mark"] = fmt.Sprintf("%%%f%%", *filter.Mark)
 		wc = append(wc, "mark = :mark")
 	}
 

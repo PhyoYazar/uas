@@ -13,7 +13,7 @@ type QueryFilter struct {
 	StudentID   *uuid.UUID `validate:"omitempty"`
 	SubjectID   *uuid.UUID `validate:"omitempty"`
 	AttributeID *uuid.UUID `validate:"omitempty"`
-	Mark        *int       `validate:"omitempty"`
+	Mark        *float64   `validate:"omitempty"`
 }
 
 // Validate checks the data in the model is considered clean.
@@ -45,6 +45,6 @@ func (qf *QueryFilter) WithAttributeID(attributeID uuid.UUID) {
 }
 
 // WithMark sets the Name field of the QueryFilter value.
-func (qf *QueryFilter) WithMark(mark int) {
+func (qf *QueryFilter) WithMark(mark float64) {
 	qf.Mark = &mark
 }
