@@ -134,7 +134,7 @@ func (s *Store) Count(ctx context.Context, filter vstudentmark.QueryFilter) (int
 	SELECT
 		count(1)
 	FROM
-		students`
+		students s`
 
 	buf := bytes.NewBufferString(q)
 	s.applyFilter(filter, data, buf)

@@ -17,12 +17,12 @@ func (s *Store) applyFilter(filter vstudentmark.QueryFilter, data map[string]int
 
 	if filter.Year != nil {
 		data["year"] = *filter.Year
-		wc = append(wc, "year = :year")
+		wc = append(wc, "s.year = :year")
 	}
 
 	if filter.AcademicYear != nil {
 		data["academic_year"] = *filter.AcademicYear
-		wc = append(wc, "academic_year = :academic_year")
+		wc = append(wc, "s.academic_year = :academic_year")
 	}
 
 	if len(wc) > 0 {

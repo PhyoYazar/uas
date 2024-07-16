@@ -25,7 +25,7 @@ func parseFilter(r *http.Request) (vstudentmark.QueryFilter, error) {
 		filter.WithYear(year)
 	}
 
-	if academicYear := values.Get("academicYear"); academicYear != "" {
+	if academicYear := values.Get("academic_year"); academicYear != "" {
 		filter.WithAcademicYear(academicYear)
 	}
 	if err := filter.Validate(); err != nil {
