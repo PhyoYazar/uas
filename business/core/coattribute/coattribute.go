@@ -51,6 +51,7 @@ func (c *Core) Create(ctx context.Context, cg NewCoAttribute) (CoAttribute, erro
 		ID:          uuid.New(),
 		CoID:        cg.CoID,
 		AttributeID: cg.AttributeID,
+		CoMark:      0,
 		DateCreated: now,
 		DateUpdated: now,
 	}

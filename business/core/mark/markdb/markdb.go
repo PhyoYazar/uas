@@ -33,9 +33,9 @@ func (s *Store) Create(ctx context.Context, cm mark.Mark) error {
 
 	const q = `
 	INSERT INTO marks
-		(mark_id, subject_id, ga_id, attribute_id, mark, date_created, date_updated)
+		(mark_id, subject_id, ga_id, attribute_id, mark, ga_mark, date_created, date_updated)
 	VALUES
-		(:mark_id, :subject_id, :ga_id, :attribute_id, :mark, :date_created, :date_updated)`
+		(:mark_id, :subject_id, :ga_id, :attribute_id, :mark, :ga_mark, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBMark(cm)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {

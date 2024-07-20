@@ -24,6 +24,7 @@ type NewMark struct {
 	GaID        uuid.UUID
 	AttributeID uuid.UUID
 	Mark        int
+	GaMark      int
 }
 
 // UpdateMark contains information needed to update a Mark.

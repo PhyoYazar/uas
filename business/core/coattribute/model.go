@@ -20,6 +20,7 @@ type CoAttribute struct {
 type NewCoAttribute struct {
 	CoID        uuid.UUID
 	AttributeID uuid.UUID
+	CoMark      int
 }
 
 // UpdateCoAttribute contains information needed to update a CoAttribute.

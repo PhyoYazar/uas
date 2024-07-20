@@ -53,6 +53,7 @@ func (c *Core) Create(ctx context.Context, m NewMark) (Mark, error) {
 		GaID:        m.GaID,
 		AttributeID: m.AttributeID,
 		Mark:        m.Mark,
+		GaMark:      m.GaMark,
 		DateCreated: now,
 		DateUpdated: now,
 	}

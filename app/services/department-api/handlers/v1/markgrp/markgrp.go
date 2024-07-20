@@ -165,6 +165,7 @@ func (h *Handlers) CreateMarkByConnectingCOGA(ctx context.Context, w http.Respon
 			AttributeID: App.AttributeID,
 			GaID:        ga.GaId,
 			Mark:        ga.Mark,
+			GaMark:      0,
 		})
 		if err != nil {
 			if errors.Is(err, mark.ErrUniqueMark) {

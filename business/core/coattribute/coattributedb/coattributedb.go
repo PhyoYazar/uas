@@ -33,9 +33,9 @@ func (s *Store) Create(ctx context.Context, cg coattribute.CoAttribute) error {
 
 	const q = `
 	INSERT INTO co_attributes
-		(co_attribute_id, co_id, attribute_id, date_created, date_updated)
+		(co_attribute_id, co_id, co_mark, attribute_id, date_created, date_updated)
 	VALUES
-		(:co_attribute_id, :co_id, :attribute_id, :date_created, :date_updated)`
+		(:co_attribute_id, :co_id, :co_mark, :attribute_id, :date_created, :date_updated)`
 
 	if err := database.NamedExecContext(ctx, s.log, s.db, q, toDBCoAttribute(cg)); err != nil {
 		if errors.Is(err, database.ErrDBDuplicatedEntry) {
